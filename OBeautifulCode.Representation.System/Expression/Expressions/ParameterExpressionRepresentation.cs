@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="ParameterExpressionDescription.cs" company="OBeautifulCode">
+// <copyright file="ParameterExpressionRepresentation.cs" company="OBeautifulCode">
 //   Copyright (c) OBeautifulCode 2018. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
@@ -12,14 +12,14 @@ namespace OBeautifulCode.Representation
     using System.Linq.Expressions;
 
     /// <summary>
-    /// Description of <see cref="ParameterExpression" />.
+    /// Representation of <see cref="ParameterExpression" />.
     /// </summary>
-    public class ParameterExpressionDescription : ExpressionDescriptionBase
+    public class ParameterExpressionRepresentation : ExpressionRepresentationBase
     {
-        /// <summary>Initializes a new instance of the <see cref="ParameterExpressionDescription"/> class.</summary>
+        /// <summary>Initializes a new instance of the <see cref="ParameterExpressionRepresentation"/> class.</summary>
         /// <param name="type">The type.</param>
         /// <param name="name">The name.</param>
-        public ParameterExpressionDescription(TypeDescription type, string name)
+        public ParameterExpressionRepresentation(TypeRepresentation type, string name)
             : base(type, ExpressionType.Parameter)
         {
             this.Name = name;
@@ -32,40 +32,40 @@ namespace OBeautifulCode.Representation
 
 #pragma warning disable SA1204 // Static elements should appear before instance elements
     /// <summary>
-    /// Extensions to <see cref="ParameterExpressionDescription" />.
+    /// Extensions to <see cref="ParameterExpressionRepresentation" />.
     /// </summary>
-    public static class ParameterExpressionDescriptionExtensions
+    public static class ParameterExpressionRepresentationExtensions
 #pragma warning restore SA1204 // Static elements should appear before instance elements
     {
         /// <summary>Converts to serializable.</summary>
         /// <param name="parameterExpression">The parameter expression.</param>
         /// <returns>Serializable expression.</returns>
-        public static ParameterExpressionDescription ToDescription(this ParameterExpression parameterExpression)
+        public static ParameterExpressionRepresentation ToRepresentation(this ParameterExpression parameterExpression)
         {
             if (parameterExpression == null)
             {
                 throw new ArgumentNullException(nameof(parameterExpression));
             }
 
-            var type = parameterExpression.Type.ToDescription();
+            var type = parameterExpression.Type.ToRepresentation();
             var name = parameterExpression.Name;
 
-            var result = new ParameterExpressionDescription(type, name);
+            var result = new ParameterExpressionRepresentation(type, name);
             return result;
         }
 
         /// <summary>From the serializable.</summary>
-        /// <param name="parameterExpressionDescription">The parameter expression.</param>
+        /// <param name="parameterExpressionRepresentation">The parameter expression.</param>
         /// <returns>Converted expression.</returns>
-        public static ParameterExpression FromDescription(this ParameterExpressionDescription parameterExpressionDescription)
+        public static ParameterExpression FromRepresentation(this ParameterExpressionRepresentation parameterExpressionRepresentation)
         {
-            if (parameterExpressionDescription == null)
+            if (parameterExpressionRepresentation == null)
             {
-                throw new ArgumentNullException(nameof(parameterExpressionDescription));
+                throw new ArgumentNullException(nameof(parameterExpressionRepresentation));
             }
 
-            var type = parameterExpressionDescription.Type.ResolveFromLoadedTypes();
-            var name = parameterExpressionDescription.Name;
+            var type = parameterExpressionRepresentation.Type.ResolveFromLoadedTypes();
+            var name = parameterExpressionRepresentation.Name;
 
             var result = Expression.Parameter(type, name);
             return result;
@@ -74,20 +74,20 @@ namespace OBeautifulCode.Representation
         /// <summary>Converts to serializable.</summary>
         /// <param name="expressions">The expressions.</param>
         /// <returns>Converted expressions.</returns>
-        public static IReadOnlyList<ParameterExpressionDescription> ToDescription(
+        public static IReadOnlyList<ParameterExpressionRepresentation> ToRepresentation(
             this IReadOnlyList<ParameterExpression> expressions)
         {
-            var result = expressions.Select(_ => _.ToDescription()).ToList();
+            var result = expressions.Select(_ => _.ToRepresentation()).ToList();
             return result;
         }
 
         /// <summary>From the serializable.</summary>
         /// <param name="expressions">The expressions.</param>
         /// <returns>Converted expressions.</returns>
-        public static IReadOnlyList<ParameterExpression> FromDescription(
-            this IReadOnlyList<ParameterExpressionDescription> expressions)
+        public static IReadOnlyList<ParameterExpression> FromRepresentation(
+            this IReadOnlyList<ParameterExpressionRepresentation> expressions)
         {
-            var result = expressions.Select(_ => _.FromDescription()).ToList();
+            var result = expressions.Select(_ => _.FromRepresentation()).ToList();
             return result;
         }
     }

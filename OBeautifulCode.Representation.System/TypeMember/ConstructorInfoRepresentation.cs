@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="ConstructorInfoDescription.cs" company="OBeautifulCode">
+// <copyright file="ConstructorInfoRepresentation.cs" company="OBeautifulCode">
 //   Copyright (c) OBeautifulCode 2018. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
@@ -13,16 +13,16 @@ namespace OBeautifulCode.Representation
     using static System.FormattableString;
 
     /// <summary>
-    /// Description of <see cref="ConstructorInfo" />.
+    /// Representation of <see cref="ConstructorInfo" />.
     /// </summary>
-    public class ConstructorInfoDescription : IEquatable<ConstructorInfoDescription>
+    public class ConstructorInfoRepresentation : IEquatable<ConstructorInfoRepresentation>
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="ConstructorInfoDescription"/> class.
+        /// Initializes a new instance of the <see cref="ConstructorInfoRepresentation"/> class.
         /// </summary>
         /// <param name="type">The type.</param>
         /// <param name="constructorHash">The method hash.</param>
-        public ConstructorInfoDescription(TypeDescription type, string constructorHash)
+        public ConstructorInfoRepresentation(TypeRepresentation type, string constructorHash)
         {
             this.Type = type;
             this.ConstructorHash = constructorHash;
@@ -39,17 +39,17 @@ namespace OBeautifulCode.Representation
         /// </summary>
         /// <value>The type.</value>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1721:PropertyNamesShouldNotMatchGetMethods", Justification = "Name/spelling is correct.")]
-        public TypeDescription Type { get; private set; }
+        public TypeRepresentation Type { get; private set; }
 
         /// <summary>
-        /// Determines whether two objects of type <see cref="ConstructorInfoDescription" /> are equal.
+        /// Determines whether two objects of type <see cref="ConstructorInfoRepresentation" /> are equal.
         /// </summary>
         /// <param name="left">The object to the left of the operator.</param>
         /// <param name="right">The object to the right of the operator.</param>
         /// <returns>True if the two object are equal; false otherwise.</returns>
         public static bool operator ==(
-            ConstructorInfoDescription left,
-            ConstructorInfoDescription right)
+            ConstructorInfoRepresentation left,
+            ConstructorInfoRepresentation right)
         {
             if (ReferenceEquals(left, right))
             {
@@ -68,14 +68,14 @@ namespace OBeautifulCode.Representation
         }
 
         /// <summary>
-        /// Determines whether two objects of type <see cref="ConstructorInfoDescription" /> are not equal.
+        /// Determines whether two objects of type <see cref="ConstructorInfoRepresentation" /> are not equal.
         /// </summary>
         /// <param name="left">The object to the left of the operator.</param>
         /// <param name="right">The object to the right of the operator.</param>
         /// <returns>True if the two object are not equal; false otherwise.</returns>
         public static bool operator !=(
-            ConstructorInfoDescription left,
-            ConstructorInfoDescription right)
+            ConstructorInfoRepresentation left,
+            ConstructorInfoRepresentation right)
             => !(left == right);
 
         /// <summary>
@@ -83,10 +83,10 @@ namespace OBeautifulCode.Representation
         /// </summary>
         /// <param name="other">An object to compare with this object.</param>
         /// <returns>true if the current object is equal to the <paramref name="other" /> parameter; otherwise, false.</returns>
-        public bool Equals(ConstructorInfoDescription other) => this == other;
+        public bool Equals(ConstructorInfoRepresentation other) => this == other;
 
         /// <inheritdoc />
-        public override bool Equals(object obj) => this == (obj as ConstructorInfoDescription);
+        public override bool Equals(object obj) => this == (obj as ConstructorInfoRepresentation);
 
         /// <inheritdoc />
         public override int GetHashCode() =>
@@ -99,9 +99,9 @@ namespace OBeautifulCode.Representation
 #pragma warning disable SA1204 // Static elements should appear before instance elements
 
     /// <summary>
-    /// Extensions to <see cref="ConstructorInfoDescription" />.
+    /// Extensions to <see cref="ConstructorInfoRepresentation" />.
     /// </summary>
-    public static class ConstructorInfoDescriptionExtensions
+    public static class ConstructorInfoRepresentationExtensions
 #pragma warning restore SA1204 // Static elements should appear before instance elements
     {
         /// <summary>Gets the constructor hash.</summary>
@@ -126,46 +126,46 @@ namespace OBeautifulCode.Representation
         /// Converts to description.
         /// </summary>
         /// <param name="constructorInfo">The constructor information.</param>
-        /// <returns>Converted <see cref="ConstructorInfoDescription" />.</returns>
-        public static ConstructorInfoDescription ToDescription(this ConstructorInfo constructorInfo)
+        /// <returns>Converted <see cref="ConstructorInfoRepresentation" />.</returns>
+        public static ConstructorInfoRepresentation ToRepresentation(this ConstructorInfo constructorInfo)
         {
             if (constructorInfo == null)
             {
                 throw new ArgumentNullException(nameof(constructorInfo));
             }
 
-            var type = constructorInfo.DeclaringType.ToDescription();
+            var type = constructorInfo.DeclaringType.ToRepresentation();
             var constructorHash = constructorInfo.GetSignatureHash();
-            var result = new ConstructorInfoDescription(type, constructorHash);
+            var result = new ConstructorInfoRepresentation(type, constructorHash);
             return result;
         }
 
         /// <summary>
         /// Converts from description.
         /// </summary>
-        /// <param name="constructorInfoDescription">The description.</param>
+        /// <param name="constructorInfoRepresentation">The description.</param>
         /// <returns>Converted <see cref="ConstructorInfo" />.</returns>
-        public static ConstructorInfo FromDescription(this ConstructorInfoDescription constructorInfoDescription)
+        public static ConstructorInfo FromRepresentation(this ConstructorInfoRepresentation constructorInfoRepresentation)
         {
-            if (constructorInfoDescription == null)
+            if (constructorInfoRepresentation == null)
             {
-                throw new ArgumentNullException(nameof(constructorInfoDescription));
+                throw new ArgumentNullException(nameof(constructorInfoRepresentation));
             }
 
-            var type = constructorInfoDescription.Type.ResolveFromLoadedTypes();
+            var type = constructorInfoRepresentation.Type.ResolveFromLoadedTypes();
             var results = type.GetConstructors()
-                              .Where(_ => _.GetSignatureHash().Equals(constructorInfoDescription.ConstructorHash, StringComparison.OrdinalIgnoreCase))
+                              .Where(_ => _.GetSignatureHash().Equals(constructorInfoRepresentation.ConstructorHash, StringComparison.OrdinalIgnoreCase))
                               .ToList();
 
             if (!results.Any())
             {
-                throw new ArgumentException(Invariant($"Could not find a constructor that matched hash '{constructorInfoDescription.ConstructorHash}' on type '{type}'."));
+                throw new ArgumentException(Invariant($"Could not find a constructor that matched hash '{constructorInfoRepresentation.ConstructorHash}' on type '{type}'."));
             }
 
             if (results.Count > 1)
             {
                 var foundAddIn = string.Join(",", results.Select(_ => _.ToString()));
-                throw new ArgumentException(Invariant($"Found too many constructors that matched hash '{constructorInfoDescription.ConstructorHash}' on type '{type}'; {foundAddIn}."));
+                throw new ArgumentException(Invariant($"Found too many constructors that matched hash '{constructorInfoRepresentation.ConstructorHash}' on type '{type}'; {foundAddIn}."));
             }
 
             return results.Single();

@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="MethodCallExpressionDescription.cs" company="OBeautifulCode">
+// <copyright file="MethodCallExpressionRepresentation.cs" company="OBeautifulCode">
 //   Copyright (c) OBeautifulCode 2018. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
@@ -11,22 +11,22 @@ namespace OBeautifulCode.Representation
     using System.Linq.Expressions;
 
     /// <summary>
-    /// Description of <see cref="MethodCallExpression" />.
+    /// Representation of <see cref="MethodCallExpression" />.
     /// </summary>
-    public class MethodCallExpressionDescription : ExpressionDescriptionBase
+    public class MethodCallExpressionRepresentation : ExpressionRepresentationBase
     {
-        /// <summary>Initializes a new instance of the <see cref="MethodCallExpressionDescription"/> class.</summary>
+        /// <summary>Initializes a new instance of the <see cref="MethodCallExpressionRepresentation"/> class.</summary>
         /// <param name="type">The type.</param>
         /// <param name="nodeType">Type of the node.</param>
         /// <param name="parentObject">The object.</param>
         /// <param name="method">The method.</param>
         /// <param name="arguments">The arguments.</param>
-        public MethodCallExpressionDescription(
-            TypeDescription type,
+        public MethodCallExpressionRepresentation(
+            TypeRepresentation type,
             ExpressionType nodeType,
-            ExpressionDescriptionBase parentObject,
-            MethodInfoDescription method,
-            IReadOnlyList<ExpressionDescriptionBase> arguments)
+            ExpressionRepresentationBase parentObject,
+            MethodInfoRepresentation method,
+            IReadOnlyList<ExpressionRepresentationBase> arguments)
         : base(type, nodeType)
         {
             this.ParentObject = parentObject;
@@ -36,57 +36,57 @@ namespace OBeautifulCode.Representation
 
         /// <summary>Gets the object.</summary>
         /// <value>The object.</value>
-        public ExpressionDescriptionBase ParentObject { get; private set; }
+        public ExpressionRepresentationBase ParentObject { get; private set; }
 
         /// <summary>Gets the method hash.</summary>
         /// <value>The method hash.</value>
-        public MethodInfoDescription Method { get; private set; }
+        public MethodInfoRepresentation Method { get; private set; }
 
         /// <summary>Gets the arguments.</summary>
         /// <value>The arguments.</value>
-        public IReadOnlyList<ExpressionDescriptionBase> Arguments { get; private set; }
+        public IReadOnlyList<ExpressionRepresentationBase> Arguments { get; private set; }
     }
 
 #pragma warning disable SA1204 // Static elements should appear before instance elements
                               /// <summary>
-                              /// Extensions to <see cref="MethodCallExpressionDescription" />.
+                              /// Extensions to <see cref="MethodCallExpressionRepresentation" />.
                               /// </summary>
-    public static class MethodCallExpressionDescriptionExtensions
+    public static class MethodCallExpressionRepresentationExtensions
 #pragma warning restore SA1204 // Static elements should appear before instance elements
     {
         /// <summary>Converts to serializable.</summary>
         /// <param name="methodCallExpression">The methodCall expression.</param>
         /// <returns>Serializable expression.</returns>
-        public static MethodCallExpressionDescription ToDescription(this MethodCallExpression methodCallExpression)
+        public static MethodCallExpressionRepresentation ToRepresentation(this MethodCallExpression methodCallExpression)
         {
             if (methodCallExpression == null)
             {
                 throw new ArgumentNullException(nameof(methodCallExpression));
             }
 
-            var type = methodCallExpression.Type.ToDescription();
+            var type = methodCallExpression.Type.ToRepresentation();
             var nodeType = methodCallExpression.NodeType;
-            var parentObject = methodCallExpression.Object.ToDescription();
-            var method = methodCallExpression.Method.ToDescription();
-            var parameters = methodCallExpression.Arguments.ToDescription();
+            var parentObject = methodCallExpression.Object.ToRepresentation();
+            var method = methodCallExpression.Method.ToRepresentation();
+            var parameters = methodCallExpression.Arguments.ToRepresentation();
 
-            var result = new MethodCallExpressionDescription(type, nodeType, parentObject, method, parameters);
+            var result = new MethodCallExpressionRepresentation(type, nodeType, parentObject, method, parameters);
             return result;
         }
 
         /// <summary>From the serializable.</summary>
-        /// <param name="methodCallExpressionDescription">The methodCall expression.</param>
+        /// <param name="methodCallExpressionRepresentation">The methodCall expression.</param>
         /// <returns>Converted expression.</returns>
-        public static MethodCallExpression FromDescription(this MethodCallExpressionDescription methodCallExpressionDescription)
+        public static MethodCallExpression FromRepresentation(this MethodCallExpressionRepresentation methodCallExpressionRepresentation)
         {
-            if (methodCallExpressionDescription == null)
+            if (methodCallExpressionRepresentation == null)
             {
-                throw new ArgumentNullException(nameof(methodCallExpressionDescription));
+                throw new ArgumentNullException(nameof(methodCallExpressionRepresentation));
             }
 
-            var instance = methodCallExpressionDescription.ParentObject.FromDescription();
-            var method = methodCallExpressionDescription.Method.FromDescription();
-            var arguments = methodCallExpressionDescription.Arguments.FromDescription();
+            var instance = methodCallExpressionRepresentation.ParentObject.FromRepresentation();
+            var method = methodCallExpressionRepresentation.Method.FromRepresentation();
+            var arguments = methodCallExpressionRepresentation.Arguments.FromRepresentation();
             var result = Expression.Call(
                 instance,
                 method,

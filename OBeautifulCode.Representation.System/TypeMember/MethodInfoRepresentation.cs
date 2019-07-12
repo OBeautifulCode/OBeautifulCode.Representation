@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="MethodInfoDescription.cs" company="OBeautifulCode">
+// <copyright file="MethodInfoRepresentation.cs" company="OBeautifulCode">
 //     Copyright (c) OBeautifulCode 2018. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
@@ -15,17 +15,17 @@ namespace OBeautifulCode.Representation
     using static System.FormattableString;
 
     /// <summary>
-    /// Description of <see cref="MethodInfo" />.
+    /// Representation of <see cref="MethodInfo" />.
     /// </summary>
-    public class MethodInfoDescription : IEquatable<MethodInfoDescription>
+    public class MethodInfoRepresentation : IEquatable<MethodInfoRepresentation>
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="MethodInfoDescription" /> class.
+        /// Initializes a new instance of the <see cref="MethodInfoRepresentation" /> class.
         /// </summary>
         /// <param name="type">The type.</param>
         /// <param name="methodHash">The method hash.</param>
         /// <param name="genericArguments">The generic arguments.</param>
-        public MethodInfoDescription(TypeDescription type, string methodHash, IReadOnlyList<TypeDescription> genericArguments)
+        public MethodInfoRepresentation(TypeRepresentation type, string methodHash, IReadOnlyList<TypeRepresentation> genericArguments)
         {
             this.Type = type;
             this.MethodHash = methodHash;
@@ -36,7 +36,7 @@ namespace OBeautifulCode.Representation
         /// Gets the generic arguments.
         /// </summary>
         /// <value>The generic arguments.</value>
-        public IReadOnlyList<TypeDescription> GenericArguments { get; private set; }
+        public IReadOnlyList<TypeRepresentation> GenericArguments { get; private set; }
 
         /// <summary>
         /// Gets the method hash.
@@ -49,17 +49,17 @@ namespace OBeautifulCode.Representation
         /// </summary>
         /// <value>The type.</value>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1721:PropertyNamesShouldNotMatchGetMethods", Justification = "Name/spelling is correct.")]
-        public TypeDescription Type { get; private set; }
+        public TypeRepresentation Type { get; private set; }
 
         /// <summary>
-        /// Determines whether two objects of type <see cref="MethodInfoDescription" /> are equal.
+        /// Determines whether two objects of type <see cref="MethodInfoRepresentation" /> are equal.
         /// </summary>
         /// <param name="left">The object to the left of the operator.</param>
         /// <param name="right">The object to the right of the operator.</param>
         /// <returns>True if the two object are equal; false otherwise.</returns>
         public static bool operator ==(
-            MethodInfoDescription left,
-            MethodInfoDescription right)
+            MethodInfoRepresentation left,
+            MethodInfoRepresentation right)
         {
             if (ReferenceEquals(left, right))
             {
@@ -80,14 +80,14 @@ namespace OBeautifulCode.Representation
         }
 
         /// <summary>
-        /// Determines whether two objects of type <see cref="MethodInfoDescription" /> are not equal.
+        /// Determines whether two objects of type <see cref="MethodInfoRepresentation" /> are not equal.
         /// </summary>
         /// <param name="left">The object to the left of the operator.</param>
         /// <param name="right">The object to the right of the operator.</param>
         /// <returns>True if the two object are not equal; false otherwise.</returns>
         public static bool operator !=(
-            MethodInfoDescription left,
-            MethodInfoDescription right)
+            MethodInfoRepresentation left,
+            MethodInfoRepresentation right)
             => !(left == right);
 
         /// <summary>
@@ -95,10 +95,10 @@ namespace OBeautifulCode.Representation
         /// </summary>
         /// <param name="other">An object to compare with this object.</param>
         /// <returns>true if the current object is equal to the <paramref name="other" /> parameter; otherwise, false.</returns>
-        public bool Equals(MethodInfoDescription other) => this == other;
+        public bool Equals(MethodInfoRepresentation other) => this == other;
 
         /// <inheritdoc />
-        public override bool Equals(object obj) => this == (obj as MethodInfoDescription);
+        public override bool Equals(object obj) => this == (obj as MethodInfoRepresentation);
 
         /// <inheritdoc />
         public override int GetHashCode() =>
@@ -112,9 +112,9 @@ namespace OBeautifulCode.Representation
 #pragma warning disable SA1204 // Static elements should appear before instance elements
 
     /// <summary>
-    /// Extensions to <see cref="MethodInfoDescription" />.
+    /// Extensions to <see cref="MethodInfoRepresentation" />.
     /// </summary>
-    public static class MethodInfoDescriptionExtensions
+    public static class MethodInfoRepresentationExtensions
 #pragma warning restore SA1204 // Static elements should appear before instance elements
     {
         /// <summary>Gets the method hash.</summary>
@@ -139,8 +139,8 @@ namespace OBeautifulCode.Representation
         /// Converts to description.
         /// </summary>
         /// <param name="methodInfo">The method information.</param>
-        /// <returns>Converted <see cref="MethodInfoDescription" />.</returns>
-        public static MethodInfoDescription ToDescription(this MethodInfo methodInfo)
+        /// <returns>Converted <see cref="MethodInfoRepresentation" />.</returns>
+        public static MethodInfoRepresentation ToRepresentation(this MethodInfo methodInfo)
         {
             if (methodInfo == null)
             {
@@ -148,26 +148,26 @@ namespace OBeautifulCode.Representation
             }
 
             var methodHash = methodInfo.GetSignatureHash();
-            var genericArguments = methodInfo.GetGenericArguments().Select(_ => _.ToDescription()).ToList();
-            var result = new MethodInfoDescription(methodInfo.DeclaringType.ToDescription(), methodHash, genericArguments);
+            var genericArguments = methodInfo.GetGenericArguments().Select(_ => _.ToRepresentation()).ToList();
+            var result = new MethodInfoRepresentation(methodInfo.DeclaringType.ToRepresentation(), methodHash, genericArguments);
             return result;
         }
 
         /// <summary>
         /// Converts from description.
         /// </summary>
-        /// <param name="methodInfoDescription">The description.</param>
+        /// <param name="methodInfoRepresentation">The description.</param>
         /// <returns>Converted <see cref="MemberInfo" />.</returns>
-        public static MethodInfo FromDescription(this MethodInfoDescription methodInfoDescription)
+        public static MethodInfo FromRepresentation(this MethodInfoRepresentation methodInfoRepresentation)
         {
-            if (methodInfoDescription == null)
+            if (methodInfoRepresentation == null)
             {
-                throw new ArgumentNullException(nameof(methodInfoDescription));
+                throw new ArgumentNullException(nameof(methodInfoRepresentation));
             }
 
-            var methodHash = methodInfoDescription.MethodHash;
-            var genericArguments = methodInfoDescription.GenericArguments.Select(_ => _.ResolveFromLoadedTypes()).ToArray();
-            var type = methodInfoDescription.Type.ResolveFromLoadedTypes();
+            var methodHash = methodInfoRepresentation.MethodHash;
+            var genericArguments = methodInfoRepresentation.GenericArguments.Select(_ => _.ResolveFromLoadedTypes()).ToArray();
+            var type = methodInfoRepresentation.Type.ResolveFromLoadedTypes();
             var methodInfos = type.GetAllMethodInfos();
 
             var methodHashAndInfoTupleSet = methodInfos.Select(methodInfo =>
@@ -183,13 +183,13 @@ namespace OBeautifulCode.Representation
 
             if (!results.Any())
             {
-                throw new ArgumentException(Invariant($"Could not find a member that matched hash '{methodInfoDescription.MethodHash}' on type '{type}'."));
+                throw new ArgumentException(Invariant($"Could not find a member that matched hash '{methodInfoRepresentation.MethodHash}' on type '{type}'."));
             }
 
             if (results.Count > 1)
             {
                 var foundAddIn = string.Join(",", results.Select(_ => _.Item2.ToString()));
-                throw new ArgumentException(Invariant($"Found too many members that matched hash '{methodInfoDescription.MethodHash}' on type '{type}'; {foundAddIn}."));
+                throw new ArgumentException(Invariant($"Found too many members that matched hash '{methodInfoRepresentation.MethodHash}' on type '{type}'; {foundAddIn}."));
             }
 
             return results.Single().Item2;

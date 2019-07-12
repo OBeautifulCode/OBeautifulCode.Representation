@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="ConstantExpressionDescription.cs" company="OBeautifulCode">
+// <copyright file="ConstantExpressionRepresentation.cs" company="OBeautifulCode">
 //   Copyright (c) OBeautifulCode 2018. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
@@ -11,15 +11,15 @@ namespace OBeautifulCode.Representation
     using OBeautifulCode.Reflection.Recipes;
 
     /// <summary>
-    /// Description of <see cref="ConstantExpression" />.
+    /// Representation of <see cref="ConstantExpression" />.
     /// </summary>
     /// <typeparam name="T">Type of the value.</typeparam>
-    public class ConstantExpressionDescription<T> : ExpressionDescriptionBase
+    public class ConstantExpressionRepresentation<T> : ExpressionRepresentationBase
     {
-        /// <summary>Initializes a new instance of the <see cref="ConstantExpressionDescription{T}"/> class.</summary>
+        /// <summary>Initializes a new instance of the <see cref="ConstantExpressionRepresentation{T}"/> class.</summary>
         /// <param name="type">The type of expression.</param>
         /// <param name="value">The value.</param>
-        public ConstantExpressionDescription(TypeDescription type, T value)
+        public ConstantExpressionRepresentation(TypeRepresentation type, T value)
             : base(type, ExpressionType.Constant)
         {
             this.Value = value;
@@ -32,40 +32,40 @@ namespace OBeautifulCode.Representation
 
 #pragma warning disable SA1204 // Static elements should appear before instance elements
     /// <summary>
-    /// Extensions to <see cref="ConstantExpressionDescription{T}" />.
+    /// Extensions to <see cref="ConstantExpressionRepresentation{T}" />.
     /// </summary>
-    public static class ConstantExpressionDescriptionExtensions
+    public static class ConstantExpressionRepresentationExtensions
 #pragma warning restore SA1204 // Static elements should appear before instance elements
     {
         /// <summary>Converts to serializable.</summary>
         /// <param name="constantExpression">The constant expression.</param>
         /// <returns>Converted expression.</returns>
-        public static ExpressionDescriptionBase ToDescription(this ConstantExpression constantExpression)
+        public static ExpressionRepresentationBase ToRepresentation(this ConstantExpression constantExpression)
         {
             if (constantExpression == null)
             {
                 throw new ArgumentNullException(nameof(constantExpression));
             }
 
-            var type = constantExpression.Type.ToDescription();
+            var type = constantExpression.Type.ToRepresentation();
             var value = constantExpression.Value;
-            var resultType = typeof(ConstantExpressionDescription<>).MakeGenericType(value.GetType());
+            var resultType = typeof(ConstantExpressionRepresentation<>).MakeGenericType(value.GetType());
             var result = resultType.Construct(type, value);
-            return (ExpressionDescriptionBase)result;
+            return (ExpressionRepresentationBase)result;
         }
 
         /// <summary>From the serializable.</summary>
-        /// <param name="constantExpressionDescription">The constant expression.</param>
+        /// <param name="constantExpressionRepresentation">The constant expression.</param>
         /// <typeparam name="T">Type of constant.</typeparam>
         /// <returns>Converted expression.</returns>
-        public static ConstantExpression FromDescription<T>(this ConstantExpressionDescription<T> constantExpressionDescription)
+        public static ConstantExpression FromRepresentation<T>(this ConstantExpressionRepresentation<T> constantExpressionRepresentation)
         {
-            if (constantExpressionDescription == null)
+            if (constantExpressionRepresentation == null)
             {
-                throw new ArgumentNullException(nameof(constantExpressionDescription));
+                throw new ArgumentNullException(nameof(constantExpressionRepresentation));
             }
 
-            var result = Expression.Constant(constantExpressionDescription.Value);
+            var result = Expression.Constant(constantExpressionRepresentation.Value);
             return result;
         }
     }

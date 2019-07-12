@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="NewExpressionDescription.cs" company="OBeautifulCode">
+// <copyright file="NewExpressionRepresentation.cs" company="OBeautifulCode">
 //   Copyright (c) OBeautifulCode 2018. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
@@ -12,18 +12,18 @@ namespace OBeautifulCode.Representation
     using System.Linq.Expressions;
 
     /// <summary>
-    /// Description of <see cref="NewExpression" />.
+    /// Representation of <see cref="NewExpression" />.
     /// </summary>
-    public class NewExpressionDescription : ExpressionDescriptionBase
+    public class NewExpressionRepresentation : ExpressionRepresentationBase
     {
-        /// <summary>Initializes a new instance of the <see cref="NewExpressionDescription"/> class.</summary>
+        /// <summary>Initializes a new instance of the <see cref="NewExpressionRepresentation"/> class.</summary>
         /// <param name="type">The type.</param>
         /// <param name="constructorInfo">The constructor info.</param>
         /// <param name="arguments">The arguments.</param>
-        public NewExpressionDescription(
-            TypeDescription type,
-            ConstructorInfoDescription constructorInfo,
-            IReadOnlyList<ExpressionDescriptionBase> arguments)
+        public NewExpressionRepresentation(
+            TypeRepresentation type,
+            ConstructorInfoRepresentation constructorInfo,
+            IReadOnlyList<ExpressionRepresentationBase> arguments)
             : base(type, ExpressionType.New)
         {
             this.ConstructorInfo = constructorInfo;
@@ -32,54 +32,54 @@ namespace OBeautifulCode.Representation
 
         /// <summary>Gets the constructor hash.</summary>
         /// <value>The constructor hash.</value>
-        public ConstructorInfoDescription ConstructorInfo { get; private set; }
+        public ConstructorInfoRepresentation ConstructorInfo { get; private set; }
 
         /// <summary>Gets the arguments.</summary>
         /// <value>The arguments.</value>
-        public IReadOnlyList<ExpressionDescriptionBase> Arguments { get; private set; }
+        public IReadOnlyList<ExpressionRepresentationBase> Arguments { get; private set; }
     }
 
 #pragma warning disable SA1204 // Static elements should appear before instance elements
     /// <summary>
-    /// Extensions to <see cref="NewExpressionDescription" />.
+    /// Extensions to <see cref="NewExpressionRepresentation" />.
     /// </summary>
-    public static class NewExpressionDescriptionExtensions
+    public static class NewExpressionRepresentationExtensions
 #pragma warning restore SA1204 // Static elements should appear before instance elements
     {
         /// <summary>Converts to serializable.</summary>
         /// <param name="newExpression">The new expression.</param>
         /// <returns>Serializable expression.</returns>
-        public static NewExpressionDescription ToDescription(this NewExpression newExpression)
+        public static NewExpressionRepresentation ToRepresentation(this NewExpression newExpression)
         {
             if (newExpression == null)
             {
                 throw new ArgumentNullException(nameof(newExpression));
             }
 
-            var type = newExpression.Type.ToDescription();
-            var constructorInfoDescription = newExpression.Constructor.ToDescription();
-            var arguments = newExpression.Arguments.ToDescription();
-            var result = new NewExpressionDescription(type, constructorInfoDescription, arguments);
+            var type = newExpression.Type.ToRepresentation();
+            var constructorInfoRepresentation = newExpression.Constructor.ToRepresentation();
+            var arguments = newExpression.Arguments.ToRepresentation();
+            var result = new NewExpressionRepresentation(type, constructorInfoRepresentation, arguments);
             return result;
         }
 
         /// <summary>From the serializable.</summary>
-        /// <param name="newExpressionDescription">The new expression.</param>
+        /// <param name="newExpressionRepresentation">The new expression.</param>
         /// <returns>Converted expression.</returns>
-        public static NewExpression FromDescription(this NewExpressionDescription newExpressionDescription)
+        public static NewExpression FromRepresentation(this NewExpressionRepresentation newExpressionRepresentation)
         {
-            if (newExpressionDescription == null)
+            if (newExpressionRepresentation == null)
             {
-                throw new ArgumentNullException(nameof(newExpressionDescription));
+                throw new ArgumentNullException(nameof(newExpressionRepresentation));
             }
 
-            var type = newExpressionDescription.Type.ResolveFromLoadedTypes();
+            var type = newExpressionRepresentation.Type.ResolveFromLoadedTypes();
 
             NewExpression result;
-            if (newExpressionDescription.ConstructorInfo != null)
+            if (newExpressionRepresentation.ConstructorInfo != null)
             {
-                var constructor = type.GetConstructors().Single(_ => _.ToDescription().Equals(newExpressionDescription.ConstructorInfo));
-                var arguments = newExpressionDescription.Arguments.FromDescription();
+                var constructor = type.GetConstructors().Single(_ => _.ToRepresentation().Equals(newExpressionRepresentation.ConstructorInfo));
+                var arguments = newExpressionRepresentation.Arguments.FromRepresentation();
                 result = Expression.New(constructor, arguments);
             }
             else

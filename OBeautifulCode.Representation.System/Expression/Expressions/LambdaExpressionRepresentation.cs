@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="LambdaExpressionDescription.cs" company="OBeautifulCode">
+// <copyright file="LambdaExpressionRepresentation.cs" company="OBeautifulCode">
 //   Copyright (c) OBeautifulCode 2018. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
@@ -12,15 +12,15 @@ namespace OBeautifulCode.Representation
     using System.Linq.Expressions;
 
     /// <summary>
-    /// Description of <see cref="LambdaExpression" />.
+    /// Representation of <see cref="LambdaExpression" />.
     /// </summary>
-    public class LambdaExpressionDescription : ExpressionDescriptionBase
+    public class LambdaExpressionRepresentation : ExpressionRepresentationBase
     {
-        /// <summary>Initializes a new instance of the <see cref="LambdaExpressionDescription"/> class.</summary>
+        /// <summary>Initializes a new instance of the <see cref="LambdaExpressionRepresentation"/> class.</summary>
         /// <param name="type">The type of expression.</param>
         /// <param name="body">The body.</param>
         /// <param name="parameters">The parameters.</param>
-        public LambdaExpressionDescription(TypeDescription type, ExpressionDescriptionBase body, IReadOnlyList<ParameterExpressionDescription> parameters)
+        public LambdaExpressionRepresentation(TypeRepresentation type, ExpressionRepresentationBase body, IReadOnlyList<ParameterExpressionRepresentation> parameters)
         : base(type, ExpressionType.Lambda)
         {
             this.Body = body;
@@ -29,50 +29,50 @@ namespace OBeautifulCode.Representation
 
         /// <summary>Gets the body.</summary>
         /// <value>The body.</value>
-        public ExpressionDescriptionBase Body { get; private set; }
+        public ExpressionRepresentationBase Body { get; private set; }
 
         /// <summary>Gets the parameters.</summary>
         /// <value>The parameters.</value>
-        public IReadOnlyList<ParameterExpressionDescription> Parameters { get; private set; }
+        public IReadOnlyList<ParameterExpressionRepresentation> Parameters { get; private set; }
     }
 
 #pragma warning disable SA1204 // Static elements should appear before instance elements
                               /// <summary>
-                              /// Extensions to <see cref="LambdaExpressionDescription" />.
+                              /// Extensions to <see cref="LambdaExpressionRepresentation" />.
                               /// </summary>
-    public static class LambdaExpressionDescriptionExtensions
+    public static class LambdaExpressionRepresentationExtensions
 #pragma warning restore SA1204 // Static elements should appear before instance elements
     {
         /// <summary>Converts to serializable.</summary>
         /// <param name="lambdaExpression">The lambda expression.</param>
         /// <returns>Serializable expression.</returns>
-        public static LambdaExpressionDescription ToDescription(this LambdaExpression lambdaExpression)
+        public static LambdaExpressionRepresentation ToRepresentation(this LambdaExpression lambdaExpression)
         {
             if (lambdaExpression == null)
             {
                 throw new ArgumentNullException(nameof(lambdaExpression));
             }
 
-            var type = lambdaExpression.Type.ToDescription();
-            var body = lambdaExpression.Body.ToDescription();
-            var parameters = lambdaExpression.Parameters.ToDescription();
-            var result = new LambdaExpressionDescription(type, body, parameters);
+            var type = lambdaExpression.Type.ToRepresentation();
+            var body = lambdaExpression.Body.ToRepresentation();
+            var parameters = lambdaExpression.Parameters.ToRepresentation();
+            var result = new LambdaExpressionRepresentation(type, body, parameters);
             return result;
         }
 
         /// <summary>From the serializable.</summary>
-        /// <param name="lambdaExpressionDescription">The lambda expression.</param>
+        /// <param name="lambdaExpressionRepresentation">The lambda expression.</param>
         /// <returns>Converted expression.</returns>
-        public static LambdaExpression FromDescription(this LambdaExpressionDescription lambdaExpressionDescription)
+        public static LambdaExpression FromRepresentation(this LambdaExpressionRepresentation lambdaExpressionRepresentation)
         {
-            if (lambdaExpressionDescription == null)
+            if (lambdaExpressionRepresentation == null)
             {
-                throw new ArgumentNullException(nameof(lambdaExpressionDescription));
+                throw new ArgumentNullException(nameof(lambdaExpressionRepresentation));
             }
 
-            var type = lambdaExpressionDescription.Type.ResolveFromLoadedTypes();
-            var body = lambdaExpressionDescription.Body.FromDescription();
-            var parameters = lambdaExpressionDescription.Parameters.FromDescription().ToList();
+            var type = lambdaExpressionRepresentation.Type.ResolveFromLoadedTypes();
+            var body = lambdaExpressionRepresentation.Body.FromRepresentation();
+            var parameters = lambdaExpressionRepresentation.Parameters.FromRepresentation().ToList();
 
             var allParametersFromBody = body.VisitAllNodes().Where(_ => _ is ParameterExpression).Cast<ParameterExpression>().ToList();
 

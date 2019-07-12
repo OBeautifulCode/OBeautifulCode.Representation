@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="TypeDescriptionCacheKey.cs" company="OBeautifulCode">
+// <copyright file="TypeRepresentationCacheKey.cs" company="OBeautifulCode">
 //   Copyright (c) OBeautifulCode 2018. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
@@ -12,28 +12,28 @@ namespace OBeautifulCode.Representation
     /// <summary>
     /// Cache key used to key an already de-referenced type along with its settings.
     /// </summary>
-    public class TypeDescriptionCacheKey : IEquatable<TypeDescriptionCacheKey>
+    public class TypeRepresentationCacheKey : IEquatable<TypeRepresentationCacheKey>
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="TypeDescriptionCacheKey"/> class.
+        /// Initializes a new instance of the <see cref="TypeRepresentationCacheKey"/> class.
         /// </summary>
-        /// <param name="typeDescription"><see cref="TypeDescription"/> being referenced.</param>
+        /// <param name="typeRepresentation"><see cref="TypeRepresentation"/> being referenced.</param>
         /// <param name="typeMatchStrategy"><see cref="TypeMatchStrategy"/> being referenced.</param>
         /// <param name="multipleMatchStrategy"><see cref="MultipleMatchStrategy"/> being referenced.</param>
-        public TypeDescriptionCacheKey(
-            TypeDescription typeDescription,
+        public TypeRepresentationCacheKey(
+            TypeRepresentation typeRepresentation,
             TypeMatchStrategy typeMatchStrategy,
             MultipleMatchStrategy multipleMatchStrategy)
         {
-            this.TypeDescription = typeDescription;
+            this.TypeRepresentation = typeRepresentation;
             this.TypeMatchStrategy = typeMatchStrategy;
             this.MultipleMatchStrategy = multipleMatchStrategy;
         }
 
         /// <summary>
-        /// Gets the <see cref="TypeDescription"/> being referenced.
+        /// Gets the <see cref="TypeRepresentation"/> being referenced.
         /// </summary>
-        public TypeDescription TypeDescription { get; private set; }
+        public TypeRepresentation TypeRepresentation { get; private set; }
 
         /// <summary>
         /// Gets the <see cref="TypeMatchStrategy"/> being referenced.
@@ -46,14 +46,14 @@ namespace OBeautifulCode.Representation
         public MultipleMatchStrategy MultipleMatchStrategy { get; private set; }
 
         /// <summary>
-        /// Determines whether two objects of type <see cref="TypeDescriptionCacheKey"/> are equal.
+        /// Determines whether two objects of type <see cref="TypeRepresentationCacheKey"/> are equal.
         /// </summary>
         /// <param name="left">The object to the left of the operator.</param>
         /// <param name="right">The object to the right of the operator.</param>
         /// <returns>True if the two items are equal; false otherwise.</returns>
         public static bool operator ==(
-            TypeDescriptionCacheKey left,
-            TypeDescriptionCacheKey right)
+            TypeRepresentationCacheKey left,
+            TypeRepresentationCacheKey right)
         {
             if (ReferenceEquals(left, right))
             {
@@ -66,7 +66,7 @@ namespace OBeautifulCode.Representation
             }
 
             var result =
-                (left.TypeDescription == right.TypeDescription) &&
+                (left.TypeRepresentation == right.TypeRepresentation) &&
                 (left.TypeMatchStrategy == right.TypeMatchStrategy) &&
                 (left.MultipleMatchStrategy == right.MultipleMatchStrategy);
 
@@ -74,26 +74,26 @@ namespace OBeautifulCode.Representation
         }
 
         /// <summary>
-        /// Determines whether two objects of type <see cref="TypeDescriptionCacheKey"/> are not equal.
+        /// Determines whether two objects of type <see cref="TypeRepresentationCacheKey"/> are not equal.
         /// </summary>
         /// <param name="left">The object to the left of the operator.</param>
         /// <param name="right">The object to the right of the operator.</param>
         /// <returns>True if the two items not equal; false otherwise.</returns>
         public static bool operator !=(
-            TypeDescriptionCacheKey left,
-            TypeDescriptionCacheKey right)
+            TypeRepresentationCacheKey left,
+            TypeRepresentationCacheKey right)
             => !(left == right);
 
         /// <inheritdoc />
-        public bool Equals(TypeDescriptionCacheKey other) => this == other;
+        public bool Equals(TypeRepresentationCacheKey other) => this == other;
 
         /// <inheritdoc />
-        public override bool Equals(object obj) => this == (obj as TypeDescriptionCacheKey);
+        public override bool Equals(object obj) => this == (obj as TypeRepresentationCacheKey);
 
         /// <inheritdoc />
         public override int GetHashCode() =>
             HashCodeHelper.Initialize()
-                .Hash(this.TypeDescription)
+                .Hash(this.TypeRepresentation)
                 .Hash(this.TypeMatchStrategy)
                 .Hash(this.MultipleMatchStrategy)
                 .Value;

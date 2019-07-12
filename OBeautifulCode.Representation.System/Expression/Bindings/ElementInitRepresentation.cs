@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="ElementInitDescription.cs" company="OBeautifulCode">
+// <copyright file="ElementInitRepresentation.cs" company="OBeautifulCode">
 //   Copyright (c) OBeautifulCode 2018. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
@@ -15,16 +15,16 @@ namespace OBeautifulCode.Representation
     using OBeautifulCode.Math.Recipes;
 
     /// <summary>
-    /// Description of <see cref="ElementInit" />.
+    /// Representation of <see cref="ElementInit" />.
     /// </summary>
-    public class ElementInitDescription : IEquatable<ElementInitDescription>
+    public class ElementInitRepresentation : IEquatable<ElementInitRepresentation>
     {
-        /// <summary>Initializes a new instance of the <see cref="ElementInitDescription"/> class.</summary>
+        /// <summary>Initializes a new instance of the <see cref="ElementInitRepresentation"/> class.</summary>
         /// <param name="type">Type with method.</param>
         /// <param name="addMethod">The add method.</param>
         /// <param name="arguments">The arguments.</param>
-        public ElementInitDescription(
-            TypeDescription type, MethodInfoDescription addMethod, IReadOnlyList<ExpressionDescriptionBase> arguments)
+        public ElementInitRepresentation(
+            TypeRepresentation type, MethodInfoRepresentation addMethod, IReadOnlyList<ExpressionRepresentationBase> arguments)
         {
             this.Type = type;
             this.AddMethod = addMethod;
@@ -34,25 +34,25 @@ namespace OBeautifulCode.Representation
         /// <summary>Gets the type.</summary>
         /// <value>The type.</value>
         [SuppressMessage("Microsoft.Naming", "CA1721:PropertyNamesShouldNotMatchGetMethods", Justification = "Name/spelling is correct.")]
-        public TypeDescription Type { get; private set; }
+        public TypeRepresentation Type { get; private set; }
 
         /// <summary>Gets the add method.</summary>
         /// <value>The add method.</value>
-        public MethodInfoDescription AddMethod { get; private set; }
+        public MethodInfoRepresentation AddMethod { get; private set; }
 
         /// <summary>Gets the arguments.</summary>
         /// <value>The arguments.</value>
-        public IReadOnlyList<ExpressionDescriptionBase> Arguments { get; private set; }
+        public IReadOnlyList<ExpressionRepresentationBase> Arguments { get; private set; }
 
         /// <summary>
-        /// Determines whether two objects of type <see cref="ElementInitDescription" /> are equal.
+        /// Determines whether two objects of type <see cref="ElementInitRepresentation" /> are equal.
         /// </summary>
         /// <param name="left">The object to the left of the operator.</param>
         /// <param name="right">The object to the right of the operator.</param>
         /// <returns>True if the two object are equal; false otherwise.</returns>
         public static bool operator ==(
-            ElementInitDescription left,
-            ElementInitDescription right)
+            ElementInitRepresentation left,
+            ElementInitRepresentation right)
         {
             if (ReferenceEquals(left, right))
             {
@@ -73,14 +73,14 @@ namespace OBeautifulCode.Representation
         }
 
         /// <summary>
-        /// Determines whether two objects of type <see cref="ElementInitDescription" /> are not equal.
+        /// Determines whether two objects of type <see cref="ElementInitRepresentation" /> are not equal.
         /// </summary>
         /// <param name="left">The object to the left of the operator.</param>
         /// <param name="right">The object to the right of the operator.</param>
         /// <returns>True if the two object are not equal; false otherwise.</returns>
         public static bool operator !=(
-            ElementInitDescription left,
-            ElementInitDescription right)
+            ElementInitRepresentation left,
+            ElementInitRepresentation right)
             => !(left == right);
 
         /// <summary>
@@ -88,10 +88,10 @@ namespace OBeautifulCode.Representation
         /// </summary>
         /// <param name="other">An object to compare with this object.</param>
         /// <returns>true if the current object is equal to the <paramref name="other" /> parameter; otherwise, false.</returns>
-        public bool Equals(ElementInitDescription other) => this == other;
+        public bool Equals(ElementInitRepresentation other) => this == other;
 
         /// <inheritdoc />
-        public override bool Equals(object obj) => this == (obj as ElementInitDescription);
+        public override bool Equals(object obj) => this == (obj as ElementInitRepresentation);
 
         /// <inheritdoc />
         public override int GetHashCode() =>
@@ -104,41 +104,41 @@ namespace OBeautifulCode.Representation
 
 #pragma warning disable SA1204 // Static elements should appear before instance elements
                               /// <summary>
-                              /// Extensions to <see cref="ElementInitDescription" /> and <see cref="ElementInit" />.
+                              /// Extensions to <see cref="ElementInitRepresentation" /> and <see cref="ElementInit" />.
                               /// </summary>
-    public static class ElementInitDescriptionExtensions
+    public static class ElementInitRepresentationExtensions
 #pragma warning restore SA1204 // Static elements should appear before instance elements
     {
         /// <summary>Converts to serializable.</summary>
-        /// <param name="elementInit">The elementInitDescription.</param>
+        /// <param name="elementInit">The elementInitRepresentation.</param>
         /// <returns>Serializable version.</returns>
-        public static ElementInitDescription ToDescription(this ElementInit elementInit)
+        public static ElementInitRepresentation ToRepresentation(this ElementInit elementInit)
         {
             if (elementInit == null)
             {
                 throw new ArgumentNullException(nameof(elementInit));
             }
 
-            var type = elementInit.AddMethod.DeclaringType.ToDescription();
-            var addMethodDescription = elementInit.AddMethod.ToDescription();
-            var arguments = elementInit.Arguments.ToDescription();
-            var result = new ElementInitDescription(type, addMethodDescription, arguments);
+            var type = elementInit.AddMethod.DeclaringType.ToRepresentation();
+            var addMethodRepresentation = elementInit.AddMethod.ToRepresentation();
+            var arguments = elementInit.Arguments.ToRepresentation();
+            var result = new ElementInitRepresentation(type, addMethodRepresentation, arguments);
             return result;
         }
 
         /// <summary>From the serializable.</summary>
-        /// <param name="elementInitDescription">The elementInitDescription.</param>
+        /// <param name="elementInitRepresentation">The elementInitRepresentation.</param>
         /// <returns>Converted version.</returns>
-        public static ElementInit FromDescription(this ElementInitDescription elementInitDescription)
+        public static ElementInit FromRepresentation(this ElementInitRepresentation elementInitRepresentation)
         {
-            if (elementInitDescription == null)
+            if (elementInitRepresentation == null)
             {
-                throw new ArgumentNullException(nameof(elementInitDescription));
+                throw new ArgumentNullException(nameof(elementInitRepresentation));
             }
 
-            var type = elementInitDescription.Type.ResolveFromLoadedTypes();
-            var addMethod = type.GetMethods().Single(_ => _.ToDescription().Equals(elementInitDescription.AddMethod));
-            var arguments = elementInitDescription.Arguments.FromDescription();
+            var type = elementInitRepresentation.Type.ResolveFromLoadedTypes();
+            var addMethod = type.GetMethods().Single(_ => _.ToRepresentation().Equals(elementInitRepresentation.AddMethod));
+            var arguments = elementInitRepresentation.Arguments.FromRepresentation();
 
             var result = Expression.ElementInit(addMethod, arguments);
             return result;
@@ -146,19 +146,19 @@ namespace OBeautifulCode.Representation
 
         /// <summary>Converts to description.</summary>
         /// <param name="elementInitList">The list of <see cref="ElementInit" />.</param>
-        /// <returns>Converted list of <see cref="ElementInitDescription" />.</returns>
-        public static IReadOnlyList<ElementInitDescription> ToDescription(this IReadOnlyList<ElementInit> elementInitList)
+        /// <returns>Converted list of <see cref="ElementInitRepresentation" />.</returns>
+        public static IReadOnlyList<ElementInitRepresentation> ToRepresentation(this IReadOnlyList<ElementInit> elementInitList)
         {
-            var result = elementInitList.Select(_ => _.ToDescription()).ToList();
+            var result = elementInitList.Select(_ => _.ToRepresentation()).ToList();
             return result;
         }
 
         /// <summary>From the serializable.</summary>
-        /// <param name="elementInitDescriptionList">The elementInitDescription.</param>
+        /// <param name="elementInitRepresentationList">The elementInitRepresentation.</param>
         /// <returns>Converted version.</returns>
-        public static IReadOnlyList<ElementInit> FromDescription(this IReadOnlyList<ElementInitDescription> elementInitDescriptionList)
+        public static IReadOnlyList<ElementInit> FromRepresentation(this IReadOnlyList<ElementInitRepresentation> elementInitRepresentationList)
         {
-            var result = elementInitDescriptionList.Select(_ => _.FromDescription()).ToList();
+            var result = elementInitRepresentationList.Select(_ => _.FromRepresentation()).ToList();
             return result;
         }
     }

@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="MemberBindingDescriptionBase.cs" company="OBeautifulCode">
+// <copyright file="MemberBindingRepresentationBase.cs" company="OBeautifulCode">
 //   Copyright (c) OBeautifulCode 2018. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
@@ -14,15 +14,15 @@ namespace OBeautifulCode.Representation
     using static System.FormattableString;
 
     /// <summary>
-    /// Description of <see cref="MemberBinding" />.
+    /// Representation of <see cref="MemberBinding" />.
     /// </summary>
-    public abstract class MemberBindingDescriptionBase
+    public abstract class MemberBindingRepresentationBase
     {
-        /// <summary>Initializes a new instance of the <see cref="MemberBindingDescriptionBase"/> class.</summary>
+        /// <summary>Initializes a new instance of the <see cref="MemberBindingRepresentationBase"/> class.</summary>
         /// <param name="type">The type with member.</param>
         /// <param name="memberInfo">The member info description.</param>
         /// <param name="bindingType">Type of the binding.</param>
-        protected MemberBindingDescriptionBase(TypeDescription type, MemberInfoDescription memberInfo, MemberBindingType bindingType)
+        protected MemberBindingRepresentationBase(TypeRepresentation type, MemberInfoRepresentation memberInfo, MemberBindingType bindingType)
         {
             this.Type = type;
             this.MemberInfo = memberInfo;
@@ -32,11 +32,11 @@ namespace OBeautifulCode.Representation
         /// <summary>Gets the type with member.</summary>
         /// <value>The type with member.</value>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1721:PropertyNamesShouldNotMatchGetMethods", Justification = "Name/spelling is correct.")]
-        public TypeDescription Type { get; private set; }
+        public TypeRepresentation Type { get; private set; }
 
         /// <summary>Gets  the member info description.</summary>
         /// <value>The member hash.</value>
-        public MemberInfoDescription MemberInfo { get; private set; }
+        public MemberInfoRepresentation MemberInfo { get; private set; }
 
         /// <summary>Gets the type of the binding.</summary>
         /// <value>The type of the binding.</value>
@@ -45,15 +45,15 @@ namespace OBeautifulCode.Representation
 
 #pragma warning disable SA1204 // Static elements should appear before instance elements
                               /// <summary>
-                              /// Extensions to <see cref="MemberBindingDescriptionBase" />.
+                              /// Extensions to <see cref="MemberBindingRepresentationBase" />.
                               /// </summary>
-    public static class MemberBindingDescriptionExtensions
+    public static class MemberBindingRepresentationExtensions
 #pragma warning restore SA1204 // Static elements should appear before instance elements
     {
         /// <summary>Converts to serializable.</summary>
         /// <param name="memberBinding">The memberBindings.</param>
         /// <returns>Serializable version.</returns>
-        public static MemberBindingDescriptionBase ToDescription(this MemberBinding memberBinding)
+        public static MemberBindingRepresentationBase ToRepresentation(this MemberBinding memberBinding)
         {
             if (memberBinding == null)
             {
@@ -62,15 +62,15 @@ namespace OBeautifulCode.Representation
 
             if (memberBinding is MemberAssignment memberAssignment)
             {
-                return memberAssignment.ToDescription();
+                return memberAssignment.ToRepresentation();
             }
             else if (memberBinding is MemberListBinding memberListBinding)
             {
-                return memberListBinding.ToDescription();
+                return memberListBinding.ToRepresentation();
             }
             else if (memberBinding is MemberMemberBinding memberMemberBinding)
             {
-                return memberMemberBinding.ToDescription();
+                return memberMemberBinding.ToRepresentation();
             }
             else
             {
@@ -79,48 +79,48 @@ namespace OBeautifulCode.Representation
         }
 
         /// <summary>From the serializable.</summary>
-        /// <param name="memberBindingDescription">The memberBindings.</param>
+        /// <param name="memberBindingRepresentation">The memberBindings.</param>
         /// <returns>Converted version.</returns>
-        public static MemberBinding FromDescription(this MemberBindingDescriptionBase memberBindingDescription)
+        public static MemberBinding FromRepresentation(this MemberBindingRepresentationBase memberBindingRepresentation)
         {
-            if (memberBindingDescription == null)
+            if (memberBindingRepresentation == null)
             {
-                throw new ArgumentNullException(nameof(memberBindingDescription));
+                throw new ArgumentNullException(nameof(memberBindingRepresentation));
             }
 
-            if (memberBindingDescription is MemberAssignmentDescription memberAssignment)
+            if (memberBindingRepresentation is MemberAssignmentRepresentation memberAssignment)
             {
-                return memberAssignment.FromDescription();
+                return memberAssignment.FromRepresentation();
             }
-            else if (memberBindingDescription is MemberListBindingDescription memberListBinding)
+            else if (memberBindingRepresentation is MemberListBindingRepresentation memberListBinding)
             {
-                return memberListBinding.FromDescription();
+                return memberListBinding.FromRepresentation();
             }
-            else if (memberBindingDescription is MemberMemberBindingDescription memberMemberBinding)
+            else if (memberBindingRepresentation is MemberMemberBindingRepresentation memberMemberBinding)
             {
-                return memberMemberBinding.FromDescription();
+                return memberMemberBinding.FromRepresentation();
             }
             else
             {
-                throw new NotSupportedException(Invariant($"Type of {nameof(MemberBindingDescriptionBase)} '{memberBindingDescription.GetType()}' is not supported."));
+                throw new NotSupportedException(Invariant($"Type of {nameof(MemberBindingRepresentationBase)} '{memberBindingRepresentation.GetType()}' is not supported."));
             }
         }
 
         /// <summary>Converts to serializable.</summary>
         /// <param name="memberBindings">The memberBindings.</param>
         /// <returns>Serializable version.</returns>
-        public static IReadOnlyCollection<MemberBindingDescriptionBase> ToDescription(this IReadOnlyCollection<MemberBinding> memberBindings)
+        public static IReadOnlyCollection<MemberBindingRepresentationBase> ToRepresentation(this IReadOnlyCollection<MemberBinding> memberBindings)
         {
-            var result = memberBindings.Select(_ => _.ToDescription()).ToList();
+            var result = memberBindings.Select(_ => _.ToRepresentation()).ToList();
             return result;
         }
 
         /// <summary>From the serializable.</summary>
         /// <param name="memberBindings">The memberBindings.</param>
         /// <returns>Converted version.</returns>
-        public static IReadOnlyCollection<MemberBinding> FromDescription(this IReadOnlyCollection<MemberBindingDescriptionBase> memberBindings)
+        public static IReadOnlyCollection<MemberBinding> FromRepresentation(this IReadOnlyCollection<MemberBindingRepresentationBase> memberBindings)
         {
-            var result = memberBindings.Select(_ => _.FromDescription()).ToList();
+            var result = memberBindings.Select(_ => _.FromRepresentation()).ToList();
             return result;
         }
     }

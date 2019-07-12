@@ -15,7 +15,7 @@ namespace OBeautifulCode.Representation
     /// <summary>
     /// Type comparer using the provided strategy.
     /// </summary>
-    public class TypeComparer : IEqualityComparer<Type>, IEqualityComparer<TypeDescription>
+    public class TypeComparer : IEqualityComparer<Type>, IEqualityComparer<TypeRepresentation>
     {
         /// <summary>
         /// The strategy to use when comparing types.
@@ -44,7 +44,7 @@ namespace OBeautifulCode.Representation
                 return false;
             }
 
-            var result = first.ToDescription().Equals(second.ToDescription());
+            var result = first.ToRepresentation().Equals(second.ToRepresentation());
 
             return result;
         }
@@ -53,8 +53,8 @@ namespace OBeautifulCode.Representation
         [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration", MessageId = "1#", Justification = "These parameter names are better.")]
         [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration", MessageId = "0#", Justification = "These parameter names are better.")]
         public bool Equals(
-            TypeDescription first,
-            TypeDescription second)
+            TypeRepresentation first,
+            TypeRepresentation second)
         {
             if (first == null || second == null)
             {
@@ -113,7 +113,7 @@ namespace OBeautifulCode.Representation
 
         /// <inheritdoc />
         public int GetHashCode(
-            TypeDescription obj)
+            TypeRepresentation obj)
         {
             new { obj }.Must().NotBeNull();
 
@@ -138,7 +138,7 @@ namespace OBeautifulCode.Representation
         public int GetHashCode(
             Type obj)
         {
-            return this.GetHashCode(obj.ToDescription());
+            return this.GetHashCode(obj.ToRepresentation());
         }
     }
 }

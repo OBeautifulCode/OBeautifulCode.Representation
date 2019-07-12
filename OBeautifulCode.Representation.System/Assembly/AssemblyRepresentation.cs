@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="AssemblyDescription.cs" company="OBeautifulCode">
+// <copyright file="AssemblyRepresentation.cs" company="OBeautifulCode">
 //   Copyright (c) OBeautifulCode 2018. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
@@ -16,18 +16,18 @@ namespace OBeautifulCode.Representation
     using static System.FormattableString;
 
     /// <summary>
-    /// Description of <see cref="Assembly" />.
+    /// Representation of <see cref="Assembly" />.
     /// </summary>
-    public class AssemblyDescription : IEquatable<AssemblyDescription>
+    public class AssemblyRepresentation : IEquatable<AssemblyRepresentation>
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="AssemblyDescription"/> class.
+        /// Initializes a new instance of the <see cref="AssemblyRepresentation"/> class.
         /// </summary>
         /// <param name="name">Name of the assembly.</param>
         /// <param name="version">Version of the assembly.</param>
         /// <param name="filePath">File path of the assembly observed.</param>
         /// <param name="frameworkVersion">Framework of assembly.</param>
-        public AssemblyDescription(string name, string version, string filePath, string frameworkVersion)
+        public AssemblyRepresentation(string name, string version, string filePath, string frameworkVersion)
         {
             new { name }.Must().NotBeNullNorWhiteSpace();
 
@@ -63,7 +63,7 @@ namespace OBeautifulCode.Representation
         /// <param name="first">First parameter.</param>
         /// <param name="second">Second parameter.</param>
         /// <returns>A value indicating whether or not the two items are equal.</returns>
-        public static bool operator ==(AssemblyDescription first, AssemblyDescription second)
+        public static bool operator ==(AssemblyRepresentation first, AssemblyRepresentation second)
         {
             if (ReferenceEquals(first, second))
             {
@@ -87,16 +87,16 @@ namespace OBeautifulCode.Representation
         /// <param name="first">First parameter.</param>
         /// <param name="second">Second parameter.</param>
         /// <returns>A value indicating whether or not the two items are inequal.</returns>
-        public static bool operator !=(AssemblyDescription first, AssemblyDescription second) => !(first == second);
+        public static bool operator !=(AssemblyRepresentation first, AssemblyRepresentation second) => !(first == second);
 
         /// <summary>
-        /// Reads the assembly from file path to create a <see cref="AssemblyDescription"/>.
+        /// Reads the assembly from file path to create a <see cref="AssemblyRepresentation"/>.
         /// </summary>
         /// <param name="assemblyFilePath">The file path the assembly is at.</param>
         /// <param name="useAssemblyIfAlreadyInAppDomain">If the assembly file is already loaded in the AppDomain will use the existing Assembly. Default is true, false will force the file to be loaded...</param>
         /// <returns>Details about an assembly.</returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2001:AvoidCallingProblematicMethods", MessageId = "System.Reflection.Assembly.LoadFile", Justification = "Need to be able to do this from a file also.")]
-        public static AssemblyDescription CreateFromFile(string assemblyFilePath, bool useAssemblyIfAlreadyInAppDomain = true)
+        public static AssemblyRepresentation CreateFromFile(string assemblyFilePath, bool useAssemblyIfAlreadyInAppDomain = true)
         {
             new { assemblyFilePath }.Must().NotBeNullNorWhiteSpace();
 
@@ -115,14 +115,14 @@ namespace OBeautifulCode.Representation
                 assembly = Assembly.LoadFile(assemblyFilePath);
             }
 
-            return assembly.ToDescription();
+            return assembly.ToRepresentation();
         }
 
         /// <inheritdoc />
-        public bool Equals(AssemblyDescription other) => this == other;
+        public bool Equals(AssemblyRepresentation other) => this == other;
 
         /// <inheritdoc />
-        public override bool Equals(object obj) => this == (obj as AssemblyDescription);
+        public override bool Equals(object obj) => this == (obj as AssemblyRepresentation);
 
         /// <inheritdoc />
         public override int GetHashCode() => HashCodeHelper.Initialize()
@@ -135,7 +135,7 @@ namespace OBeautifulCode.Representation
         /// <inheritdoc />
         public override string ToString()
         {
-            var result = Invariant($"{nameof(AssemblyDescription)} - {nameof(this.Name)}: {this.Name}; {nameof(this.Version)}: {this.Version?.ToString() ?? "<null>"}; {nameof(this.FilePath)}: {this.FilePath ?? "<null>"}; {nameof(this.FrameworkVersion)}: {this.FrameworkVersion ?? "<null>"}.");
+            var result = Invariant($"{nameof(AssemblyRepresentation)} - {nameof(this.Name)}: {this.Name}; {nameof(this.Version)}: {this.Version?.ToString() ?? "<null>"}; {nameof(this.FilePath)}: {this.FilePath ?? "<null>"}; {nameof(this.FrameworkVersion)}: {this.FrameworkVersion ?? "<null>"}.");
             return result;
         }
     }
@@ -143,17 +143,17 @@ namespace OBeautifulCode.Representation
 #pragma warning disable SA1204 // Static elements should appear before instance elements
 
     /// <summary>
-    /// Extensions to <see cref="AssemblyDescription" />.
+    /// Extensions to <see cref="AssemblyRepresentation" />.
     /// </summary>
-    public static class AssemblyDescriptionExtensions
+    public static class AssemblyRepresentationExtensions
 #pragma warning restore SA1204 // Static elements should appear before instance elements
     {
         /// <summary>
-        /// Reads the assembly to create a new <see cref="AssemblyDescription"/>.
+        /// Reads the assembly to create a new <see cref="AssemblyRepresentation"/>.
         /// </summary>
         /// <param name="assembly">The assembly object to interrogate.</param>
         /// <returns>Details about an assembly.</returns>
-        public static AssemblyDescription ToDescription(this Assembly assembly)
+        public static AssemblyRepresentation ToRepresentation(this Assembly assembly)
         {
             if (assembly == null)
             {
@@ -171,37 +171,37 @@ namespace OBeautifulCode.Representation
 
             var codeBase = codeBasesToIgnore.Contains(name) ? name : assembly.GetCodeBaseAsPathInsteadOfUri();
 
-            return new AssemblyDescription(name, version, codeBase, frameworkVersionNumber);
+            return new AssemblyRepresentation(name, version, codeBase, frameworkVersionNumber);
         }
 
         /// <summary>
         /// Froms the description.
         /// </summary>
-        /// <param name="assemblyDescription">The assembly description.</param>
+        /// <param name="assemblyRepresentation">The assembly description.</param>
         /// <returns>System.Reflection.Assembly.</returns>
-        public static Assembly FromDescription(
-                    this AssemblyDescription assemblyDescription)
+        public static Assembly FromRepresentation(
+                    this AssemblyRepresentation assemblyRepresentation)
         {
-            if (assemblyDescription == null)
+            if (assemblyRepresentation == null)
             {
-                throw new ArgumentNullException(nameof(assemblyDescription));
+                throw new ArgumentNullException(nameof(assemblyRepresentation));
             }
 
             var allAssemblies = AppDomain.CurrentDomain.GetAssemblies();
 
             var results = allAssemblies
-                              .Where(_ => _.ToDescription().Equals(assemblyDescription))
+                              .Where(_ => _.ToRepresentation().Equals(assemblyRepresentation))
                               .ToList();
 
             if (!results.Any())
             {
-                throw new ArgumentException(Invariant($"Could not find an assembly that matched description '{assemblyDescription}' in '{nameof(AppDomain)}'."));
+                throw new ArgumentException(Invariant($"Could not find an assembly that matched description '{assemblyRepresentation}' in '{nameof(AppDomain)}'."));
             }
 
             if (results.Count > 1)
             {
                 var foundAddIn = string.Join(",", results.Select(_ => _.ToString()));
-                throw new ArgumentException(Invariant($"Found too many assemblies that matched description '{assemblyDescription}' in '{nameof(AppDomain)}'; {foundAddIn}."));
+                throw new ArgumentException(Invariant($"Found too many assemblies that matched description '{assemblyRepresentation}' in '{nameof(AppDomain)}'; {foundAddIn}."));
             }
 
             return results.Single();

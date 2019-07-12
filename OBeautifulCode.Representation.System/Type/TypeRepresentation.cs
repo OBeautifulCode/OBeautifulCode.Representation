@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="TypeDescription.cs" company="OBeautifulCode">
+// <copyright file="TypeRepresentation.cs" company="OBeautifulCode">
 //     Copyright (c) OBeautifulCode 2018. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
@@ -14,33 +14,33 @@ namespace OBeautifulCode.Representation
     /// <summary>
     /// Model object containing a description of a type that can be serialized without knowledge of the type.
     /// </summary>
-    public class TypeDescription : IEquatable<TypeDescription>
+    public class TypeRepresentation : IEquatable<TypeRepresentation>
     {
         /// <summary>
         /// The unknown type description to use.
         /// </summary>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes", Justification = "Is in fact immutable.")]
-        public static readonly TypeDescription UnknownTypeDescription = typeof(UnknownTypePlaceholder).ToDescription();
+        public static readonly TypeRepresentation UnknownTypeRepresentation = typeof(UnknownTypePlaceholder).ToRepresentation();
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="TypeDescription" /> class.
+        /// Initializes a new instance of the <see cref="TypeRepresentation" /> class.
         /// </summary>
-        public TypeDescription()
+        public TypeRepresentation()
         {
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="TypeDescription" /> class.
+        /// Initializes a new instance of the <see cref="TypeRepresentation" /> class.
         /// </summary>
         /// <param name="namespace">Namespace of type.</param>
         /// <param name="name">Name of type.</param>
         /// <param name="assemblyQualifiedName">Assembly qualified name of type.</param>
         /// <param name="genericArguments">Generic arguments if any.</param>
-        public TypeDescription(
+        public TypeRepresentation(
             string @namespace,
             string name,
             string assemblyQualifiedName,
-            IReadOnlyList<TypeDescription> genericArguments)
+            IReadOnlyList<TypeRepresentation> genericArguments)
         {
             this.Namespace = @namespace;
             this.Name = name;
@@ -70,17 +70,17 @@ namespace OBeautifulCode.Representation
         /// Gets or sets the generic arguments.
         /// </summary>
         /// <value>The generic arguments.</value>
-        public IReadOnlyList<TypeDescription> GenericArguments { get; set; }
+        public IReadOnlyList<TypeRepresentation> GenericArguments { get; set; }
 
         /// <summary>
-        /// Determines whether two objects of type <see cref="TypeDescription" /> are equal.
+        /// Determines whether two objects of type <see cref="TypeRepresentation" /> are equal.
         /// </summary>
         /// <param name="left">The object to the left of the operator.</param>
         /// <param name="right">The object to the right of the operator.</param>
         /// <returns>True if the two object are equal; false otherwise.</returns>
         public static bool operator ==(
-            TypeDescription left,
-            TypeDescription right)
+            TypeRepresentation left,
+            TypeRepresentation right)
         {
             if (ReferenceEquals(left, right))
             {
@@ -102,21 +102,21 @@ namespace OBeautifulCode.Representation
         }
 
         /// <summary>
-        /// Determines whether two objects of type <see cref="TypeDescription" /> are not equal.
+        /// Determines whether two objects of type <see cref="TypeRepresentation" /> are not equal.
         /// </summary>
         /// <param name="left">The object to the left of the operator.</param>
         /// <param name="right">The object to the right of the operator.</param>
         /// <returns>True if the two object are not equal; false otherwise.</returns>
         public static bool operator !=(
-            TypeDescription left,
-            TypeDescription right)
+            TypeRepresentation left,
+            TypeRepresentation right)
             => !(left == right);
 
         /// <inheritdoc />
-        public bool Equals(TypeDescription other) => this == other;
+        public bool Equals(TypeRepresentation other) => this == other;
 
         /// <inheritdoc />
-        public override bool Equals(object obj) => this == (obj as TypeDescription);
+        public override bool Equals(object obj) => this == (obj as TypeRepresentation);
 
         /// <inheritdoc />
         public override int GetHashCode() =>

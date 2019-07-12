@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="MemberInfoDescription.cs" company="OBeautifulCode">
+// <copyright file="MemberInfoRepresentation.cs" company="OBeautifulCode">
 //     Copyright (c) OBeautifulCode 2018. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
@@ -12,16 +12,16 @@ namespace OBeautifulCode.Representation
     using static System.FormattableString;
 
     /// <summary>
-    /// Description of <see cref="MemberInfo" />.
+    /// Representation of <see cref="MemberInfo" />.
     /// </summary>
-    public class MemberInfoDescription : IEquatable<MemberInfoDescription>
+    public class MemberInfoRepresentation : IEquatable<MemberInfoRepresentation>
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="MemberInfoDescription" /> class.
+        /// Initializes a new instance of the <see cref="MemberInfoRepresentation" /> class.
         /// </summary>
         /// <param name="type">The type.</param>
         /// <param name="memberHash">The member hash.</param>
-        public MemberInfoDescription(TypeDescription type, string memberHash)
+        public MemberInfoRepresentation(TypeRepresentation type, string memberHash)
         {
             this.Type = type;
             this.MemberHash = memberHash;
@@ -38,17 +38,17 @@ namespace OBeautifulCode.Representation
         /// </summary>
         /// <value>The type.</value>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1721:PropertyNamesShouldNotMatchGetMethods", Justification = "Spelling/name is correct.")]
-        public TypeDescription Type { get; private set; }
+        public TypeRepresentation Type { get; private set; }
 
         /// <summary>
-        /// Determines whether two objects of type <see cref="MemberInfoDescription" /> are equal.
+        /// Determines whether two objects of type <see cref="MemberInfoRepresentation" /> are equal.
         /// </summary>
         /// <param name="left">The object to the left of the operator.</param>
         /// <param name="right">The object to the right of the operator.</param>
         /// <returns>True if the two object are equal; false otherwise.</returns>
         public static bool operator ==(
-            MemberInfoDescription left,
-            MemberInfoDescription right)
+            MemberInfoRepresentation left,
+            MemberInfoRepresentation right)
         {
             if (ReferenceEquals(left, right))
             {
@@ -67,14 +67,14 @@ namespace OBeautifulCode.Representation
         }
 
         /// <summary>
-        /// Determines whether two objects of type <see cref="MemberInfoDescription" /> are not equal.
+        /// Determines whether two objects of type <see cref="MemberInfoRepresentation" /> are not equal.
         /// </summary>
         /// <param name="left">The object to the left of the operator.</param>
         /// <param name="right">The object to the right of the operator.</param>
         /// <returns>True if the two object are not equal; false otherwise.</returns>
         public static bool operator !=(
-            MemberInfoDescription left,
-            MemberInfoDescription right)
+            MemberInfoRepresentation left,
+            MemberInfoRepresentation right)
             => !(left == right);
 
         /// <summary>
@@ -82,10 +82,10 @@ namespace OBeautifulCode.Representation
         /// </summary>
         /// <param name="other">An object to compare with this object.</param>
         /// <returns>true if the current object is equal to the <paramref name="other" /> parameter; otherwise, false.</returns>
-        public bool Equals(MemberInfoDescription other) => this == other;
+        public bool Equals(MemberInfoRepresentation other) => this == other;
 
         /// <inheritdoc />
-        public override bool Equals(object obj) => this == (obj as MemberInfoDescription);
+        public override bool Equals(object obj) => this == (obj as MemberInfoRepresentation);
 
         /// <inheritdoc />
         public override int GetHashCode() =>
@@ -98,9 +98,9 @@ namespace OBeautifulCode.Representation
 #pragma warning disable SA1204 // Static elements should appear before instance elements
 
     /// <summary>
-    /// Extensions to <see cref="MemberInfoDescription" />.
+    /// Extensions to <see cref="MemberInfoRepresentation" />.
     /// </summary>
-    public static class MemberInfoDescriptionExtensions
+    public static class MemberInfoRepresentationExtensions
 #pragma warning restore SA1204 // Static elements should appear before instance elements
     {
         /// <summary>Gets the member hash.</summary>
@@ -122,46 +122,46 @@ namespace OBeautifulCode.Representation
         /// Converts to description.
         /// </summary>
         /// <param name="memberInfo">The member information.</param>
-        /// <returns>Converted <see cref="MemberInfoDescription" />.</returns>
-        public static MemberInfoDescription ToDescription(this MemberInfo memberInfo)
+        /// <returns>Converted <see cref="MemberInfoRepresentation" />.</returns>
+        public static MemberInfoRepresentation ToRepresentation(this MemberInfo memberInfo)
         {
             if (memberInfo == null)
             {
                 throw new ArgumentNullException(nameof(memberInfo));
             }
 
-            var type = memberInfo.DeclaringType.ToDescription();
+            var type = memberInfo.DeclaringType.ToRepresentation();
             var memberHash = memberInfo.GetSignatureHash();
-            var result = new MemberInfoDescription(type, memberHash);
+            var result = new MemberInfoRepresentation(type, memberHash);
             return result;
         }
 
         /// <summary>
         /// Converts from description.
         /// </summary>
-        /// <param name="memberInfoDescription">The description.</param>
+        /// <param name="memberInfoRepresentation">The description.</param>
         /// <returns>Converted <see cref="MemberInfo" />.</returns>
-        public static MemberInfo FromDescription(this MemberInfoDescription memberInfoDescription)
+        public static MemberInfo FromRepresentation(this MemberInfoRepresentation memberInfoRepresentation)
         {
-            if (memberInfoDescription == null)
+            if (memberInfoRepresentation == null)
             {
-                throw new ArgumentNullException(nameof(memberInfoDescription));
+                throw new ArgumentNullException(nameof(memberInfoRepresentation));
             }
 
-            var type = memberInfoDescription.Type.ResolveFromLoadedTypes();
+            var type = memberInfoRepresentation.Type.ResolveFromLoadedTypes();
             var results = type.GetMembers()
-                              .Where(_ => _.GetSignatureHash().Equals(memberInfoDescription.MemberHash, StringComparison.OrdinalIgnoreCase))
+                              .Where(_ => _.GetSignatureHash().Equals(memberInfoRepresentation.MemberHash, StringComparison.OrdinalIgnoreCase))
                               .ToList();
 
             if (!results.Any())
             {
-                throw new ArgumentException(Invariant($"Could not find a member that matched hash '{memberInfoDescription.MemberHash}' on type '{type}'."));
+                throw new ArgumentException(Invariant($"Could not find a member that matched hash '{memberInfoRepresentation.MemberHash}' on type '{type}'."));
             }
 
             if (results.Count > 1)
             {
                 var foundAddIn = string.Join(",", results.Select(_ => _.ToString()));
-                throw new ArgumentException(Invariant($"Found too many members that matched hash '{memberInfoDescription.MemberHash}' on type '{type}'; {foundAddIn}."));
+                throw new ArgumentException(Invariant($"Found too many members that matched hash '{memberInfoRepresentation.MemberHash}' on type '{type}'; {foundAddIn}."));
             }
 
             return results.Single();

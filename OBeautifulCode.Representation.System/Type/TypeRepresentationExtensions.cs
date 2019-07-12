@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="TypeDescriptionExtensions.cs" company="OBeautifulCode">
+// <copyright file="TypeRepresentationExtensions.cs" company="OBeautifulCode">
 //   Copyright (c) OBeautifulCode 2018. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
@@ -16,18 +16,18 @@ namespace OBeautifulCode.Representation
     using static System.FormattableString;
 
     /// <summary>
-    /// Extensions to <see cref="TypeDescription"/>.
+    /// Extensions to <see cref="TypeRepresentation"/>.
     /// </summary>
-    public static class TypeDescriptionExtensions
+    public static class TypeRepresentationExtensions
     {
-        private static readonly ConcurrentDictionary<TypeDescriptionCacheKey, Type> TypeDescriptionCacheKeyToTypeMap = new ConcurrentDictionary<TypeDescriptionCacheKey, Type>();
+        private static readonly ConcurrentDictionary<TypeRepresentationCacheKey, Type> TypeRepresentationCacheKeyToTypeMap = new ConcurrentDictionary<TypeRepresentationCacheKey, Type>();
 
         /// <summary>
         /// Creates a new type description from a given type.
         /// </summary>
         /// <param name="type">Input type to use.</param>
         /// <returns>Type description describing input type.</returns>
-        public static TypeDescription ToDescription(
+        public static TypeRepresentation ToRepresentation(
             this Type type)
         {
             if (type == null)
@@ -35,13 +35,13 @@ namespace OBeautifulCode.Representation
                 throw new ArgumentNullException(nameof(type));
             }
 
-            TypeDescription result;
+            TypeRepresentation result;
             if (type.IsGenericType)
             {
                 var genericType = type.GetGenericTypeDefinition();
                 var genericArguments = type.GetGenericArguments();
-                var genericArgumentDefinitions = genericArguments.Select(_ => _.ToDescription()).ToList();
-                result = new TypeDescription(
+                var genericArgumentDefinitions = genericArguments.Select(_ => _.ToRepresentation()).ToList();
+                result = new TypeRepresentation(
                     genericType.Namespace,
                     genericType.Name,
                     genericType.AssemblyQualifiedName,
@@ -49,51 +49,51 @@ namespace OBeautifulCode.Representation
             }
             else
             {
-                result = new TypeDescription(
+                result = new TypeRepresentation(
                     type.Namespace,
                     type.Name,
                     type.AssemblyQualifiedName,
-                    new List<TypeDescription>());
+                    new List<TypeRepresentation>());
             }
 
             return result;
         }
 
         /// <summary>
-        /// Resolve the <see cref="TypeDescription" /> from the loaded types.
+        /// Resolve the <see cref="TypeRepresentation" /> from the loaded types.
         /// </summary>
-        /// <param name="typeDescription">Type description to look for.</param>
+        /// <param name="typeRepresentation">Type description to look for.</param>
         /// <param name="typeMatchStrategy">Strategy to use for equality when matching.</param>
         /// <param name="multipleMatchStrategy">Strategy to use with collisions when matching.</param>
         /// <returns>Matched type.</returns>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling", Justification = "Keeping all together.")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity", Justification = "Keeping all together.")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification = "Want to swallow that specific exception.")]
-        public static Type ResolveFromLoadedTypes(this TypeDescription typeDescription, TypeMatchStrategy typeMatchStrategy = TypeMatchStrategy.NamespaceAndName, MultipleMatchStrategy multipleMatchStrategy = MultipleMatchStrategy.ThrowOnMultiple)
+        public static Type ResolveFromLoadedTypes(this TypeRepresentation typeRepresentation, TypeMatchStrategy typeMatchStrategy = TypeMatchStrategy.NamespaceAndName, MultipleMatchStrategy multipleMatchStrategy = MultipleMatchStrategy.ThrowOnMultiple)
         {
-            new { typeDescription }.Must().NotBeNull();
+            new { typeRepresentation }.Must().NotBeNull();
 
             Type result;
 
-            var cacheKey = new TypeDescriptionCacheKey(typeDescription, typeMatchStrategy, multipleMatchStrategy);
-            if (TypeDescriptionCacheKeyToTypeMap.ContainsKey(cacheKey))
+            var cacheKey = new TypeRepresentationCacheKey(typeRepresentation, typeMatchStrategy, multipleMatchStrategy);
+            if (TypeRepresentationCacheKeyToTypeMap.ContainsKey(cacheKey))
             {
-                result = TypeDescriptionCacheKeyToTypeMap[cacheKey];
+                result = TypeRepresentationCacheKeyToTypeMap[cacheKey];
 
                 return result;
             }
 
             // first deal with special hack implementation of array types...
-            if (typeDescription.Name.Contains("[]") || typeDescription.AssemblyQualifiedName.Contains("[]"))
+            if (typeRepresentation.Name.Contains("[]") || typeRepresentation.AssemblyQualifiedName.Contains("[]"))
             {
-                var arrayItemTypeDescription = new TypeDescription
+                var arrayItemTypeRepresentation = new TypeRepresentation
                 {
-                    AssemblyQualifiedName = typeDescription.AssemblyQualifiedName.Replace("[]", string.Empty),
-                    Namespace = typeDescription.Namespace,
-                    Name = typeDescription.Name.Replace("[]", string.Empty),
+                    AssemblyQualifiedName = typeRepresentation.AssemblyQualifiedName.Replace("[]", string.Empty),
+                    Namespace = typeRepresentation.Namespace,
+                    Name = typeRepresentation.Name.Replace("[]", string.Empty),
                 };
 
-                var arrayItemType = arrayItemTypeDescription.ResolveFromLoadedTypes(typeMatchStrategy, multipleMatchStrategy);
+                var arrayItemType = arrayItemTypeRepresentation.ResolveFromLoadedTypes(typeMatchStrategy, multipleMatchStrategy);
 
                 result = arrayItemType?.MakeArrayType();
             }
@@ -125,16 +125,16 @@ namespace OBeautifulCode.Representation
                 var typeComparer = new TypeComparer(typeMatchStrategy);
                 var allMatchingTypes = allTypes.Where(_ =>
                 {
-                    TypeDescription description = null;
+                    TypeRepresentation description = null;
 
                     try
                     {
                         /* For types that have dependent assemblies that are not found on disk this will fail when it tries to get properties from the type.
                          * Added because we encountered a FileNotFoundException for an assembly that was not on disk when taking a loaded type and calling
-                         * ToDescription on it (specifically it threw on the type.Namespace getter call).
+                         * ToRepresentation on it (specifically it threw on the type.Namespace getter call).
                          */
 
-                        description = _.ToDescription();
+                        description = _.ToRepresentation();
                     }
                     catch (Exception)
                     {
@@ -146,7 +146,7 @@ namespace OBeautifulCode.Representation
                         return false;
                     }
 
-                    return typeComparer.Equals(description, typeDescription);
+                    return typeComparer.Equals(description, typeRepresentation);
                 }).ToList();
 
                 switch (multipleMatchStrategy)
@@ -180,7 +180,7 @@ namespace OBeautifulCode.Representation
                 }
             }
 
-            TypeDescriptionCacheKeyToTypeMap.TryAdd(cacheKey, result);
+            TypeRepresentationCacheKeyToTypeMap.TryAdd(cacheKey, result);
 
             return result;
         }

@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="UnaryExpressionDescription.cs" company="OBeautifulCode">
+// <copyright file="UnaryExpressionRepresentation.cs" company="OBeautifulCode">
 //   Copyright (c) OBeautifulCode 2018. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
@@ -10,15 +10,15 @@ namespace OBeautifulCode.Representation
     using System.Linq.Expressions;
 
     /// <summary>
-    /// Description of <see cref="UnaryExpression" />.
+    /// Representation of <see cref="UnaryExpression" />.
     /// </summary>
-    public class UnaryExpressionDescription : ExpressionDescriptionBase
+    public class UnaryExpressionRepresentation : ExpressionRepresentationBase
     {
-        /// <summary>Initializes a new instance of the <see cref="UnaryExpressionDescription"/> class.</summary>
+        /// <summary>Initializes a new instance of the <see cref="UnaryExpressionRepresentation"/> class.</summary>
         /// <param name="type">The type.</param>
         /// <param name="nodeType">Type of the node.</param>
         /// <param name="operand">The operand.</param>
-        public UnaryExpressionDescription(TypeDescription type, ExpressionType nodeType, ExpressionDescriptionBase operand)
+        public UnaryExpressionRepresentation(TypeRepresentation type, ExpressionType nodeType, ExpressionRepresentationBase operand)
             : base(type, nodeType)
         {
             this.Operand = operand;
@@ -26,51 +26,51 @@ namespace OBeautifulCode.Representation
 
         /// <summary>Gets the operand.</summary>
         /// <value>The operand.</value>
-        public ExpressionDescriptionBase Operand { get; private set; }
+        public ExpressionRepresentationBase Operand { get; private set; }
     }
 
 #pragma warning disable SA1204 // Static elements should appear before instance elements
     /// <summary>
-    /// Extensions to <see cref="UnaryExpressionDescription" />.
+    /// Extensions to <see cref="UnaryExpressionRepresentation" />.
     /// </summary>
-    public static class UnaryExpressionDescriptionExtensions
+    public static class UnaryExpressionRepresentationExtensions
 #pragma warning restore SA1204 // Static elements should appear before instance elements
     {
         /// <summary>Converts to serializable.</summary>
         /// <param name="unaryExpression">The unary expression.</param>
         /// <returns>Serializable expression.</returns>
-        public static UnaryExpressionDescription ToDescription(this UnaryExpression unaryExpression)
+        public static UnaryExpressionRepresentation ToRepresentation(this UnaryExpression unaryExpression)
         {
             if (unaryExpression == null)
             {
                 throw new ArgumentNullException(nameof(unaryExpression));
             }
 
-            var type = unaryExpression.Type.ToDescription();
+            var type = unaryExpression.Type.ToRepresentation();
             var nodeType = unaryExpression.NodeType;
-            var operand = unaryExpression.Operand.ToDescription();
+            var operand = unaryExpression.Operand.ToRepresentation();
 
-            var result = new UnaryExpressionDescription(type, nodeType, operand);
+            var result = new UnaryExpressionRepresentation(type, nodeType, operand);
             return result;
         }
 
         /// <summary>From the serializable.</summary>
-        /// <param name="unaryExpressionDescription">The unary expression.</param>
+        /// <param name="unaryExpressionRepresentation">The unary expression.</param>
         /// <returns>Converted expression.</returns>
-        public static Expression FromDescription(this UnaryExpressionDescription unaryExpressionDescription)
+        public static Expression FromRepresentation(this UnaryExpressionRepresentation unaryExpressionRepresentation)
         {
-            if (unaryExpressionDescription == null)
+            if (unaryExpressionRepresentation == null)
             {
-                throw new ArgumentNullException(nameof(unaryExpressionDescription));
+                throw new ArgumentNullException(nameof(unaryExpressionRepresentation));
             }
 
-            var nodeType = unaryExpressionDescription.NodeType;
+            var nodeType = unaryExpressionRepresentation.NodeType;
             switch (nodeType)
             {
                 case ExpressionType.UnaryPlus:
-                    return Expression.UnaryPlus(unaryExpressionDescription.Operand.FromDescription());
+                    return Expression.UnaryPlus(unaryExpressionRepresentation.Operand.FromRepresentation());
                 default:
-                    return Expression.MakeUnary(nodeType, unaryExpressionDescription.Operand.FromDescription(), unaryExpressionDescription.Type.ResolveFromLoadedTypes());
+                    return Expression.MakeUnary(nodeType, unaryExpressionRepresentation.Operand.FromRepresentation(), unaryExpressionRepresentation.Type.ResolveFromLoadedTypes());
             }
         }
     }
