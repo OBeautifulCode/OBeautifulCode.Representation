@@ -1,0 +1,8 @@
+﻿<?xml version="1.0"?>
+<package>
+  <metadata>
+    <description>Specifies model objects that represent other objects, but which can be passed around without a reference to the original object.</description>
+    <tags>serialization representation</tags>
+    <iconUrl>https://raw.githubusercontent.com/OBeautifulCode/OBeautifulCode.Representation/master/OBeautifulCode.Representation.System/nuget-icon.png</iconUrl>
+  </metadata>
+</package>
