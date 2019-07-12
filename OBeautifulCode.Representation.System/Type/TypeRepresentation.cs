@@ -12,12 +12,12 @@ namespace OBeautifulCode.Representation
     using OBeautifulCode.Math.Recipes;
 
     /// <summary>
-    /// Model object containing a description of a type that can be serialized without knowledge of the type.
+    /// Model object containing a representation of a type that can be serialized without knowledge of the type.
     /// </summary>
     public class TypeRepresentation : IEquatable<TypeRepresentation>
     {
         /// <summary>
-        /// The unknown type description to use.
+        /// The unknown type representation to use.
         /// </summary>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes", Justification = "Is in fact immutable.")]
         public static readonly TypeRepresentation UnknownTypeRepresentation = typeof(UnknownTypePlaceholder).ToRepresentation();

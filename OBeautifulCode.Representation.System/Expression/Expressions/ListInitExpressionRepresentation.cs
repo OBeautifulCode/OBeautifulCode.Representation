@@ -31,8 +31,8 @@ namespace OBeautifulCode.Representation
             this.Initializers = initializers;
         }
 
-        /// <summary>Gets the new expression description.</summary>
-        /// <value>The new expression description.</value>
+        /// <summary>Gets the new expression representation.</summary>
+        /// <value>The new expression representation.</value>
         public NewExpressionRepresentation NewExpressionRepresentation { get; private set; }
 
         /// <summary>Gets the initializers.</summary>

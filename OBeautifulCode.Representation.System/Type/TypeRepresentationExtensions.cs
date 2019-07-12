@@ -23,10 +23,10 @@ namespace OBeautifulCode.Representation
         private static readonly ConcurrentDictionary<TypeRepresentationCacheKey, Type> TypeRepresentationCacheKeyToTypeMap = new ConcurrentDictionary<TypeRepresentationCacheKey, Type>();
 
         /// <summary>
-        /// Creates a new type description from a given type.
+        /// Creates a new type representation from a given type.
         /// </summary>
         /// <param name="type">Input type to use.</param>
-        /// <returns>Type description describing input type.</returns>
+        /// <returns>Type representation describing input type.</returns>
         public static TypeRepresentation ToRepresentation(
             this Type type)
         {
@@ -62,7 +62,7 @@ namespace OBeautifulCode.Representation
         /// <summary>
         /// Resolve the <see cref="TypeRepresentation" /> from the loaded types.
         /// </summary>
-        /// <param name="typeRepresentation">Type description to look for.</param>
+        /// <param name="typeRepresentation">Type representation to look for.</param>
         /// <param name="typeMatchStrategy">Strategy to use for equality when matching.</param>
         /// <param name="multipleMatchStrategy">Strategy to use with collisions when matching.</param>
         /// <returns>Matched type.</returns>
@@ -125,7 +125,7 @@ namespace OBeautifulCode.Representation
                 var typeComparer = new TypeComparer(typeMatchStrategy);
                 var allMatchingTypes = allTypes.Where(_ =>
                 {
-                    TypeRepresentation description = null;
+                    TypeRepresentation representation = null;
 
                     try
                     {
@@ -134,19 +134,19 @@ namespace OBeautifulCode.Representation
                          * ToRepresentation on it (specifically it threw on the type.Namespace getter call).
                          */
 
-                        description = _.ToRepresentation();
+                        representation = _.ToRepresentation();
                     }
                     catch (Exception)
                     {
                         return false;
                     }
 
-                    if (description == null)
+                    if (representation == null)
                     {
                         return false;
                     }
 
-                    return typeComparer.Equals(description, typeRepresentation);
+                    return typeComparer.Equals(representation, typeRepresentation);
                 }).ToList();
 
                 switch (multipleMatchStrategy)

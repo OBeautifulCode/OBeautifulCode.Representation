@@ -20,7 +20,7 @@ namespace OBeautifulCode.Representation
     {
         /// <summary>Initializes a new instance of the <see cref="MemberBindingRepresentationBase"/> class.</summary>
         /// <param name="type">The type with member.</param>
-        /// <param name="memberInfo">The member info description.</param>
+        /// <param name="memberInfo">The member info representation.</param>
         /// <param name="bindingType">Type of the binding.</param>
         protected MemberBindingRepresentationBase(TypeRepresentation type, MemberInfoRepresentation memberInfo, MemberBindingType bindingType)
         {
@@ -34,7 +34,7 @@ namespace OBeautifulCode.Representation
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1721:PropertyNamesShouldNotMatchGetMethods", Justification = "Name/spelling is correct.")]
         public TypeRepresentation Type { get; private set; }
 
-        /// <summary>Gets  the member info description.</summary>
+        /// <summary>Gets  the member info representation.</summary>
         /// <value>The member hash.</value>
         public MemberInfoRepresentation MemberInfo { get; private set; }
 

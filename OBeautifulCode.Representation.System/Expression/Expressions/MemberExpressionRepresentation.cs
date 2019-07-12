@@ -18,7 +18,7 @@ namespace OBeautifulCode.Representation
         /// <summary>Initializes a new instance of the <see cref="MemberExpressionRepresentation"/> class.</summary>
         /// <param name="type">The type.</param>
         /// <param name="expression">The expression.</param>
-        /// <param name="memberInfo">The member info description.</param>
+        /// <param name="memberInfo">The member info representation.</param>
         public MemberExpressionRepresentation(TypeRepresentation type, ExpressionRepresentationBase expression, MemberInfoRepresentation memberInfo)
             : base(type, ExpressionType.MemberAccess)
         {

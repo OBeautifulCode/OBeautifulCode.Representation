@@ -136,7 +136,7 @@ namespace OBeautifulCode.Representation
         }
 
         /// <summary>
-        /// Converts to description.
+        /// Converts to representation.
         /// </summary>
         /// <param name="methodInfo">The method information.</param>
         /// <returns>Converted <see cref="MethodInfoRepresentation" />.</returns>
@@ -154,9 +154,9 @@ namespace OBeautifulCode.Representation
         }
 
         /// <summary>
-        /// Converts from description.
+        /// Converts from representation.
         /// </summary>
-        /// <param name="methodInfoRepresentation">The description.</param>
+        /// <param name="methodInfoRepresentation">The representation.</param>
         /// <returns>Converted <see cref="MemberInfo" />.</returns>
         public static MethodInfo FromRepresentation(this MethodInfoRepresentation methodInfoRepresentation)
         {

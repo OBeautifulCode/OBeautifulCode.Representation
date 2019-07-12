@@ -119,7 +119,7 @@ namespace OBeautifulCode.Representation
         }
 
         /// <summary>
-        /// Converts to description.
+        /// Converts to representation.
         /// </summary>
         /// <param name="memberInfo">The member information.</param>
         /// <returns>Converted <see cref="MemberInfoRepresentation" />.</returns>
@@ -137,9 +137,9 @@ namespace OBeautifulCode.Representation
         }
 
         /// <summary>
-        /// Converts from description.
+        /// Converts from representation.
         /// </summary>
-        /// <param name="memberInfoRepresentation">The description.</param>
+        /// <param name="memberInfoRepresentation">The representation.</param>
         /// <returns>Converted <see cref="MemberInfo" />.</returns>
         public static MemberInfo FromRepresentation(this MemberInfoRepresentation memberInfoRepresentation)
         {

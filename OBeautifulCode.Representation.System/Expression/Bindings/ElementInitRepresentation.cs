@@ -144,7 +144,7 @@ namespace OBeautifulCode.Representation
             return result;
         }
 
-        /// <summary>Converts to description.</summary>
+        /// <summary>Converts to representation.</summary>
         /// <param name="elementInitList">The list of <see cref="ElementInit" />.</param>
         /// <returns>Converted list of <see cref="ElementInitRepresentation" />.</returns>
         public static IReadOnlyList<ElementInitRepresentation> ToRepresentation(this IReadOnlyList<ElementInit> elementInitList)

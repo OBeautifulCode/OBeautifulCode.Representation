@@ -175,9 +175,9 @@ namespace OBeautifulCode.Representation
         }
 
         /// <summary>
-        /// Froms the description.
+        /// Converts from the Representation back to the original.
         /// </summary>
-        /// <param name="assemblyRepresentation">The assembly description.</param>
+        /// <param name="assemblyRepresentation">The assembly representation.</param>
         /// <returns>System.Reflection.Assembly.</returns>
         public static Assembly FromRepresentation(
                     this AssemblyRepresentation assemblyRepresentation)
@@ -195,13 +195,13 @@ namespace OBeautifulCode.Representation
 
             if (!results.Any())
             {
-                throw new ArgumentException(Invariant($"Could not find an assembly that matched description '{assemblyRepresentation}' in '{nameof(AppDomain)}'."));
+                throw new ArgumentException(Invariant($"Could not find an assembly that matched representation '{assemblyRepresentation}' in '{nameof(AppDomain)}'."));
             }
 
             if (results.Count > 1)
             {
                 var foundAddIn = string.Join(",", results.Select(_ => _.ToString()));
-                throw new ArgumentException(Invariant($"Found too many assemblies that matched description '{assemblyRepresentation}' in '{nameof(AppDomain)}'; {foundAddIn}."));
+                throw new ArgumentException(Invariant($"Found too many assemblies that matched representation '{assemblyRepresentation}' in '{nameof(AppDomain)}'; {foundAddIn}."));
             }
 
             return results.Single();

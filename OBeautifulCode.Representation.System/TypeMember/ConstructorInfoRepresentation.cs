@@ -123,7 +123,7 @@ namespace OBeautifulCode.Representation
         }
 
         /// <summary>
-        /// Converts to description.
+        /// Converts to representation.
         /// </summary>
         /// <param name="constructorInfo">The constructor information.</param>
         /// <returns>Converted <see cref="ConstructorInfoRepresentation" />.</returns>
@@ -141,9 +141,9 @@ namespace OBeautifulCode.Representation
         }
 
         /// <summary>
-        /// Converts from description.
+        /// Converts from representation.
         /// </summary>
-        /// <param name="constructorInfoRepresentation">The description.</param>
+        /// <param name="constructorInfoRepresentation">The representation.</param>
         /// <returns>Converted <see cref="ConstructorInfo" />.</returns>
         public static ConstructorInfo FromRepresentation(this ConstructorInfoRepresentation constructorInfoRepresentation)
         {
