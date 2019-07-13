@@ -95,7 +95,6 @@
     <Compile Include=".recipes\OBeautifulCode.Validation\ValidatedNotNullAttribute.cs" />
     <Compile Include="AssemblyRepresentation\AssemblyRepresentationTests.cs" />
     <Compile Include="ExpressionRepresentation\ExpressionRepresentationTests.cs" />
-    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RepresentationDummyFactory.cs" />
     <Compile Include="TypeRepresentation\TypeComparerTests.cs" />
