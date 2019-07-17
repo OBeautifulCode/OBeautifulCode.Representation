@@ -23,6 +23,7 @@ namespace OBeautifulCode.Representation.Test
         private const string DeepCloneWithTestInflationToken = "<<<DeepCloneTestInflationHere>>>";
         private const string PropertyNameToken = "<<<PropertyNameHere>>>";
         private const string ParameterNameToken = "<<<ParameterNameHere>>>";
+        private const string ParameterTypeNameToken = "<<<ParameterTypeNameHere>>>";
 
         private const string CloningMethodsCodeTemplate = @"
         /// <inheritdoc />
@@ -42,7 +43,7 @@ namespace OBeautifulCode.Representation.Test
         /// </summary>
         /// <param name=""" + ParameterNameToken + @""">The new <see cref=""" + PropertyNameToken + @""" />.</param>
         /// <returns>New <see cref=""" + TypeNameToken + @""" /> using the specified <paramref name=""" + ParameterNameToken + @""" /> for <see cref=""" + PropertyNameToken + @""" /> and a deep clone of every other property.</returns>
-        public " + TypeNameToken + @" DeepCloneWith" + PropertyNameToken + @"(string " + ParameterNameToken + @")
+        public " + TypeNameToken + @" DeepCloneWith" + PropertyNameToken + @"(" + ParameterTypeNameToken + @" " + ParameterNameToken + @")
         {
             var result = " + NewObjectForDeepCloneWithToken + @";
             return result;
@@ -115,17 +116,18 @@ namespace OBeautifulCode.Representation.Test
                     var newObjectCode = type.GenerateNewLogicCodeForTypeWithSources(propertyNameToSourceCodeMap);
 
                     var testMethod = DeepCloneWithMethodCodeTemplate
-                                    .Replace(TypeNameToken,                  type.Name)
+                                    .Replace(TypeNameToken,                  type.TreatedTypeName())
                                     .Replace(PropertyNameToken,                  parameter.Name.ToUpperFirstLetter())
                                     .Replace(ParameterNameToken,                  parameter.Name)
-                                    .Replace(NewObjectForDeepCloneWithToken, newObjectCode);
+                                    .Replace(NewObjectForDeepCloneWithToken, newObjectCode)
+                                    .Replace(ParameterTypeNameToken, parameter.ParameterType.TreatedTypeName());
                     deepCloneWithMethods.Add(testMethod);
                 }
             }
 
             var deepCloneWithInflationToken = string.Join(Environment.NewLine, deepCloneWithMethods);
 
-            var result = CloningMethodsCodeTemplate.Replace(TypeNameToken, type.Name)
+            var result = CloningMethodsCodeTemplate.Replace(TypeNameToken, type.TreatedTypeName())
                                                    .Replace(DeepCloneToken, deepCloneToken)
                                                    .Replace(DeepCloneWithInflationToken, deepCloneWithInflationToken);
 
@@ -152,8 +154,9 @@ namespace OBeautifulCode.Representation.Test
                                                                 _ =>
                                                                 {
                                                                     var sourceName = _.Name == parameter.Name ? "referenceObject" : "systemUnderTest";
-                                                                    var resultAssert =
-                                                                        Invariant($"actual.{_.Name.ToUpperFirstLetter()}.Should().Be({sourceName}.{_.Name.ToUpperFirstLetter()});");
+                                                                    var resultAssert = _.ParameterType.GenerateFluentEqualityStatement(
+                                                                        Invariant($"actual.{_.Name.ToUpperFirstLetter()}"),
+                                                                        Invariant($"{sourceName}.{_.Name.ToUpperFirstLetter()}"));
                                                                     if (parameter.ParameterType.IsByRef)
                                                                     {
                                                                         resultAssert +=
@@ -168,7 +171,7 @@ namespace OBeautifulCode.Representation.Test
                     var assertDeepCloneWithToken = string.Join(Environment.NewLine + "               ", assertDeepCloneWithSet);
 
                     var testMethod = DeepCloneWithTestMethodCodeTemplate
-                                    .Replace(TypeNameToken,                  type.Name)
+                                    .Replace(TypeNameToken,                  type.TreatedTypeName())
                                     .Replace(PropertyNameToken,              parameter.Name.ToUpperFirstLetter())
                                     .Replace(ParameterNameToken,             parameter.Name)
                                     .Replace(DeepCloneWithAssertLogicToken, assertDeepCloneWithToken);
@@ -182,7 +185,7 @@ namespace OBeautifulCode.Representation.Test
                 deepCloneWithTestInflationToken = string.Empty;
             }
 
-            var result = CloningTestMethodsCodeTemplate.Replace(TypeNameToken, type.Name)
+            var result = CloningTestMethodsCodeTemplate.Replace(TypeNameToken, type.TreatedTypeName())
                                                        .Replace(AssertDeepCloneToken, assertDeepCloneToken)
                                                        .Replace(DeepCloneWithTestInflationToken, deepCloneWithTestInflationToken);
 

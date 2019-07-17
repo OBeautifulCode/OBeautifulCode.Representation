@@ -53,7 +53,7 @@ namespace OBeautifulCode.Representation.Test
         {
             var toStringConstructionCode = type.GenerateToStringTestConstructionCode();
             var result = ToStringTestMethodCodeTemplate
-                        .Replace(TypeNameToken, type.Name)
+                        .Replace(TypeNameToken, type.TreatedTypeName())
                         .Replace(ToStringTestToken, toStringConstructionCode);
             return result;
         }
@@ -61,15 +61,15 @@ namespace OBeautifulCode.Representation.Test
         private static string GenerateToStringConstructionCode(
             this Type type)
         {
-            var propertyNames = type.GetPropertiesOfConcernFromType().Select(_ => _.Name).ToList();
+            var propertyNames = type.GetPropertiesOfConcernFromType().ToDictionary(_ => _.Name, _ => _);
             return "Invariant($\"{nameof("
                  + type.Namespace
                  + ")}.{nameof("
-                 + type.Name
+                 + type.TreatedTypeName()
                  + ")}: "
                  + string.Join(
                        ", ",
-                       propertyNames.Select(_ => _ + " = {this." + _ + "?.ToString() ?? \"<null>\"})"))
+                       propertyNames.Select(_ => _ + " = {this." + _.Key + (_.Value.PropertyType.IsByRef || _.Value.PropertyType == typeof(string) ? "?" : string.Empty) + ".ToString() ?? \"<null>\"})"))
                  + ".\")";
         }
 
@@ -80,7 +80,7 @@ namespace OBeautifulCode.Representation.Test
             return "Invariant($\""
                  + type.Namespace?.Split('.').Last()
                  + "."
-                 + type.Name
+                 + type.TreatedTypeName()
                  + ": "
                  + string.Join(
                        ", ",

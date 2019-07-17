@@ -12,6 +12,7 @@ namespace OBeautifulCode.Representation.Test
     using System.Collections.ObjectModel;
     using System.Linq;
     using System.Reflection;
+    using static System.FormattableString;
 
     public static class CodeGenerationShared
     {
@@ -58,7 +59,7 @@ namespace OBeautifulCode.Representation.Test
         public static string GenerateWireUpOutputLogic(
             this Type type)
         {
-            var result = WireUpOutputCodeTemplate.Replace(TypeNameToken, type.Name);
+            var result = WireUpOutputCodeTemplate.Replace(TypeNameToken, type.TreatedTypeName());
             return result;
         }
 
@@ -66,7 +67,16 @@ namespace OBeautifulCode.Representation.Test
         public static string GenerateGenerationTestMethod(
             this Type type)
         {
-            var result = GenerationTestMethodCodeTemplate.Replace(TypeNameToken, type.Name);
+            var result = GenerationTestMethodCodeTemplate.Replace(TypeNameToken, type.TreatedTypeName());
+            return result;
+        }
+
+        public static string GenerateFluentEqualityStatement(
+            this Type type,
+            string actual,
+            string expected)
+        {
+            var result = Invariant($"{actual}.Should().{(type.IsAssignableToAnyDictionary() || type.IsAssignableToAnyCollection() ? "Equal" : "Be")}({expected});");
             return result;
         }
 
@@ -74,6 +84,35 @@ namespace OBeautifulCode.Representation.Test
             this Type type)
         {
             return type.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.GetProperty | BindingFlags.FlattenHierarchy);
+        }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Globalization", "CA1308:NormalizeStringsToUppercase", Justification = "Lowercase is correct here.")]
+        public static string TreatedTypeName(
+            this Type type)
+        {
+            if (type == typeof(string))
+            {
+                return typeof(string).Name.ToLowerInvariant();
+            }
+            else if (type == typeof(int))
+            {
+                return "int";
+            }
+            else if (type == typeof(bool))
+            {
+                return "bool";
+            }
+            else if (type.IsGenericType)
+            {
+                var typeName                  = type.Name.Split('`').First();
+                var genericArguments          = type.GetGenericArguments();
+                var genericArgumentsTypeNames = genericArguments.Select(_ => _.TreatedTypeName());
+                return typeName + "<" + string.Join(", ", genericArgumentsTypeNames) + ">";
+            }
+            else
+            {
+                return type.Name;
+            }
         }
 
         public static bool IsAssignableToAnyDictionary(
@@ -112,20 +151,6 @@ namespace OBeautifulCode.Representation.Test
 
             var result = CollectionTypes.Any(_ => genericType == _);
             return result;
-        }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Globalization", "CA1308:NormalizeStringsToUppercase", Justification = "Lowercase is correct here.")]
-        public static string TreatedTypeName(
-            this Type type)
-        {
-            if (type == typeof(string))
-            {
-                return typeof(string).Name.ToLowerInvariant();
-            }
-            else
-            {
-                return type.Name;
-            }
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Globalization", "CA1308:NormalizeStringsToUppercase", Justification = "Lowercase is correct here.")]

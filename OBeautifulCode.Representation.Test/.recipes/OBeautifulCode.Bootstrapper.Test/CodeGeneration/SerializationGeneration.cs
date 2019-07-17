@@ -70,7 +70,7 @@ namespace OBeautifulCode.Representation.Test
 
             var prefix = type.Namespace?.Split('.').Last();
             var result = SerializationFieldsCodeTemplate
-                        .Replace(TypeNameToken, type.Name)
+                        .Replace(TypeNameToken, type.TreatedTypeName())
                         .Replace(SerializationConfigurationPrefixToken, prefix);
 
             return result;
@@ -80,7 +80,7 @@ namespace OBeautifulCode.Representation.Test
             this Type type)
         {
             type.Named(nameof(type)).Should().NotBeNull();
-            var result = SerializationTestMethodsCodeTemplate.Replace(TypeNameToken, type.Name);
+            var result = SerializationTestMethodsCodeTemplate.Replace(TypeNameToken, type.TreatedTypeName());
             return result;
         }
     }

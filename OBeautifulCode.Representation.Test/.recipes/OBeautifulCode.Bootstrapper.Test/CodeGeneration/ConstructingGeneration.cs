@@ -20,6 +20,7 @@ namespace OBeautifulCode.Representation.Test
         private const string NewObjectForArgumentNullTestToken = "<<<NewObjectWithOneArgumentNullHere>>>";
         private const string NewObjectForArgumentWhiteSpaceTestToken = "<<<NewObjectWithOneArgumentWhiteSpaceHere>>>";
         private const string PropertyNameToken = "<<<PropertyNameHere>>>";
+        private const string AssertPropertyGetterToken = "<<<AssertPropertyGetterHere>>>";
         private const string NewObjectForGetterTestToken = "<<<NewObjectWithOneArgumentFromOtherHere>>>";
 
         private const string ConstructingTestMethodsCodeTemplate = @"
@@ -91,7 +92,7 @@ namespace OBeautifulCode.Representation.Test
                 var actual = systemUnderTest." + PropertyNameToken + @";
 
                 // Assert
-                actual.Should().Be(expected);
+                " + AssertPropertyGetterToken + @"
             }";
 
         public static string GenerateNewLogicCodeForTypeWithSources(
@@ -111,12 +112,12 @@ namespace OBeautifulCode.Representation.Test
                          }))
             {
                 var parameterPadding = "                                 ";
-                return "new " + type.Name + "(" + Environment.NewLine + parameterPadding + string.Join("," + Environment.NewLine + parameterPadding, propertyNameToSourceCodeMap.Values) + ")";
+                return "new " + type.TreatedTypeName() + "(" + Environment.NewLine + parameterPadding + string.Join("," + Environment.NewLine + parameterPadding, propertyNameToSourceCodeMap.Values) + ")";
             }
             else if (type.GetPropertiesOfConcernFromType().All(_ => _.CanWrite))
             {
                 return "new "
-                     + type.Name
+                     + type.TreatedTypeName()
                      + "{"
                      + string.Join(", ", propertyNameToSourceCodeMap.Select(_ => Invariant($"{_.Key} = {_.Value}")))
                      + "}";
@@ -139,7 +140,7 @@ namespace OBeautifulCode.Representation.Test
                 testMethods.Add(string.Empty);
 
                 var parameters = constructorWithParameters.GetParameters();
-                foreach (var parameter in parameters)
+                foreach (var parameter in parameters.Where(_ => _.ParameterType.IsByRef || _.ParameterType == typeof(string)))
                 {
                     var propertyNameToSourceCodeMap = parameters.ToDictionary(
                         k => k.Name,
@@ -152,7 +153,7 @@ namespace OBeautifulCode.Representation.Test
                     var newObjectCode = type.GenerateNewLogicCodeForTypeWithSources(propertyNameToSourceCodeMap);
 
                     var testMethod = ConstructorTestMethodForArgumentCodeTemplate
-                                    .Replace(TypeNameToken,             type.Name)
+                                    .Replace(TypeNameToken,             type.TreatedTypeName())
                                     .Replace(ConstructorParameterToken, parameter.Name)
                                     .Replace(NewObjectForArgumentNullTestToken, newObjectCode);
                     testMethods.Add(testMethod);
@@ -170,7 +171,7 @@ namespace OBeautifulCode.Representation.Test
                         var stringNewObjectCode = type.GenerateNewLogicCodeForTypeWithSources(stringPropertyNameToSourceCodeMap);
 
                         var stringTestMethod = ConstructorTestMethodForStringArgumentCodeTemplate
-                                              .Replace(TypeNameToken,                     type.Name)
+                                              .Replace(TypeNameToken,                     type.TreatedTypeName())
                                               .Replace(ConstructorParameterToken,         parameter.Name)
                                               .Replace(NewObjectForArgumentWhiteSpaceTestToken, stringNewObjectCode);
 
@@ -186,10 +187,15 @@ namespace OBeautifulCode.Representation.Test
 
                     var newObjectCode = type.GenerateNewLogicCodeForTypeWithSources(propertyNameToSourceCodeMap);
 
+                    var assertPropertyGetterToken  = parameter.ParameterType.GenerateFluentEqualityStatement(
+                        "actual",
+                        "expected");
+
                     var testMethod = PropertyGetterTestMethodTemplate
-                                    .Replace(TypeNameToken,               type.Name)
+                                    .Replace(TypeNameToken,               type.TreatedTypeName())
                                     .Replace(PropertyNameToken,           parameter.Name.ToUpperFirstLetter())
                                     .Replace(ConstructorParameterToken,  parameter.Name)
+                                    .Replace(AssertPropertyGetterToken,  assertPropertyGetterToken)
                                     .Replace(NewObjectForGetterTestToken, newObjectCode);
                     testMethods.Add(testMethod);
                 }
@@ -198,7 +204,7 @@ namespace OBeautifulCode.Representation.Test
             var constructorTestInflationToken = string.Join(Environment.NewLine, testMethods);
 
             var result = ConstructingTestMethodsCodeTemplate
-                        .Replace(TypeNameToken,                 type.Name)
+                        .Replace(TypeNameToken,                 type.TreatedTypeName())
                         .Replace(ConstructorTestInflationToken, constructorTestInflationToken);
             return result;
         }

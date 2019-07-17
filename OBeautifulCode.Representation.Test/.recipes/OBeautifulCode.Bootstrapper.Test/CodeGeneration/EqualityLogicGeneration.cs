@@ -329,7 +329,7 @@ namespace OBeautifulCode.Representation.Test
             var properties = type.GetPropertiesOfConcernFromType();
             var equalityLines = properties.Select(_ => _.GenerateEqualityLogicCodeForProperty()).ToList();
             var equalityToken  = string.Join(Environment.NewLine + "                      && ", equalityLines);
-            var result = EqualityMethodsCodeTemplate.Replace(TypeNameToken, type.Name)
+            var result = EqualityMethodsCodeTemplate.Replace(TypeNameToken, type.TreatedTypeName())
                                                     .Replace(EqualityToken, equalityToken);
 
             return result;
@@ -339,7 +339,7 @@ namespace OBeautifulCode.Representation.Test
         public static string GenerateEqualityTestMethods(
             this Type type)
         {
-            var result = EqualityTestMethodsCodeTemplate.Replace(TypeNameToken, type.Name);
+            var result = EqualityTestMethodsCodeTemplate.Replace(TypeNameToken, type.TreatedTypeName());
 
             return result;
         }
@@ -373,7 +373,7 @@ namespace OBeautifulCode.Representation.Test
 
             var newObjectFromEquatableToken = type.GenerateNewLogicCodeForTypeWithSources(propertyNameToSourceCodeMapForNewForEquatable);
 
-            var result = EqualityTestFieldsCodeTemplate.Replace(TypeNameToken, type.Name)
+            var result = EqualityTestFieldsCodeTemplate.Replace(TypeNameToken, type.TreatedTypeName())
                                                        .Replace(UnequalObjectsToken,        unequalObjectsToken)
                                                        .Replace(NewObjectForEquatableToken, newObjectFromEquatableToken);
 
