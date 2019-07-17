@@ -69,7 +69,7 @@ namespace OBeautifulCode.Representation.Test
                  + ")}: "
                  + string.Join(
                        ", ",
-                       propertyNames.Select(_ => _ + " = {this." + _.Key + (_.Value.PropertyType.IsByRef || _.Value.PropertyType == typeof(string) ? "?" : string.Empty) + ".ToString() ?? \"<null>\"})"))
+                       propertyNames.Select(_ => _ + " = {this." + _.Key + (_.Value.PropertyType.IsByRef || _.Value.PropertyType == typeof(string) ? "?" : string.Empty) + ".ToString() ?? \"<null>\"}"))
                  + ".\")";
         }
 
