@@ -59,11 +59,11 @@ namespace OBeautifulCode.Representation
         public string FrameworkVersion { get; private set; }
 
         /// <summary>
-        /// Equality operator.
+        /// Determines whether two objects of type <see cref="AssemblyRepresentation"/> are equal.
         /// </summary>
-        /// <param name="left">Left parameter.</param>
-        /// <param name="right">Right parameter.</param>
-        /// <returns>A value indicating whether or not the two items are equal.</returns>
+        /// <param name="left">The object to the left of the operator.</param>
+        /// <param name="right">The object to the right of the operator.</param>
+        /// <returns>True if the two items are equal; otherwise false.</returns>
         public static bool operator ==(AssemblyRepresentation left, AssemblyRepresentation right)
         {
             if (ReferenceEquals(left, right))
@@ -76,18 +76,20 @@ namespace OBeautifulCode.Representation
                 return false;
             }
 
-            return left.Name.Equals(right.Name, StringComparison.Ordinal)
-                && left.Version.Equals(right.Version, StringComparison.Ordinal)
-                && left.FilePath.Equals(right.FilePath, StringComparison.Ordinal)
-                && left.FrameworkVersion.Equals(right.FrameworkVersion, StringComparison.Ordinal);
+            var result = left.Name.Equals(right.Name, StringComparison.Ordinal)
+                      && left.Version.Equals(right.Version, StringComparison.Ordinal)
+                      && left.FilePath.Equals(right.FilePath, StringComparison.Ordinal)
+                      && left.FrameworkVersion.Equals(right.FrameworkVersion, StringComparison.Ordinal);
+
+            return result;
         }
 
         /// <summary>
-        /// Inequality operator.
+        /// Determines whether two objects of type <see cref="AssemblyRepresentation"/> are not equal.
         /// </summary>
-        /// <param name="left">Left parameter.</param>
-        /// <param name="right">Right parameter.</param>
-        /// <returns>A value indicating whether or not the two items are unequal.</returns>
+        /// <param name="left">The object to the left of the operator.</param>
+        /// <param name="right">The object to the right of the operator.</param>
+        /// <returns>True if the two items not equal; otherwise false.</returns>
         public static bool operator !=(AssemblyRepresentation left, AssemblyRepresentation right) => !(left == right);
 
         /// <inheritdoc />
@@ -97,8 +99,11 @@ namespace OBeautifulCode.Representation
         public override bool Equals(object obj) => this == (obj as AssemblyRepresentation);
 
         /// <inheritdoc />
-        public override int GetHashCode() => HashCodeHelper.Initialize().
-            Hash(this.Name).Hash(this.Version).Hash(this.FilePath).Hash(this.FrameworkVersion)
+        public override int GetHashCode() => HashCodeHelper.Initialize()
+            .Hash(this.Name)
+            .Hash(this.Version)
+            .Hash(this.FilePath)
+            .Hash(this.FrameworkVersion)
             .Value;
 
         /// <inheritdoc />
@@ -107,15 +112,79 @@ namespace OBeautifulCode.Representation
         /// <inheritdoc />
         public AssemblyRepresentation DeepClone()
         {
-            var result = new AssemblyRepresentation(this.Name?.Clone().ToString(), this.Version?.Clone().ToString(), this.FilePath?.Clone().ToString(), this.FrameworkVersion?.Clone().ToString());
+            var result = new AssemblyRepresentation(
+                                 this.Name?.Clone().ToString(),
+                                 this.Version?.Clone().ToString(),
+                                 this.FilePath?.Clone().ToString(),
+                                 this.FrameworkVersion?.Clone().ToString());
 
+            return result;
+        }
+
+        /// <summary>
+        /// Deep clones this object with a new <paramref name="name" />.
+        /// </summary>
+        /// <param name="name">The new <see cref="Name" />.</param>
+        /// <returns>New <see cref="AssemblyRepresentation" /> using the specified <paramref name="name" /> for <see cref="Name" /> and a deep clone of every other property.</returns>
+        public AssemblyRepresentation DeepCloneWithName(string name)
+        {
+            var result = new AssemblyRepresentation(
+                                 name,
+                                 this.Version?.Clone().ToString(),
+                                 this.FilePath?.Clone().ToString(),
+                                 this.FrameworkVersion?.Clone().ToString());
+            return result;
+        }
+
+        /// <summary>
+        /// Deep clones this object with a new <paramref name="version" />.
+        /// </summary>
+        /// <param name="version">The new <see cref="Version" />.</param>
+        /// <returns>New <see cref="AssemblyRepresentation" /> using the specified <paramref name="version" /> for <see cref="Version" /> and a deep clone of every other property.</returns>
+        public AssemblyRepresentation DeepCloneWithVersion(string version)
+        {
+            var result = new AssemblyRepresentation(
+                                 this.Name?.Clone().ToString(),
+                                 version,
+                                 this.FilePath?.Clone().ToString(),
+                                 this.FrameworkVersion?.Clone().ToString());
+            return result;
+        }
+
+        /// <summary>
+        /// Deep clones this object with a new <paramref name="filePath" />.
+        /// </summary>
+        /// <param name="filePath">The new <see cref="FilePath" />.</param>
+        /// <returns>New <see cref="AssemblyRepresentation" /> using the specified <paramref name="filePath" /> for <see cref="FilePath" /> and a deep clone of every other property.</returns>
+        public AssemblyRepresentation DeepCloneWithFilePath(string filePath)
+        {
+            var result = new AssemblyRepresentation(
+                                 this.Name?.Clone().ToString(),
+                                 this.Version?.Clone().ToString(),
+                                 filePath,
+                                 this.FrameworkVersion?.Clone().ToString());
+            return result;
+        }
+
+        /// <summary>
+        /// Deep clones this object with a new <paramref name="frameworkVersion" />.
+        /// </summary>
+        /// <param name="frameworkVersion">The new <see cref="FrameworkVersion" />.</param>
+        /// <returns>New <see cref="AssemblyRepresentation" /> using the specified <paramref name="frameworkVersion" /> for <see cref="FrameworkVersion" /> and a deep clone of every other property.</returns>
+        public AssemblyRepresentation DeepCloneWithFrameworkVersion(string frameworkVersion)
+        {
+            var result = new AssemblyRepresentation(
+                                 this.Name?.Clone().ToString(),
+                                 this.Version?.Clone().ToString(),
+                                 this.FilePath?.Clone().ToString(),
+                                 frameworkVersion);
             return result;
         }
 
         /// <inheritdoc />
         public override string ToString()
         {
-            var result = Invariant($"{nameof(AssemblyRepresentation)}: Name = {this.Name?.ToString() ?? "<null>"} ,Version = {this.Version?.ToString() ?? "<null>"} ,FilePath = {this.FilePath?.ToString() ?? "<null>"} ,FrameworkVersion = {this.FrameworkVersion?.ToString() ?? "<null>"}.");
+            var result = Invariant($"{nameof(OBeautifulCode.Representation)}.{nameof(AssemblyRepresentation)}: Name = {this.Name?.ToString() ?? "<null>"}), Version = {this.Version?.ToString() ?? "<null>"}), FilePath = {this.FilePath?.ToString() ?? "<null>"}), FrameworkVersion = {this.FrameworkVersion?.ToString() ?? "<null>"}).");
 
             return result;
         }
