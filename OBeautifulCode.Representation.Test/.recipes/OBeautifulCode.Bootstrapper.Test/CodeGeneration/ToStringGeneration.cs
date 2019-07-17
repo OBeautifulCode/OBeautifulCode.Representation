@@ -75,7 +75,7 @@ namespace OBeautifulCode.Representation.Test
                                      var localResult = _.Key
                                                      + " = {this."
                                                      + _.Key
-                                                     + (_.Value.PropertyType.IsByRef || _.Value.PropertyType == typeof(string) ? "?" : string.Empty)
+                                                     + (!_.Value.PropertyType.IsValueType || _.Value.PropertyType == typeof(string) ? "?" : string.Empty)
                                                      + ".ToString() ?? \"<null>\"}";
 
                                      return localResult;

@@ -13,11 +13,13 @@ namespace OBeautifulCode.Representation
     using System.Linq.Expressions;
     using OBeautifulCode.Collection.Recipes;
     using OBeautifulCode.Math.Recipes;
+    using OBeautifulCode.Type;
+    using static System.FormattableString;
 
     /// <summary>
     /// Representation of <see cref="ElementInit" />.
     /// </summary>
-    public class ElementInitRepresentation : IEquatable<ElementInitRepresentation>
+    public class ElementInitRepresentation : IModel<ElementInitRepresentation>
     {
         /// <summary>Initializes a new instance of the <see cref="ElementInitRepresentation"/> class.</summary>
         /// <param name="type">Type with method.</param>
@@ -45,14 +47,12 @@ namespace OBeautifulCode.Representation
         public IReadOnlyList<ExpressionRepresentationBase> Arguments { get; private set; }
 
         /// <summary>
-        /// Determines whether two objects of type <see cref="ElementInitRepresentation" /> are equal.
+        /// Determines whether two objects of type <see cref="ElementInitRepresentation"/> are equal.
         /// </summary>
         /// <param name="left">The object to the left of the operator.</param>
         /// <param name="right">The object to the right of the operator.</param>
-        /// <returns>True if the two object are equal; false otherwise.</returns>
-        public static bool operator ==(
-            ElementInitRepresentation left,
-            ElementInitRepresentation right)
+        /// <returns>True if the two items are equal; otherwise false.</returns>
+        public static bool operator ==(ElementInitRepresentation left, ElementInitRepresentation right)
         {
             if (ReferenceEquals(left, right))
             {
@@ -64,48 +64,103 @@ namespace OBeautifulCode.Representation
                 return false;
             }
 
-            var result =
-                (left.Type == right.Type) &&
-                (left.AddMethod == right.AddMethod) &&
-                left.Arguments.SequenceEqualHandlingNulls(right.Arguments);
+            var result = left.Type == right.Type
+                      && left.AddMethod == right.AddMethod
+                      && left.Arguments.SequenceEqualHandlingNulls(right.Arguments);
 
             return result;
         }
 
         /// <summary>
-        /// Determines whether two objects of type <see cref="ElementInitRepresentation" /> are not equal.
+        /// Determines whether two objects of type <see cref="ElementInitRepresentation"/> are not equal.
         /// </summary>
         /// <param name="left">The object to the left of the operator.</param>
         /// <param name="right">The object to the right of the operator.</param>
-        /// <returns>True if the two object are not equal; false otherwise.</returns>
-        public static bool operator !=(
-            ElementInitRepresentation left,
-            ElementInitRepresentation right)
-            => !(left == right);
+        /// <returns>True if the two items not equal; otherwise false.</returns>
+        public static bool operator !=(ElementInitRepresentation left, ElementInitRepresentation right) => !(left == right);
 
-        /// <summary>
-        /// Indicates whether the current object is equal to another object of the same type.
-        /// </summary>
-        /// <param name="other">An object to compare with this object.</param>
-        /// <returns>true if the current object is equal to the <paramref name="other" /> parameter; otherwise, false.</returns>
+        /// <inheritdoc />
         public bool Equals(ElementInitRepresentation other) => this == other;
 
         /// <inheritdoc />
         public override bool Equals(object obj) => this == (obj as ElementInitRepresentation);
 
         /// <inheritdoc />
-        public override int GetHashCode() =>
-            HashCodeHelper.Initialize()
-                .Hash(this.Type)
-                .Hash(this.AddMethod)
-                .HashElements(this.Arguments)
-                .Value;
+        public override int GetHashCode() => HashCodeHelper.Initialize()
+            .Hash(this.Type)
+            .Hash(this.AddMethod)
+            .HashElements(this.Arguments)
+            .Value;
+
+        /// <inheritdoc />
+        public object Clone() => this.DeepClone();
+
+        /// <inheritdoc />
+        public ElementInitRepresentation DeepClone()
+        {
+            var result = new ElementInitRepresentation(
+                                 this.Type,
+                                 this.AddMethod,
+                                 this.Arguments?.Select(_ => _).ToList());
+
+            return result;
+        }
+
+        /// <summary>
+        /// Deep clones this object with a new <paramref name="type" />.
+        /// </summary>
+        /// <param name="type">The new <see cref="Type" />.</param>
+        /// <returns>New <see cref="ElementInitRepresentation" /> using the specified <paramref name="type" /> for <see cref="Type" /> and a deep clone of every other property.</returns>
+        public ElementInitRepresentation DeepCloneWithType(TypeRepresentation type)
+        {
+            var result = new ElementInitRepresentation(
+                                 type,
+                                 this.AddMethod,
+                                 this.Arguments?.Select(_ => _).ToList());
+            return result;
+        }
+
+        /// <summary>
+        /// Deep clones this object with a new <paramref name="addMethod" />.
+        /// </summary>
+        /// <param name="addMethod">The new <see cref="AddMethod" />.</param>
+        /// <returns>New <see cref="ElementInitRepresentation" /> using the specified <paramref name="addMethod" /> for <see cref="AddMethod" /> and a deep clone of every other property.</returns>
+        public ElementInitRepresentation DeepCloneWithAddMethod(MethodInfoRepresentation addMethod)
+        {
+            var result = new ElementInitRepresentation(
+                                 this.Type,
+                                 addMethod,
+                                 this.Arguments?.Select(_ => _).ToList());
+            return result;
+        }
+
+        /// <summary>
+        /// Deep clones this object with a new <paramref name="arguments" />.
+        /// </summary>
+        /// <param name="arguments">The new <see cref="Arguments" />.</param>
+        /// <returns>New <see cref="ElementInitRepresentation" /> using the specified <paramref name="arguments" /> for <see cref="Arguments" /> and a deep clone of every other property.</returns>
+        public ElementInitRepresentation DeepCloneWithArguments(IReadOnlyList<ExpressionRepresentationBase> arguments)
+        {
+            var result = new ElementInitRepresentation(
+                                 this.Type,
+                                 this.AddMethod,
+                                 arguments);
+            return result;
+        }
+
+        /// <inheritdoc />
+        public override string ToString()
+        {
+            var result = Invariant($"{nameof(OBeautifulCode.Representation)}.{nameof(ElementInitRepresentation)}: Type = {this.Type.ToString() ?? "<null>"}, AddMethod = {this.AddMethod.ToString() ?? "<null>"}, Arguments = {this.Arguments.ToString() ?? "<null>"}.");
+
+            return result;
+        }
     }
 
 #pragma warning disable SA1204 // Static elements should appear before instance elements
-                              /// <summary>
-                              /// Extensions to <see cref="ElementInitRepresentation" /> and <see cref="ElementInit" />.
-                              /// </summary>
+    /// <summary>
+    /// Extensions to <see cref="ElementInitRepresentation" /> and <see cref="ElementInit" />.
+    /// </summary>
     public static class ElementInitRepresentationExtensions
 #pragma warning restore SA1204 // Static elements should appear before instance elements
     {

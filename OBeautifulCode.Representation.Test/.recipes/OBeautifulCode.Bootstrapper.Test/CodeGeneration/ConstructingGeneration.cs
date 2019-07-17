@@ -140,7 +140,7 @@ namespace OBeautifulCode.Representation.Test
                 testMethods.Add(string.Empty);
 
                 var parameters = constructorWithParameters.GetParameters();
-                foreach (var parameter in parameters.Where(_ => _.ParameterType.IsByRef || _.ParameterType == typeof(string)))
+                foreach (var parameter in parameters.Where(_ => !_.ParameterType.IsValueType || _.ParameterType == typeof(string)))
                 {
                     var propertyNameToSourceCodeMap = parameters.ToDictionary(
                         k => k.Name,

@@ -9,12 +9,11 @@ namespace OBeautifulCode.Representation.Test
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Linq.Expressions;
     using System.Reflection;
     using FakeItEasy;
-
     using OBeautifulCode.AutoFakeItEasy;
     using OBeautifulCode.Reflection.Recipes;
-
     using static System.FormattableString;
 
     /// <summary>
@@ -71,6 +70,24 @@ namespace OBeautifulCode.Representation.Test
                     A.Dummy<string>(),
                     A.Dummy<string>(),
                     A.Dummy<string>()));
+
+            AutoFixtureBackedDummyFactory.AddDummyCreator(
+                () => new ElementInitRepresentation(
+                    A.Dummy<TypeRepresentation>(),
+                    A.Dummy<MethodInfoRepresentation>(),
+                    A.Dummy<IReadOnlyList<ExpressionRepresentationBase>>()));
+
+            AutoFixtureBackedDummyFactory.AddDummyCreator(
+                () => (ExpressionRepresentationBase)new ConstantExpressionRepresentation<string>(
+                    A.Dummy<string>(),
+                    A.Dummy<ExpressionType>(),
+                    A.Dummy<TypeRepresentation>()));
+
+            AutoFixtureBackedDummyFactory.AddDummyCreator(
+                () => new ConstantExpressionRepresentation<string>(
+                    A.Dummy<string>(),
+                    A.Dummy<ExpressionType>(),
+                    A.Dummy<TypeRepresentation>()));
         }
 
         /// <inheritdoc />

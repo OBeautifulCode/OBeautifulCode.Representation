@@ -138,7 +138,7 @@ namespace OBeautifulCode.Representation.Test
             this Type type)
         {
             var properties = type.GetPropertiesOfConcernFromType();
-            var assertDeepCloneSet = properties.Where(_ => _.PropertyType.IsByRef).Select(_ => Invariant($"actual.{_.Name}.Should().NotBeSameAs(systemUnderTest.{_.Name});")).ToList();
+            var assertDeepCloneSet = properties.Where(_ => !_.PropertyType.IsValueType && _.PropertyType != typeof(string)).Select(_ => Invariant($"actual.{_.Name}.Should().NotBeSameAs(systemUnderTest.{_.Name});")).ToList();
             var assertDeepCloneToken = string.Join(Environment.NewLine + "               ", assertDeepCloneSet);
 
             var parameters           = type.GetConstructors().SingleOrDefault(_ => _.GetParameters().Length > 1)?.GetParameters().ToList();
@@ -157,7 +157,7 @@ namespace OBeautifulCode.Representation.Test
                                                                     var resultAssert = _.ParameterType.GenerateFluentEqualityStatement(
                                                                         Invariant($"actual.{_.Name.ToUpperFirstLetter()}"),
                                                                         Invariant($"{sourceName}.{_.Name.ToUpperFirstLetter()}"));
-                                                                    if (parameter.ParameterType.IsByRef)
+                                                                    if (!parameter.ParameterType.IsValueType && parameter.ParameterType != typeof(string))
                                                                     {
                                                                         resultAssert +=
                                                                             Environment.NewLine
@@ -224,7 +224,7 @@ namespace OBeautifulCode.Representation.Test
                 // string should be cloned using it's existing interface.
                 result = Invariant($"{cloneSourceCode}?.Clone().ToString()");
             }
-            else if (type.IsByRef)
+            else if (!type.IsValueType)
             {
                 // assume that we are driving the DeepClone convention and it exists.
                 result = Invariant($"{cloneSourceCode}?.DeepClone()");

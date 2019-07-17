@@ -1,15 +1,17 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="TypeRepresentationTest.cs" company="OBeautifulCode">
+// <copyright file="ConstantExpressionRepresentationTest.cs" company="OBeautifulCode">
 //   Copyright (c) OBeautifulCode 2018. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace OBeautifulCode.Representation.Test.TypeRepresentationTests
+namespace OBeautifulCode.Representation.Test.ConstantExpressionRepresentationTests
 {
     using System;
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
+    using System.IO;
     using System.Linq;
+    using System.Linq.Expressions;
     using System.Reflection;
     using Castle.DynamicProxy.Internal;
     using FakeItEasy;
@@ -21,46 +23,37 @@ namespace OBeautifulCode.Representation.Test.TypeRepresentationTests
     using Xunit.Abstractions;
     using static System.FormattableString;
 
-    public class TypeRepresentationTest
+    public class ConstantExpressionRepresentationTest
     {
-        private static readonly TypeRepresentation ObjectForEquatableTests = A.Dummy<TypeRepresentation>();
+        private static readonly ConstantExpressionRepresentation<string> ObjectForEquatableTests = A.Dummy<ConstantExpressionRepresentation<string>>();
 
-        private static readonly TypeRepresentation ObjectThatIsEqualToButNotTheSameAsObjectForEquatableTests =
-            new TypeRepresentation(
-                                 ObjectForEquatableTests.Namespace,
-                                 ObjectForEquatableTests.Name,
-                                 ObjectForEquatableTests.AssemblyQualifiedName,
-                                 ObjectForEquatableTests.GenericArguments);
+        private static readonly ConstantExpressionRepresentation<string> ObjectThatIsEqualToButNotTheSameAsObjectForEquatableTests =
+            new ConstantExpressionRepresentation<string>(
+                                 ObjectForEquatableTests.Value,
+                                 ObjectForEquatableTests.NodeType,
+                                 ObjectForEquatableTests.Type);
 
-        private static readonly TypeRepresentation[] ObjectsThatAreNotEqualToObjectForEquatableTests =
+        private static readonly ConstantExpressionRepresentation<string>[] ObjectsThatAreNotEqualToObjectForEquatableTests =
         {
-            new TypeRepresentation(
-                                 ObjectForEquatableTests.Namespace,
-                                 A.Dummy<string>().ThatIsNot(ObjectForEquatableTests.Name),
-                                 A.Dummy<string>().ThatIsNot(ObjectForEquatableTests.AssemblyQualifiedName),
-                                 A.Dummy<IReadOnlyList<TypeRepresentation>>().ThatIsNot(ObjectForEquatableTests.GenericArguments)),
-            new TypeRepresentation(
-                                 A.Dummy<string>().ThatIsNot(ObjectForEquatableTests.Namespace),
-                                 ObjectForEquatableTests.Name,
-                                 A.Dummy<string>().ThatIsNot(ObjectForEquatableTests.AssemblyQualifiedName),
-                                 A.Dummy<IReadOnlyList<TypeRepresentation>>().ThatIsNot(ObjectForEquatableTests.GenericArguments)),
-            new TypeRepresentation(
-                                 A.Dummy<string>().ThatIsNot(ObjectForEquatableTests.Namespace),
-                                 A.Dummy<string>().ThatIsNot(ObjectForEquatableTests.Name),
-                                 ObjectForEquatableTests.AssemblyQualifiedName,
-                                 A.Dummy<IReadOnlyList<TypeRepresentation>>().ThatIsNot(ObjectForEquatableTests.GenericArguments)),
-            new TypeRepresentation(
-                                 A.Dummy<string>().ThatIsNot(ObjectForEquatableTests.Namespace),
-                                 A.Dummy<string>().ThatIsNot(ObjectForEquatableTests.Name),
-                                 A.Dummy<string>().ThatIsNot(ObjectForEquatableTests.AssemblyQualifiedName),
-                                 ObjectForEquatableTests.GenericArguments),
+            new ConstantExpressionRepresentation<string>(
+                                 ObjectForEquatableTests.Value,
+                                 A.Dummy<ExpressionType>().ThatIsNot(ObjectForEquatableTests.NodeType),
+                                 A.Dummy<TypeRepresentation>().ThatIsNot(ObjectForEquatableTests.Type)),
+            new ConstantExpressionRepresentation<string>(
+                                 A.Dummy<string>().ThatIsNot(ObjectForEquatableTests.Value),
+                                 ObjectForEquatableTests.NodeType,
+                                 A.Dummy<TypeRepresentation>().ThatIsNot(ObjectForEquatableTests.Type)),
+            new ConstantExpressionRepresentation<string>(
+                                 A.Dummy<string>().ThatIsNot(ObjectForEquatableTests.Value),
+                                 A.Dummy<ExpressionType>().ThatIsNot(ObjectForEquatableTests.NodeType),
+                                 ObjectForEquatableTests.Type),
         };
 
         private static readonly string ObjectThatIsNotTheSameTypeAsObjectForEquatableTests = A.Dummy<string>();
 
         private readonly ITestOutputHelper testOutputHelper;
 
-        public TypeRepresentationTest(
+        public ConstantExpressionRepresentationTest(
             ITestOutputHelper testOutputHelper)
         {
             this.testOutputHelper = testOutputHelper;
@@ -70,9 +63,9 @@ namespace OBeautifulCode.Representation.Test.TypeRepresentationTests
         public void ToString___Should_generate_friendly_string_representation_of_object___When_called()
         {
             // Arrange
-            var systemUnderTest = A.Dummy<TypeRepresentation>();
+            var systemUnderTest = A.Dummy<ConstantExpressionRepresentation<string>>();
 
-            var expected = Invariant($"Representation.TypeRepresentation: Namespace = {systemUnderTest.Namespace}, Name = {systemUnderTest.Name}, AssemblyQualifiedName = {systemUnderTest.AssemblyQualifiedName}, GenericArguments = {systemUnderTest.GenericArguments}.");
+            var expected = Invariant($"Representation.ConstantExpressionRepresentation: Value = {systemUnderTest.Value}, NodeType = {systemUnderTest.NodeType}, Type = {systemUnderTest.Type}.");
 
             // Act
             var actual = systemUnderTest.ToString();
@@ -84,7 +77,7 @@ namespace OBeautifulCode.Representation.Test.TypeRepresentationTests
         [Fact]
         public void Generate()
         {
-            var results = ModelObjectCodeGenerator.GenerateCodeForModelObject<TypeRepresentation>();
+            var results = ModelObjectCodeGenerator.GenerateCodeForModelObject<ConstantExpressionRepresentation<string>>();
             this.testOutputHelper.WriteLine(results);
         }
 
@@ -92,11 +85,11 @@ namespace OBeautifulCode.Representation.Test.TypeRepresentationTests
         public static class Constructing
         {
             [Fact]
-            public static void TypeRepresentation___Should_implement_IModel___When_reflecting()
+            public static void ConstantExpressionRepresentation___Should_implement_IModel___When_reflecting()
             {
                 // Arrange
-                var type = typeof(TypeRepresentation);
-                var expectedModelMethods = typeof(IModel<TypeRepresentation>)
+                var type = typeof(ConstantExpressionRepresentation<string>);
+                var expectedModelMethods = typeof(IModel<ConstantExpressionRepresentation<string>>)
                                           .GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.FlattenHierarchy)
                                           .ToList();
                 var expectedModelMethodHashes = expectedModelMethods.Select(_ => _.GetSignatureHash());
@@ -107,84 +100,62 @@ namespace OBeautifulCode.Representation.Test.TypeRepresentationTests
                 var actualModeMethodHashes = actualModelMethods.Select(_ => _.GetSignatureHash());
 
                 // Assert
-                actualInterfaces.Should().Contain(typeof(IModel<TypeRepresentation>));
+                actualInterfaces.Should().Contain(typeof(IModel<ConstantExpressionRepresentation<string>>));
                 actualModeMethodHashes.Should().Contain(expectedModelMethodHashes);
             }
 
             [Fact]
-            public static void Namespace___Should_return_same_namespace_parameter_passed_to_constructor___When_getting()
+            public static void Value___Should_return_same_value_parameter_passed_to_constructor___When_getting()
             {
                 // Arrange,
-                var referenceObject = A.Dummy<TypeRepresentation>();
-                var systemUnderTest = new TypeRepresentation(
-                                 referenceObject.Namespace,
-                                 referenceObject.Name,
-                                 referenceObject.AssemblyQualifiedName,
-                                 referenceObject.GenericArguments);
-                var expected = referenceObject.Namespace;
+                var referenceObject = A.Dummy<ConstantExpressionRepresentation<string>>();
+                var systemUnderTest = new ConstantExpressionRepresentation<string>(
+                                 referenceObject.Value,
+                                 referenceObject.NodeType,
+                                 referenceObject.Type);
+                var expected = referenceObject.Value;
 
                 // Act
-                var actual = systemUnderTest.Namespace;
+                var actual = systemUnderTest.Value;
 
                 // Assert
                 actual.Should().Be(expected);
             }
 
             [Fact]
-            public static void Name___Should_return_same_name_parameter_passed_to_constructor___When_getting()
+            public static void NodeType___Should_return_same_nodeType_parameter_passed_to_constructor___When_getting()
             {
                 // Arrange,
-                var referenceObject = A.Dummy<TypeRepresentation>();
-                var systemUnderTest = new TypeRepresentation(
-                                 referenceObject.Namespace,
-                                 referenceObject.Name,
-                                 referenceObject.AssemblyQualifiedName,
-                                 referenceObject.GenericArguments);
-                var expected = referenceObject.Name;
+                var referenceObject = A.Dummy<ConstantExpressionRepresentation<string>>();
+                var systemUnderTest = new ConstantExpressionRepresentation<string>(
+                                 referenceObject.Value,
+                                 referenceObject.NodeType,
+                                 referenceObject.Type);
+                var expected = referenceObject.NodeType;
 
                 // Act
-                var actual = systemUnderTest.Name;
+                var actual = systemUnderTest.NodeType;
 
                 // Assert
                 actual.Should().Be(expected);
             }
 
             [Fact]
-            public static void AssemblyQualifiedName___Should_return_same_assemblyQualifiedName_parameter_passed_to_constructor___When_getting()
+            public static void Type___Should_return_same_type_parameter_passed_to_constructor___When_getting()
             {
                 // Arrange,
-                var referenceObject = A.Dummy<TypeRepresentation>();
-                var systemUnderTest = new TypeRepresentation(
-                                 referenceObject.Namespace,
-                                 referenceObject.Name,
-                                 referenceObject.AssemblyQualifiedName,
-                                 referenceObject.GenericArguments);
-                var expected = referenceObject.AssemblyQualifiedName;
+                var referenceObject = A.Dummy<ConstantExpressionRepresentation<string>>();
+                var systemUnderTest = new ConstantExpressionRepresentation<string>(
+                                 referenceObject.Value,
+                                 referenceObject.NodeType,
+                                 referenceObject.Type);
+                var expected = referenceObject.Type;
 
                 // Act
-                var actual = systemUnderTest.AssemblyQualifiedName;
+                var actual = systemUnderTest.Type;
 
                 // Assert
                 actual.Should().Be(expected);
-            }
-
-            [Fact]
-            public static void GenericArguments___Should_return_same_genericArguments_parameter_passed_to_constructor___When_getting()
-            {
-                // Arrange,
-                var referenceObject = A.Dummy<TypeRepresentation>();
-                var systemUnderTest = new TypeRepresentation(
-                                 referenceObject.Namespace,
-                                 referenceObject.Name,
-                                 referenceObject.AssemblyQualifiedName,
-                                 referenceObject.GenericArguments);
-                var expected = referenceObject.GenericArguments;
-
-                // Act
-                var actual = systemUnderTest.GenericArguments;
-
-                // Assert
-                actual.Should().Equal(expected);
             }
         }
 
@@ -195,7 +166,7 @@ namespace OBeautifulCode.Representation.Test.TypeRepresentationTests
             public static void DeepClone___Should_deep_clone_object___When_called()
             {
                 // Arrange
-                var systemUnderTest = A.Dummy<TypeRepresentation>();
+                var systemUnderTest = A.Dummy<ConstantExpressionRepresentation<string>>();
 
                 // Act
                 var actual = systemUnderTest.DeepClone();
@@ -203,88 +174,55 @@ namespace OBeautifulCode.Representation.Test.TypeRepresentationTests
                 // Assert
                 actual.Should().Be(systemUnderTest);
                 actual.Should().NotBeSameAs(systemUnderTest);
-
-                if (actual.GenericArguments?.Any() ?? false)
-                {
-                    actual.GenericArguments.Should().NotBeSameAs(systemUnderTest.GenericArguments);
-                }
+                actual.Type.Should().NotBeSameAs(systemUnderTest.Type);
             }
 
             [Fact]
-            public static void DeepCloneWithNamespace___Should_deep_clone_object_and_replace_Namespace_with_the_provided_namespace___When_called()
+            public static void DeepCloneWithValue___Should_deep_clone_object_and_replace_Value_with_the_provided_value___When_called()
             {
                 // Arrange,
-                var systemUnderTest = A.Dummy<TypeRepresentation>();
-                var referenceObject = A.Dummy<TypeRepresentation>().ThatIsNot(systemUnderTest);
+                var systemUnderTest = A.Dummy<ConstantExpressionRepresentation<string>>();
+                var referenceObject = A.Dummy<ConstantExpressionRepresentation<string>>().ThatIsNot(systemUnderTest);
 
                 // Act
-                var actual = systemUnderTest.DeepCloneWithNamespace(referenceObject.Namespace);
+                var actual = systemUnderTest.DeepCloneWithValue(referenceObject.Value);
 
                 // Assert
-                actual.Namespace.Should().Be(referenceObject.Namespace);
-                actual.Name.Should().Be(systemUnderTest.Name);
-                actual.AssemblyQualifiedName.Should().Be(systemUnderTest.AssemblyQualifiedName);
-
-                if (actual.GenericArguments?.Any() ?? false)
-                {
-                    actual.GenericArguments.Should().Equal(systemUnderTest.GenericArguments);
-                }
+                actual.Value.Should().Be(referenceObject.Value);
+                actual.NodeType.Should().Be(systemUnderTest.NodeType);
+                actual.Type.Should().Be(systemUnderTest.Type);
             }
 
             [Fact]
-            public static void DeepCloneWithName___Should_deep_clone_object_and_replace_Name_with_the_provided_name___When_called()
+            public static void DeepCloneWithNodeType___Should_deep_clone_object_and_replace_NodeType_with_the_provided_nodeType___When_called()
             {
                 // Arrange,
-                var systemUnderTest = A.Dummy<TypeRepresentation>();
-                var referenceObject = A.Dummy<TypeRepresentation>().ThatIsNot(systemUnderTest);
+                var systemUnderTest = A.Dummy<ConstantExpressionRepresentation<string>>();
+                var referenceObject = A.Dummy<ConstantExpressionRepresentation<string>>().ThatIsNot(systemUnderTest);
 
                 // Act
-                var actual = systemUnderTest.DeepCloneWithName(referenceObject.Name);
+                var actual = systemUnderTest.DeepCloneWithNodeType(referenceObject.NodeType);
 
                 // Assert
-                actual.Namespace.Should().Be(systemUnderTest.Namespace);
-                actual.Name.Should().Be(referenceObject.Name);
-                actual.AssemblyQualifiedName.Should().Be(systemUnderTest.AssemblyQualifiedName);
-                actual.GenericArguments.Should().Equal(systemUnderTest.GenericArguments);
+                actual.Value.Should().Be(systemUnderTest.Value);
+                actual.NodeType.Should().Be(referenceObject.NodeType);
+                actual.Type.Should().Be(systemUnderTest.Type);
             }
 
             [Fact]
-            public static void DeepCloneWithAssemblyQualifiedName___Should_deep_clone_object_and_replace_AssemblyQualifiedName_with_the_provided_assemblyQualifiedName___When_called()
+            public static void DeepCloneWithType___Should_deep_clone_object_and_replace_Type_with_the_provided_type___When_called()
             {
                 // Arrange,
-                var systemUnderTest = A.Dummy<TypeRepresentation>();
-                var referenceObject = A.Dummy<TypeRepresentation>().ThatIsNot(systemUnderTest);
+                var systemUnderTest = A.Dummy<ConstantExpressionRepresentation<string>>();
+                var referenceObject = A.Dummy<ConstantExpressionRepresentation<string>>().ThatIsNot(systemUnderTest);
 
                 // Act
-                var actual = systemUnderTest.DeepCloneWithAssemblyQualifiedName(referenceObject.AssemblyQualifiedName);
+                var actual = systemUnderTest.DeepCloneWithType(referenceObject.Type);
 
                 // Assert
-                actual.Namespace.Should().Be(systemUnderTest.Namespace);
-                actual.Name.Should().Be(systemUnderTest.Name);
-                actual.AssemblyQualifiedName.Should().Be(referenceObject.AssemblyQualifiedName);
-                actual?.GenericArguments.Should().Equal(systemUnderTest.GenericArguments);
-            }
-
-            [Fact]
-            public static void DeepCloneWithGenericArguments___Should_deep_clone_object_and_replace_GenericArguments_with_the_provided_genericArguments___When_called()
-            {
-                // Arrange,
-                var systemUnderTest = A.Dummy<TypeRepresentation>();
-                var referenceObject = A.Dummy<TypeRepresentation>().ThatIsNot(systemUnderTest);
-
-                // Act
-                var actual = systemUnderTest.DeepCloneWithGenericArguments(referenceObject.GenericArguments);
-
-                // Assert
-                actual.Namespace.Should().Be(systemUnderTest.Namespace);
-                actual.Name.Should().Be(systemUnderTest.Name);
-                actual.AssemblyQualifiedName.Should().Be(systemUnderTest.AssemblyQualifiedName);
-
-                if (actual?.GenericArguments.Any() ?? false)
-                {
-                    actual.GenericArguments.Should().Equal(referenceObject.GenericArguments);
-                    actual.GenericArguments.Should().NotBeSameAs(referenceObject.GenericArguments);
-                }
+                actual.Value.Should().Be(systemUnderTest.Value);
+                actual.NodeType.Should().Be(systemUnderTest.NodeType);
+                actual.Type.Should().Be(referenceObject.Type);
             }
         }
 
@@ -295,8 +233,8 @@ namespace OBeautifulCode.Representation.Test.TypeRepresentationTests
             public static void EqualsOperator___Should_return_true___When_both_sides_of_operator_are_null()
             {
                 // Arrange
-                TypeRepresentation systemUnderTest1 = null;
-                TypeRepresentation systemUnderTest2 = null;
+                ConstantExpressionRepresentation<string> systemUnderTest1 = null;
+                ConstantExpressionRepresentation<string> systemUnderTest2 = null;
 
                 // Act
                 var result = systemUnderTest1 == systemUnderTest2;
@@ -309,7 +247,7 @@ namespace OBeautifulCode.Representation.Test.TypeRepresentationTests
             public static void EqualsOperator___Should_return_false___When_one_side_of_operator_is_null_and_the_other_side_is_not_null()
             {
                 // Arrange
-                TypeRepresentation systemUnderTest = null;
+                ConstantExpressionRepresentation<string> systemUnderTest = null;
 
                 // Act
                 var result1 = systemUnderTest == ObjectForEquatableTests;
@@ -358,8 +296,8 @@ namespace OBeautifulCode.Representation.Test.TypeRepresentationTests
             public static void NotEqualsOperator___Should_return_false___When_both_sides_of_operator_are_null()
             {
                 // Arrange
-                TypeRepresentation systemUnderTest1 = null;
-                TypeRepresentation systemUnderTest2 = null;
+                ConstantExpressionRepresentation<string> systemUnderTest1 = null;
+                ConstantExpressionRepresentation<string> systemUnderTest2 = null;
 
                 // Act
                 var result = systemUnderTest1 != systemUnderTest2;
@@ -372,7 +310,7 @@ namespace OBeautifulCode.Representation.Test.TypeRepresentationTests
             public static void NotEqualsOperator___Should_return_true___When_one_side_of_operator_is_null_and_the_other_side_is_not_null()
             {
                 // Arrange
-                TypeRepresentation systemUnderTest = null;
+                ConstantExpressionRepresentation<string> systemUnderTest = null;
 
                 // Act
                 var result1 = systemUnderTest != ObjectForEquatableTests;
@@ -418,10 +356,10 @@ namespace OBeautifulCode.Representation.Test.TypeRepresentationTests
             }
 
             [Fact]
-            public static void Equals_with_TypeRepresentation___Should_return_false___When_parameter_other_is_null()
+            public static void Equals_with_ConstantExpressionRepresentation___Should_return_false___When_parameter_other_is_null()
             {
                 // Arrange
-                TypeRepresentation systemUnderTest = null;
+                ConstantExpressionRepresentation<string> systemUnderTest = null;
 
                 // Act
                 var result = ObjectForEquatableTests.Equals(systemUnderTest);
@@ -431,7 +369,7 @@ namespace OBeautifulCode.Representation.Test.TypeRepresentationTests
             }
 
             [Fact]
-            public static void Equals_with_TypeRepresentation___Should_return_true___When_parameter_other_is_same_object()
+            public static void Equals_with_ConstantExpressionRepresentation___Should_return_true___When_parameter_other_is_same_object()
             {
                 // Arrange, Act
                 var result = ObjectForEquatableTests.Equals(ObjectForEquatableTests);
@@ -441,7 +379,7 @@ namespace OBeautifulCode.Representation.Test.TypeRepresentationTests
             }
 
             [Fact]
-            public static void Equals_with_TypeRepresentation___Should_return_false___When_objects_being_compared_have_different_property_values()
+            public static void Equals_with_ConstantExpressionRepresentation___Should_return_false___When_objects_being_compared_have_different_property_values()
             {
                 // Arrange, Act
                 var actualCheckReferenceAgainstUnequalSet = ObjectsThatAreNotEqualToObjectForEquatableTests.Select(_ => ObjectForEquatableTests.Equals(_)).ToList();
@@ -453,7 +391,7 @@ namespace OBeautifulCode.Representation.Test.TypeRepresentationTests
             }
 
             [Fact]
-            public static void Equals_with_TypeRepresentation___Should_return_true___When_objects_being_compared_have_same_property_values()
+            public static void Equals_with_ConstantExpressionRepresentation___Should_return_true___When_objects_being_compared_have_same_property_values()
             {
                 // Arrange, Act
                 var result = ObjectForEquatableTests.Equals(ObjectThatIsEqualToButNotTheSameAsObjectForEquatableTests);
@@ -538,7 +476,5 @@ namespace OBeautifulCode.Representation.Test.TypeRepresentationTests
                 hash1.Should().Be(hash2);
             }
         }
-
-        // ReSharper restore InconsistentNaming
     }
 }
