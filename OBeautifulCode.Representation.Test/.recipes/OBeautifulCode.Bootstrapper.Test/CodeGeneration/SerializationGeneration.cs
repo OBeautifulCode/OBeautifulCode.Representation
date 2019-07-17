@@ -21,7 +21,7 @@ namespace OBeautifulCode.Representation.Test
         private const string SerializationFieldsCodeTemplate = @"
         private static readonly ISerializeAndDeserialize BsonSerializer = new NaosBsonSerializer<" + SerializationConfigurationPrefixToken + @"BsonConfiguration>();
         
-        private static readonly ISerializeAndDeserialize JsonSerializer = new NaosJsonSerializer<" + SerializationConfigurationPrefixToken + @"JsonConfiguration>()";
+        private static readonly ISerializeAndDeserialize JsonSerializer = new NaosJsonSerializer<" + SerializationConfigurationPrefixToken + @"JsonConfiguration>();";
 
         private const string SerializationTestMethodsCodeTemplate = @"
         [SuppressMessage(""Microsoft.Naming"", ""CA1724:TypeNamesShouldNotMatchNamespaces"", Justification = ""Name is correct."")]

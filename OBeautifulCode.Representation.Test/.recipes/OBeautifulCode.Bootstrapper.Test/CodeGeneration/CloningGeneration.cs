@@ -69,6 +69,7 @@ namespace OBeautifulCode.Representation.Test
         }";
 
         private const string DeepCloneWithTestMethodCodeTemplate = @"
+            [Fact]
             public static void DeepCloneWith" + PropertyNameToken + @"___Should_deep_clone_object_and_replace_" + PropertyNameToken + @"_with_the_provided_" + ParameterNameToken + @"___When_called()
             {
                 // Arrange,
@@ -79,9 +80,8 @@ namespace OBeautifulCode.Representation.Test
                 var actual = systemUnderTest.DeepCloneWith" + PropertyNameToken + @"(referenceObject." + PropertyNameToken + @");
 
                 // Assert
-               " + DeepCloneWithAssertLogicToken + @"
-            }
-";
+                " + DeepCloneWithAssertLogicToken + @"
+            }";
 
         public static string GenerateCloningMethods(
             this Type type)
@@ -136,7 +136,7 @@ namespace OBeautifulCode.Representation.Test
             this Type type)
         {
             var properties = type.GetPropertiesOfConcernFromType();
-            var assertDeepCloneSet = properties.Where(_ => _.PropertyType.IsByRef).Select(_ => Invariant($"actual.{_.Name}.Should().NotBeSameAs(systemUnderTest.{_.Name})")).ToList();
+            var assertDeepCloneSet = properties.Where(_ => _.PropertyType.IsByRef).Select(_ => Invariant($"actual.{_.Name}.Should().NotBeSameAs(systemUnderTest.{_.Name});")).ToList();
             var assertDeepCloneToken = string.Join(Environment.NewLine + "               ", assertDeepCloneSet);
 
             var parameters           = type.GetConstructors().SingleOrDefault(_ => _.GetParameters().Length > 1)?.GetParameters().ToList();
@@ -151,15 +151,15 @@ namespace OBeautifulCode.Representation.Test
                     var assertDeepCloneWithSet = parameters.Select(
                                                                 _ =>
                                                                 {
-                                                                    var sourceName = _.Name == parameter.Name ? "reference" : "systemUnderTest";
+                                                                    var sourceName = _.Name == parameter.Name ? "referenceObject" : "systemUnderTest";
                                                                     var resultAssert =
-                                                                        Invariant($"actual.{_.Name.ToUpperFirstLetter()}.Should().Be({sourceName}.{_.Name.ToUpperFirstLetter()})");
-                                                                    if (parameter.ParameterType.IsByRef || parameter.ParameterType == typeof(string))
+                                                                        Invariant($"actual.{_.Name.ToUpperFirstLetter()}.Should().Be({sourceName}.{_.Name.ToUpperFirstLetter()});");
+                                                                    if (parameter.ParameterType.IsByRef)
                                                                     {
                                                                         resultAssert +=
                                                                             Environment.NewLine
                                                                           + Invariant(
-                                                                                $"actual.{_.Name.ToUpperFirstLetter()}.Should().NotBeSameAs({sourceName}.{_.Name.ToUpperFirstLetter()})");
+                                                                                $"actual.{_.Name.ToUpperFirstLetter()}.Should().NotBeSameAs({sourceName}.{_.Name.ToUpperFirstLetter()});");
                                                                     }
 
                                                                     return resultAssert;
@@ -177,6 +177,10 @@ namespace OBeautifulCode.Representation.Test
             }
 
             var deepCloneWithTestInflationToken = string.Join(Environment.NewLine, deepCloneWithTestMethods);
+            if (string.IsNullOrWhiteSpace(deepCloneWithTestInflationToken))
+            {
+                deepCloneWithTestInflationToken = string.Empty;
+            }
 
             var result = CloningTestMethodsCodeTemplate.Replace(TypeNameToken, type.Name)
                                                        .Replace(AssertDeepCloneToken, assertDeepCloneToken)

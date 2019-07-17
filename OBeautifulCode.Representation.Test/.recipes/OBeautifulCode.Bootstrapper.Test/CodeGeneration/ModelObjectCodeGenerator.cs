@@ -57,6 +57,7 @@ namespace OBeautifulCode.Representation.Test
                     type.GenerateEqualityMethods(),
                     type.GenerateGetHashCodeMethod(),
                     type.GenerateCloningMethods(),
+                    type.GenerateToStringMethod(),
                 });
 
             return result;

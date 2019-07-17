@@ -66,11 +66,11 @@ namespace OBeautifulCode.Representation.Test
                  + type.Namespace
                  + ")}.{nameof("
                  + type.Name
-                 + ")}\")}: "
+                 + ")}: "
                  + string.Join(
                        ", ",
                        propertyNames.Select(_ => _ + " = {this." + _ + "?.ToString() ?? \"<null>\"})"))
-                 + ".\"";
+                 + ".\")";
         }
 
         private static string GenerateToStringTestConstructionCode(
@@ -78,14 +78,14 @@ namespace OBeautifulCode.Representation.Test
         {
             var propertyNames = type.GetPropertiesOfConcernFromType().Select(_ => _.Name).ToList();
             return "Invariant($\""
-                 + type.Namespace
+                 + type.Namespace?.Split('.').Last()
                  + "."
                  + type.Name
                  + ": "
                  + string.Join(
                        ", ",
                        propertyNames.Select(_ => _ + " = {systemUnderTest." + _ + "})"))
-                 + ".\"";
+                 + ".\")";
         }
     }
 }

@@ -234,7 +234,6 @@ namespace OBeautifulCode.Representation.Test
                 // Assert
                 actualCheckReferenceAgainstUnequalSet.ForEach(_ => _.Should().BeFalse());
                 actualCheckAgainstOthersInUnequalSet.ForEach(_ => _.Should().BeFalse());
-
             }
 
             [Fact]
@@ -304,11 +303,11 @@ namespace OBeautifulCode.Representation.Test
             {
                 // Arrange, Act
                 var actualHashCodeOfReference = ObjectForEquatableTests.GetHashCode();
-                var actualHashCodesInNotEqualSet = ObjectsThatAreNotEqualToObjectForEquatableTests.GetCombinations(2, 2).Select( _=>_ .First().GetHashCode() == _.Last().GetHashCode()).ToList();
-                var actualEqualityCheckOfHashCodesAgainstOthersInNotEqualSet = ObjectsThatAreNotEqualToObjectForEquatableTests.GetCombinations(2, 2).Select( _=>_ .First().GetHashCode() == _.Last().GetHashCode()).ToList();
+                var actualHashCodesInNotEqualSet = ObjectsThatAreNotEqualToObjectForEquatableTests.Select(_ => _.GetHashCode()).ToList();
+                var actualEqualityCheckOfHashCodesAgainstOthersInNotEqualSet = ObjectsThatAreNotEqualToObjectForEquatableTests.GetCombinations(2, 2).Select(_ => _.First().GetHashCode() == _.Last().GetHashCode()).ToList();
 
                 // Assert
-                actualHashCodesInNotEqualSet.ForEach(_ => _.Should().NotBe(actualHashCodeOfReference));
+                actualHashCodesInNotEqualSet.Should().NotContain(actualHashCodeOfReference);
                 actualEqualityCheckOfHashCodesAgainstOthersInNotEqualSet.ForEach(_ => _.Should().BeFalse());
             }
 
@@ -364,7 +363,7 @@ namespace OBeautifulCode.Representation.Test
                 unequalSet.Add(code);
             }
 
-            var unequalObjectsToken = string.Join("," + Environment.NewLine + "            ", unequalSet);
+            var unequalObjectsToken = string.Join("," + Environment.NewLine + "            ", unequalSet) + ",";
 
             var propertyNameToSourceCodeMapForNewForEquatable = properties.ToDictionary(k => k.Name, v =>
             {

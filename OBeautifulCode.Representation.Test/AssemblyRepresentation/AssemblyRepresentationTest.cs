@@ -8,12 +8,19 @@ namespace OBeautifulCode.Representation.Test.AssemblyRepresentationTests
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
     using System.IO;
     using System.Linq;
+    using System.Reflection;
+    using Castle.DynamicProxy.Internal;
     using FakeItEasy;
     using FluentAssertions;
+    using OBeautifulCode.AutoFakeItEasy;
+    using OBeautifulCode.Collection.Recipes;
+    using OBeautifulCode.Type;
     using Xunit;
     using Xunit.Abstractions;
+    using static System.FormattableString;
 
     public class AssemblyRepresentationTest
     {
