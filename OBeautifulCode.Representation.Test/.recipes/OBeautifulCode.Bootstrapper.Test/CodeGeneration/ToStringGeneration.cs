@@ -62,30 +62,44 @@ namespace OBeautifulCode.Representation.Test
             this Type type)
         {
             var propertyNames = type.GetPropertiesOfConcernFromType().ToDictionary(_ => _.Name, _ => _);
-            return "Invariant($\"{nameof("
-                 + type.Namespace
-                 + ")}.{nameof("
-                 + type.TreatedTypeName()
-                 + ")}: "
-                 + string.Join(
-                       ", ",
-                       propertyNames.Select(_ => _ + " = {this." + _.Key + (_.Value.PropertyType.IsByRef || _.Value.PropertyType == typeof(string) ? "?" : string.Empty) + ".ToString() ?? \"<null>\"}"))
-                 + ".\")";
+            var result = "Invariant($\"{nameof("
+                       + type.Namespace
+                       + ")}.{nameof("
+                       + type.TreatedTypeName()
+                       + ")}: "
+                       + string.Join(
+                             ", ",
+                             propertyNames.Select(
+                                 _ =>
+                                 {
+                                     var localResult = _.Key
+                                                     + " = {this."
+                                                     + _.Key
+                                                     + (_.Value.PropertyType.IsByRef || _.Value.PropertyType == typeof(string) ? "?" : string.Empty)
+                                                     + ".ToString() ?? \"<null>\"}";
+
+                                     return localResult;
+                                 }))
+                       + ".\")";
+
+            return result;
         }
 
         private static string GenerateToStringTestConstructionCode(
             this Type type)
         {
             var propertyNames = type.GetPropertiesOfConcernFromType().Select(_ => _.Name).ToList();
-            return "Invariant($\""
-                 + type.Namespace?.Split('.').Last()
-                 + "."
-                 + type.TreatedTypeName()
-                 + ": "
-                 + string.Join(
-                       ", ",
-                       propertyNames.Select(_ => _ + " = {systemUnderTest." + _ + "})"))
-                 + ".\")";
+            var result = "Invariant($\""
+                       + type.Namespace?.Split('.').Last()
+                       + "."
+                       + type.TreatedTypeName()
+                       + ": "
+                       + string.Join(
+                             ", ",
+                             propertyNames.Select(_ => _ + " = {systemUnderTest." + _ + "}"))
+                       + ".\")";
+
+            return result;
         }
     }
 }
