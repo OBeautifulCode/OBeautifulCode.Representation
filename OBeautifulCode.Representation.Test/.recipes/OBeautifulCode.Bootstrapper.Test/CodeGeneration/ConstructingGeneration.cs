@@ -17,7 +17,8 @@ namespace OBeautifulCode.Representation.Test
         private const string TypeNameToken = "<<<TypeNameHere>>>";
         private const string ConstructorParameterToken = "<<<ConstructorParameterUnderTest>>>";
         private const string ConstructorTestInflationToken = "<<<ConstructorTestMethodsInflatedGoesHere>>>";
-        private const string NewObjectForArgumentTestToken = "<<<NewObjectWithOneArgumentNullHere>>>";
+        private const string NewObjectForArgumentNullTestToken = "<<<NewObjectWithOneArgumentNullHere>>>";
+        private const string NewObjectForArgumentWhiteSpaceTestToken = "<<<NewObjectWithOneArgumentWhiteSpaceHere>>>";
         private const string PropertyNameToken = "<<<PropertyNameHere>>>";
         private const string NewObjectForGetterTestToken = "<<<NewObjectWithOneArgumentFromOtherHere>>>";
 
@@ -54,11 +55,27 @@ namespace OBeautifulCode.Representation.Test
                 var referenceObject = A.Dummy<" + TypeNameToken + @">();
 
                 // Act
-                var actual = Record.Exception(() => " + NewObjectForArgumentTestToken + @");
+                var actual = Record.Exception(() => " + NewObjectForArgumentNullTestToken + @");
 
                 // Assert
                 actual.Should().BeOfType<ArgumentNullException>();
                 actual.Message.Should().Contain(""" + ConstructorParameterToken + @""");
+            }";
+
+        private const string ConstructorTestMethodForStringArgumentCodeTemplate = @"
+            [Fact]
+            public static void Constructor___Should_throw_ArgumentException___When_parameter_" + ConstructorParameterToken + @"_is_white_space()
+            {
+                // Arrange,
+                var referenceObject = A.Dummy<" + TypeNameToken + @">();
+
+                // Act
+                var actual = Record.Exception(() => " + NewObjectForArgumentWhiteSpaceTestToken + @");
+
+                // Assert
+                actual.Should().BeOfType<ArgumentException>();
+                actual.Message.Should().Contain(""" + ConstructorParameterToken + @""");
+                actual.Message.Should().Contain(""white space"");
             }";
 
         private const string PropertyGetterTestMethodTemplate = @"
@@ -137,8 +154,28 @@ namespace OBeautifulCode.Representation.Test
                     var testMethod = ConstructorTestMethodForArgumentCodeTemplate
                                     .Replace(TypeNameToken,             type.Name)
                                     .Replace(ConstructorParameterToken, parameter.Name)
-                                    .Replace(NewObjectForArgumentTestToken, newObjectCode);
+                                    .Replace(NewObjectForArgumentNullTestToken, newObjectCode);
                     testMethods.Add(testMethod);
+
+                    if (parameter.ParameterType == typeof(string))
+                    {
+                        var stringPropertyNameToSourceCodeMap = parameters.ToDictionary(
+                            k => k.Name,
+                            v =>
+                            {
+                                var referenceObject = "referenceObject." + v.Name.ToUpperFirstLetter();
+                                return v.Name == parameter.Name ? "Invariant($\"  {Environment.NewLine}  \")" : referenceObject;
+                            });
+
+                        var stringNewObjectCode = type.GenerateNewLogicCodeForTypeWithSources(stringPropertyNameToSourceCodeMap);
+
+                        var stringTestMethod = ConstructorTestMethodForStringArgumentCodeTemplate
+                                              .Replace(TypeNameToken,                     type.Name)
+                                              .Replace(ConstructorParameterToken,         parameter.Name)
+                                              .Replace(NewObjectForArgumentWhiteSpaceTestToken, stringNewObjectCode);
+
+                        testMethods.Add(stringTestMethod);
+                    }
                 }
 
                 foreach (var parameter in parameters)

@@ -61,7 +61,7 @@ namespace OBeautifulCode.Representation.Test
         private const string EqualityTestFieldsCodeTemplate = @"
         private static readonly " + TypeNameToken + @" ObjectForEquatableTests = A.Dummy<" + TypeNameToken + @">();
 
-        private static readonly " + TypeNameToken + @" ObjectThatIsEqualButNotTheSameAsObjectForEquatableTests =
+        private static readonly " + TypeNameToken + @" ObjectThatIsEqualToButNotTheSameAsObjectForEquatableTests =
             " + NewObjectForEquatableToken + @";
 
         private static readonly " + TypeNameToken + @"[] ObjectsThatAreNotEqualToObjectForEquatableTests =
@@ -132,7 +132,7 @@ namespace OBeautifulCode.Representation.Test
             public static void EqualsOperator___Should_return_true___When_objects_being_compared_have_same_property_values()
             {
                 // Arrange, Act
-                var result = ObjectForEquatableTests == ObjectThatIsEqualButNotTheSameAsObjectForEquatableTests;
+                var result = ObjectForEquatableTests == ObjectThatIsEqualToButNotTheSameAsObjectForEquatableTests;
 
                 // Assert
                 result.Should().BeTrue();
@@ -195,7 +195,7 @@ namespace OBeautifulCode.Representation.Test
             public static void NotEqualsOperator___Should_return_false___When_objects_being_compared_have_same_property_values()
             {
                 // Arrange, Act
-                var result = ObjectForEquatableTests != ObjectThatIsEqualButNotTheSameAsObjectForEquatableTests;
+                var result = ObjectForEquatableTests != ObjectThatIsEqualToButNotTheSameAsObjectForEquatableTests;
 
                 // Assert
                 result.Should().BeFalse();
@@ -240,7 +240,7 @@ namespace OBeautifulCode.Representation.Test
             public static void Equals_with_" + TypeNameToken + @"___Should_return_true___When_objects_being_compared_have_same_property_values()
             {
                 // Arrange, Act
-                var result = ObjectForEquatableTests.Equals(ObjectThatIsEqualButNotTheSameAsObjectForEquatableTests);
+                var result = ObjectForEquatableTests.Equals(ObjectThatIsEqualToButNotTheSameAsObjectForEquatableTests);
 
                 // Assert
                 result.Should().BeTrue();
@@ -292,7 +292,7 @@ namespace OBeautifulCode.Representation.Test
             public static void Equals_with_Object___Should_return_true___When_objects_being_compared_have_same_property_values()
             {
                 // Arrange, Act
-                var result = ObjectForEquatableTests.Equals((object)ObjectThatIsEqualButNotTheSameAsObjectForEquatableTests);
+                var result = ObjectForEquatableTests.Equals((object)ObjectThatIsEqualToButNotTheSameAsObjectForEquatableTests);
 
                 // Assert
                 result.Should().BeTrue();
@@ -316,7 +316,7 @@ namespace OBeautifulCode.Representation.Test
             {
                 // Arrange, Act
                 var hash1 = ObjectForEquatableTests.GetHashCode();
-                var hash2 = ObjectThatIsEqualButNotTheSameAsObjectForEquatableTests.GetHashCode();
+                var hash2 = ObjectThatIsEqualToButNotTheSameAsObjectForEquatableTests.GetHashCode();
 
                 // Assert
                 hash1.Should().Be(hash2);
@@ -368,7 +368,7 @@ namespace OBeautifulCode.Representation.Test
             var propertyNameToSourceCodeMapForNewForEquatable = properties.ToDictionary(k => k.Name, v =>
             {
                 var referenceObject = "ObjectForEquatableTests." + v.Name;
-                return v.PropertyType.GenerateDummyConstructionCodeForType(referenceObject);
+                return referenceObject;
             });
 
             var newObjectFromEquatableToken = type.GenerateNewLogicCodeForTypeWithSources(propertyNameToSourceCodeMapForNewForEquatable);
