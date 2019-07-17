@@ -190,7 +190,9 @@ namespace OBeautifulCode.Representation.Test
                 var actual = systemUnderTest.DeepClone();
 
                 // Assert
-                " + AssertDeepCloneToken + @"
+               actual.Should().Be(systemUnderTest);
+               actual.Should().NotBeSameAs(systemUnderTest);
+               " + AssertDeepCloneToken + @"
             }
         }
 
@@ -569,11 +571,15 @@ namespace OBeautifulCode.Representation.Test
                                                                                                          return v.PropertyType.GenerateDummyConstructionCodeForType(referenceObject);
                                                                                                      });
 
+            var assertDeepCloneSet = properties.Select(_ => Invariant($"actual.{_.Name}.Should().NotBeSameAs(systemUnderTest.{_.Name})")).ToList();
+            var assertDeepCloneToken = string.Join(Environment.NewLine + "               ", assertDeepCloneSet);
+
             var newObjectFromEquatableToken = type.GenerateNewLogicCodeForTypeWithSources(propertyNameToSourceCodeMapForNewForEquatable);
 
             var result = TestClassCode.Replace(ClassNameToken, type.Name)
                                       .Replace(ToStringTestToken, toStringTestToken)
                                       .Replace(UnequalObjectsToken, unequalObjectsToken)
+                                      .Replace(AssertDeepCloneToken, assertDeepCloneToken)
                                       .Replace(NewObjectForEquatableToken, newObjectFromEquatableToken);
 
             return result;
