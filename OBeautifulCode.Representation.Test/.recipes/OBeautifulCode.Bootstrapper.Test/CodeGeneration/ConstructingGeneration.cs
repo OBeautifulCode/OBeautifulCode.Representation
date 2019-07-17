@@ -15,12 +15,11 @@ namespace OBeautifulCode.Representation.Test
     public static class ConstructingGeneration
     {
         private const string TypeNameToken = "<<<TypeNameHere>>>";
-
         private const string ConstructorParameterToken = "<<<ConstructorParameterUnderTest>>>";
-
         private const string ConstructorTestInflationToken = "<<<ConstructorTestMethodsInflatedGoesHere>>>";
-
         private const string NewObjectForArgumentTestToken = "<<<NewObjectWithOneArgumentNullHere>>>";
+        private const string PropertyNameToken = "<<<PropertyNameHere>>>";
+        private const string NewObjectForGetterTestToken = "<<<NewObjectWithOneArgumentFromOtherHere>>>";
 
         private const string ConstructingTestMethodsCodeTemplate = @"
         [SuppressMessage(""Microsoft.Design"", ""CA1034:NestedTypesShouldNotBeVisible"", Justification = ""Grouping construct for unit test runner."")]
@@ -60,6 +59,22 @@ namespace OBeautifulCode.Representation.Test
                 // Assert
                 actual.Should().BeOfType<ArgumentNullException>();
                 actual.Message.Should().Contain(""" + ConstructorParameterToken + @""");
+            }";
+
+        private const string PropertyGetterTestMethodTemplate = @"
+            [Fact]
+            public static void " + PropertyNameToken + @"___Should_return_same_" + ConstructorParameterToken + @"_parameter_passed_to_constructor___When_getting()
+            {
+                // Arrange,
+                var referenceObject = A.Dummy<" + TypeNameToken + @">();
+                var systemUnderTest = " + NewObjectForGetterTestToken + @";
+                var expected = referenceObject." + PropertyNameToken + @";
+                
+                // Act
+                var actual = systemUnderTest." + PropertyNameToken + @";
+
+                // Assert
+                actual.Should().Be(expected);
             }";
 
         public static string GenerateNewLogicCodeForTypeWithSources(
@@ -123,6 +138,22 @@ namespace OBeautifulCode.Representation.Test
                                     .Replace(TypeNameToken,             type.Name)
                                     .Replace(ConstructorParameterToken, parameter.Name)
                                     .Replace(NewObjectForArgumentTestToken, newObjectCode);
+                    testMethods.Add(testMethod);
+                }
+
+                foreach (var parameter in parameters)
+                {
+                    var propertyNameToSourceCodeMap = parameters.ToDictionary(
+                        k => k.Name,
+                        v => "referenceObject." + v.Name.ToUpperFirstLetter());
+
+                    var newObjectCode = type.GenerateNewLogicCodeForTypeWithSources(propertyNameToSourceCodeMap);
+
+                    var testMethod = PropertyGetterTestMethodTemplate
+                                    .Replace(TypeNameToken,               type.Name)
+                                    .Replace(PropertyNameToken,           parameter.Name.ToUpperFirstLetter())
+                                    .Replace(ConstructorParameterToken,  parameter.Name)
+                                    .Replace(NewObjectForGetterTestToken, newObjectCode);
                     testMethods.Add(testMethod);
                 }
             }
