@@ -64,6 +64,13 @@ namespace OBeautifulCode.Representation.Test
                     var result = AppDomainTypes[index];
                     return result.ToRepresentation();
                 });
+
+            AutoFixtureBackedDummyFactory.AddDummyCreator(
+                () => new AssemblyRepresentation(
+                    A.Dummy<string>(),
+                    A.Dummy<string>(),
+                    A.Dummy<string>(),
+                    A.Dummy<string>()));
         }
 
         /// <inheritdoc />

@@ -12,13 +12,14 @@ namespace OBeautifulCode.Representation
     using System.Reflection;
     using OBeautifulCode.Math.Recipes;
     using OBeautifulCode.Reflection.Recipes;
+    using OBeautifulCode.Type;
     using OBeautifulCode.Validation.Recipes;
     using static System.FormattableString;
 
     /// <summary>
     /// Representation of <see cref="Assembly" />.
     /// </summary>
-    public class AssemblyRepresentation : IEquatable<AssemblyRepresentation>
+    public class AssemblyRepresentation : IModel<AssemblyRepresentation>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="AssemblyRepresentation"/> class.
@@ -60,63 +61,34 @@ namespace OBeautifulCode.Representation
         /// <summary>
         /// Equality operator.
         /// </summary>
-        /// <param name="first">First parameter.</param>
-        /// <param name="second">Second parameter.</param>
+        /// <param name="left">Left parameter.</param>
+        /// <param name="right">Right parameter.</param>
         /// <returns>A value indicating whether or not the two items are equal.</returns>
-        public static bool operator ==(AssemblyRepresentation first, AssemblyRepresentation second)
+        public static bool operator ==(AssemblyRepresentation left, AssemblyRepresentation right)
         {
-            if (ReferenceEquals(first, second))
+            if (ReferenceEquals(left, right))
             {
                 return true;
             }
 
-            if (ReferenceEquals(first, null) || ReferenceEquals(second, null))
+            if (ReferenceEquals(left, null) || ReferenceEquals(right, null))
             {
                 return false;
             }
 
-            return string.Equals(first.Name, second.Name, StringComparison.OrdinalIgnoreCase) &&
-                   string.Equals(first.Version, second.Version, StringComparison.OrdinalIgnoreCase) &&
-                   string.Equals(first.FilePath, second.FilePath, StringComparison.OrdinalIgnoreCase) &&
-                   string.Equals(first.FrameworkVersion, second.FrameworkVersion, StringComparison.OrdinalIgnoreCase);
+            return left.Name.Equals(right.Name, StringComparison.Ordinal)
+                && left.Version.Equals(right.Version, StringComparison.Ordinal)
+                && left.FilePath.Equals(right.FilePath, StringComparison.Ordinal)
+                && left.FrameworkVersion.Equals(right.FrameworkVersion, StringComparison.Ordinal);
         }
 
         /// <summary>
         /// Inequality operator.
         /// </summary>
-        /// <param name="first">First parameter.</param>
-        /// <param name="second">Second parameter.</param>
-        /// <returns>A value indicating whether or not the two items are inequal.</returns>
-        public static bool operator !=(AssemblyRepresentation first, AssemblyRepresentation second) => !(first == second);
-
-        /// <summary>
-        /// Reads the assembly from file path to create a <see cref="AssemblyRepresentation"/>.
-        /// </summary>
-        /// <param name="assemblyFilePath">The file path the assembly is at.</param>
-        /// <param name="useAssemblyIfAlreadyInAppDomain">If the assembly file is already loaded in the AppDomain will use the existing Assembly. Default is true, false will force the file to be loaded...</param>
-        /// <returns>Details about an assembly.</returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2001:AvoidCallingProblematicMethods", MessageId = "System.Reflection.Assembly.LoadFile", Justification = "Need to be able to do this from a file also.")]
-        public static AssemblyRepresentation CreateFromFile(string assemblyFilePath, bool useAssemblyIfAlreadyInAppDomain = true)
-        {
-            new { assemblyFilePath }.Must().NotBeNullNorWhiteSpace();
-
-            Assembly assembly = null;
-
-            if (useAssemblyIfAlreadyInAppDomain)
-            {
-                assembly =
-                    AppDomain.CurrentDomain.GetAssemblies()
-                             .Where(_ => !_.IsDynamic)
-                             .SingleOrDefault(_ => _.CodeBase.ToUpperInvariant() == new Uri(assemblyFilePath).ToString().ToUpperInvariant());
-            }
-
-            if (assembly == null)
-            {
-                assembly = Assembly.LoadFile(assemblyFilePath);
-            }
-
-            return assembly.ToRepresentation();
-        }
+        /// <param name="left">Left parameter.</param>
+        /// <param name="right">Right parameter.</param>
+        /// <returns>A value indicating whether or not the two items are unequal.</returns>
+        public static bool operator !=(AssemblyRepresentation left, AssemblyRepresentation right) => !(left == right);
 
         /// <inheritdoc />
         public bool Equals(AssemblyRepresentation other) => this == other;
@@ -125,17 +97,26 @@ namespace OBeautifulCode.Representation
         public override bool Equals(object obj) => this == (obj as AssemblyRepresentation);
 
         /// <inheritdoc />
-        public override int GetHashCode() => HashCodeHelper.Initialize()
-            .Hash(this.Name)
-            .Hash(this.Version)
-            .Hash(this.FilePath)
-            .Hash(this.FrameworkVersion)
+        public override int GetHashCode() => HashCodeHelper.Initialize().
+            Hash(this.Name).Hash(this.Version).Hash(this.FilePath).Hash(this.FrameworkVersion)
             .Value;
+
+        /// <inheritdoc />
+        public object Clone() => this.DeepClone();
+
+        /// <inheritdoc />
+        public AssemblyRepresentation DeepClone()
+        {
+            var result = new AssemblyRepresentation(this.Name?.Clone().ToString(), this.Version?.Clone().ToString(), this.FilePath?.Clone().ToString(), this.FrameworkVersion?.Clone().ToString());
+
+            return result;
+        }
 
         /// <inheritdoc />
         public override string ToString()
         {
-            var result = Invariant($"{nameof(AssemblyRepresentation)} - {nameof(this.Name)}: {this.Name}; {nameof(this.Version)}: {this.Version?.ToString() ?? "<null>"}; {nameof(this.FilePath)}: {this.FilePath ?? "<null>"}; {nameof(this.FrameworkVersion)}: {this.FrameworkVersion ?? "<null>"}.");
+            var result = Invariant($"{nameof(AssemblyRepresentation)}: Name = {this.Name?.ToString() ?? "<null>"} ,Version = {this.Version?.ToString() ?? "<null>"} ,FilePath = {this.FilePath?.ToString() ?? "<null>"} ,FrameworkVersion = {this.FrameworkVersion?.ToString() ?? "<null>"}.");
+
             return result;
         }
     }
