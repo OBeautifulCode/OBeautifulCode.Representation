@@ -17,6 +17,7 @@ namespace OBeautifulCode.Representation.Test.ConstantExpressionRepresentationTes
     using FakeItEasy;
     using FluentAssertions;
     using OBeautifulCode.AutoFakeItEasy;
+    using OBeautifulCode.Bootstrapper.Test.CodeGeneration;
     using OBeautifulCode.Collection.Recipes;
     using OBeautifulCode.Type;
     using Xunit;

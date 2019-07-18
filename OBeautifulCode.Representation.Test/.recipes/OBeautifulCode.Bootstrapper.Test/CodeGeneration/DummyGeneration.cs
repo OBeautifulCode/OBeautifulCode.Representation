@@ -4,9 +4,10 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace OBeautifulCode.Representation.Test
+namespace OBeautifulCode.Bootstrapper.Test.CodeGeneration
 {
     using System;
+    using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using OBeautifulCode.Validation.Recipes;
 
@@ -18,16 +19,16 @@ namespace OBeautifulCode.Representation.Test
             AutoFixtureBackedDummyFactory.AddDummyCreator(
                 () => " + NewDummyToken + @");";
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1026:DefaultParametersShouldNotBeUsed", Justification = "Want a default value for optional ThatIsNot source.")]
+        [SuppressMessage("Microsoft.Design", "CA1026:DefaultParametersShouldNotBeUsed", Justification = "Want a default value for optional ThatIsNot source.")]
         public static string GenerateDummyConstructionCodeForType(
             this Type type,
-            string    thatIsNot = null)
+            string thatIsNot = null)
         {
             type.Named(nameof(type)).Must().NotBeNull();
 
             var result =
                 string.IsNullOrWhiteSpace(thatIsNot)
-                    ? "A.Dummy<" + type.TreatedTypeName()                                + ">()"
+                    ? "A.Dummy<" + type.TreatedTypeName() + ">()"
                     : "A.Dummy<" + type.TreatedTypeName() + ">().ThatIsNot(" + thatIsNot + ")";
 
             return result;
@@ -36,10 +37,10 @@ namespace OBeautifulCode.Representation.Test
         public static string GenerateCodeForDummyFactory(
             this Type type)
         {
-            var properties                  = type.GetPropertiesOfConcernFromType();
+            var properties = type.GetPropertiesOfConcernFromType();
             var propertyNameToSourceCodeMap = properties.ToDictionary(k => k.Name, v => v.PropertyType.GenerateDummyConstructionCodeForType());
-            var newDummyToken               = type.GenerateNewLogicCodeForTypeWithSources(propertyNameToSourceCodeMap);
-            var result                      = DummyFactoryCode.Replace(NewDummyToken, newDummyToken);
+            var newDummyToken = type.GenerateNewLogicCodeForTypeWithSources(propertyNameToSourceCodeMap);
+            var result = DummyFactoryCode.Replace(NewDummyToken, newDummyToken);
             return result;
         }
     }

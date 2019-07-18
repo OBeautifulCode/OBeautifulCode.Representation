@@ -4,14 +4,16 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace OBeautifulCode.Representation.Test
+namespace OBeautifulCode.Bootstrapper.Test.CodeGeneration
 {
     using System;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
+    using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using System.Reflection;
+    using OBeautifulCode.Validation.Recipes;
     using static System.FormattableString;
 
     public static class CodeGenerationShared
@@ -50,13 +52,19 @@ namespace OBeautifulCode.Representation.Test
         public static PropertyInfo[] GetPropertiesOfConcernFromType(
             this Type type)
         {
-            return type.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.GetProperty | BindingFlags.FlattenHierarchy);
+            type.Named(nameof(type)).Must().NotBeNull();
+
+            var result = type.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.GetProperty | BindingFlags.FlattenHierarchy);
+
+            return result;
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Globalization", "CA1308:NormalizeStringsToUppercase", Justification = "Lowercase is correct here.")]
+        [SuppressMessage("Microsoft.Globalization", "CA1308:NormalizeStringsToUppercase", Justification = "Lowercase is correct here.")]
         public static string TreatedTypeName(
             this Type type)
         {
+            type.Named(nameof(type)).Must().NotBeNull();
+
             if (type == typeof(string))
             {
                 return typeof(string).Name.ToLowerInvariant();
@@ -71,8 +79,8 @@ namespace OBeautifulCode.Representation.Test
             }
             else if (type.IsGenericType)
             {
-                var typeName                  = type.Name.Split('`').First();
-                var genericArguments          = type.GetGenericArguments();
+                var typeName = type.Name.Split('`').First();
+                var genericArguments = type.GetGenericArguments();
                 var genericArgumentsTypeNames = genericArguments.Select(_ => _.TreatedTypeName());
                 return typeName + "<" + string.Join(", ", genericArgumentsTypeNames) + ">";
             }
@@ -120,7 +128,7 @@ namespace OBeautifulCode.Representation.Test
             return result;
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Globalization", "CA1308:NormalizeStringsToUppercase", Justification = "Lowercase is correct here.")]
+        [SuppressMessage("Microsoft.Globalization", "CA1308:NormalizeStringsToUppercase", Justification = "Lowercase is correct here.")]
         public static string ToLowerFirstLetter(
             this string input)
         {

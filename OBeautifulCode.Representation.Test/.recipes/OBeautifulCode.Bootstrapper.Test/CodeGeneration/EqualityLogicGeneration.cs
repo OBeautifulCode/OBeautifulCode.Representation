@@ -4,10 +4,11 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace OBeautifulCode.Representation.Test
+namespace OBeautifulCode.Bootstrapper.Test.CodeGeneration
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using System.Reflection;
     using OBeautifulCode.Validation.Recipes;
@@ -18,7 +19,7 @@ namespace OBeautifulCode.Representation.Test
         private const string TypeNameToken = "<<<TypeNameHere>>>";
         private const string EqualityToken = "<<<EqualityLogicHere>>>";
         private const string NewObjectForEquatableToken = "<<<NewObjectLogicForEquatableHere>>>";
-        private const string UnequalObjectsToken        = "<<<UnequalObjectsCreationHere>>>";
+        private const string UnequalObjectsToken = "<<<UnequalObjectsCreationHere>>>";
 
         private const string EqualityMethodsCodeTemplate = @"    /// <summary>
         /// Determines whether two objects of type <see cref=""" + TypeNameToken + @"""/> are equal.
@@ -326,14 +327,14 @@ namespace OBeautifulCode.Representation.Test
         {
             var properties = type.GetPropertiesOfConcernFromType();
             var equalityLines = properties.Select(_ => _.GenerateEqualityLogicCodeForProperty()).ToList();
-            var equalityToken  = string.Join(Environment.NewLine + "                      && ", equalityLines);
+            var equalityToken = string.Join(Environment.NewLine + "                      && ", equalityLines);
             var result = EqualityMethodsCodeTemplate.Replace(TypeNameToken, type.TreatedTypeName())
                                                     .Replace(EqualityToken, equalityToken);
 
             return result;
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters", Justification = "Want Type to be the type.")]
+        [SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters", Justification = "Want Type to be the type.")]
         public static string GenerateEqualityTestMethods(
             this Type type)
         {

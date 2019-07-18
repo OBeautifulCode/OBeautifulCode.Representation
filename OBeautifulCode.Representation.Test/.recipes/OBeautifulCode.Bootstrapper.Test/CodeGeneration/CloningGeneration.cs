@@ -4,7 +4,7 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace OBeautifulCode.Representation.Test
+namespace OBeautifulCode.Bootstrapper.Test.CodeGeneration
 {
     using System;
     using System.Collections.Generic;
@@ -140,7 +140,7 @@ namespace OBeautifulCode.Representation.Test
             var assertDeepCloneSet = properties.Where(_ => !_.PropertyType.IsValueType && _.PropertyType != typeof(string)).Select(_ => Invariant($"actual.{_.Name}.Should().NotBeSameAs(systemUnderTest.{_.Name});")).ToList();
             var assertDeepCloneToken = assertDeepCloneSet.Any() ? Environment.NewLine + "               " + string.Join(Environment.NewLine + "               ", assertDeepCloneSet) : string.Empty;
 
-            var parameters           = type.GetConstructors().SingleOrDefault(_ => _.GetParameters().Length > 1)?.GetParameters().ToList();
+            var parameters = type.GetConstructors().SingleOrDefault(_ => _.GetParameters().Length > 1)?.GetParameters().ToList();
             var deepCloneWithTestMethods = new List<string>();
             if (parameters != null)
             {
@@ -156,12 +156,12 @@ namespace OBeautifulCode.Representation.Test
                                                                     var resultAssert = _.ParameterType.GenerateFluentEqualityStatement(
                                                                         Invariant($"actual.{_.Name.ToUpperFirstLetter()}"),
                                                                         Invariant($"{sourceName}.{_.Name.ToUpperFirstLetter()}"));
-                                                                    if (!parameter.ParameterType.IsValueType && parameter.ParameterType != typeof(string))
+                                                                    if (_.Name != parameter.Name && !_.ParameterType.IsValueType && _.ParameterType != typeof(string))
                                                                     {
                                                                         resultAssert +=
                                                                             Environment.NewLine
                                                                           + Invariant(
-                                                                                $"actual.{_.Name.ToUpperFirstLetter()}.Should().NotBeSameAs({sourceName}.{_.Name.ToUpperFirstLetter()});");
+                                                                                $"               actual.{_.Name.ToUpperFirstLetter()}.Should().NotBeSameAs({sourceName}.{_.Name.ToUpperFirstLetter()});");
                                                                     }
 
                                                                     return resultAssert;
@@ -189,7 +189,7 @@ namespace OBeautifulCode.Representation.Test
 
         private static string GenerateCloningLogicCodeForType(
             this Type type,
-            string    cloneSourceCode)
+            string cloneSourceCode)
         {
             type.Named(nameof(type)).Must().NotBeNull();
 
@@ -201,17 +201,17 @@ namespace OBeautifulCode.Representation.Test
                                 .Must()
                                 .BeEqualTo(2);
 
-                var keyType    = genericArguments.First();
-                var valueType  = genericArguments.Last();
-                var keyClone   = keyType.GenerateCloningLogicCodeForType("k.Key");
+                var keyType = genericArguments.First();
+                var valueType = genericArguments.Last();
+                var keyClone = keyType.GenerateCloningLogicCodeForType("k.Key");
                 var valueClone = valueType.GenerateCloningLogicCodeForType("v.Value");
                 result = Invariant($"{cloneSourceCode}?.ToDictionary(k => {keyClone}, v => {valueClone})");
             }
             else if (type.IsAssignableToAnyCollection())
             {
                 var genericArguments = type.GetGenericArguments();
-                var valueType        = genericArguments.Single();
-                var valueClone       = valueType.GenerateCloningLogicCodeForType("_");
+                var valueType = genericArguments.Single();
+                var valueClone = valueType.GenerateCloningLogicCodeForType("_");
                 result = Invariant($"{cloneSourceCode}?.Select(_ => {valueClone}).ToList()");
             }
             else if (type == typeof(string))

@@ -4,12 +4,13 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace OBeautifulCode.Representation.Test
+namespace OBeautifulCode.Bootstrapper.Test.CodeGeneration
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using OBeautifulCode.Collection.Recipes;
+    using OBeautifulCode.Validation.Recipes;
     using static System.FormattableString;
 
     public static class ConstructingGeneration
@@ -96,9 +97,12 @@ namespace OBeautifulCode.Representation.Test
             }";
 
         public static string GenerateNewLogicCodeForTypeWithSources(
-            this Type                  type,
+            this Type type,
             Dictionary<string, string> propertyNameToSourceCodeMap)
         {
+            type.Named(nameof(type)).Must().NotBeNull();
+            propertyNameToSourceCodeMap.Named(nameof(propertyNameToSourceCodeMap)).Must().NotBeNull();
+
             if (type.GetConstructors()
                     .Any(
                          _ =>
@@ -132,6 +136,8 @@ namespace OBeautifulCode.Representation.Test
         public static string GenerateConstructorTestMethods(
             this Type type)
         {
+            type.Named(nameof(type)).Must().NotBeNull();
+
             var constructorWithParameters = type.GetConstructors().SingleOrDefault(_ => _.GetParameters().Length > 0);
             var testMethods = new List<string>();
             if (constructorWithParameters != null)
@@ -187,7 +193,7 @@ namespace OBeautifulCode.Representation.Test
 
                     var newObjectCode = type.GenerateNewLogicCodeForTypeWithSources(propertyNameToSourceCodeMap);
 
-                    var assertPropertyGetterToken  = parameter.ParameterType.GenerateFluentEqualityStatement(
+                    var assertPropertyGetterToken = parameter.ParameterType.GenerateFluentEqualityStatement(
                         "actual",
                         "expected");
 

@@ -4,7 +4,7 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace OBeautifulCode.Representation.Test
+namespace OBeautifulCode.Bootstrapper.Test.CodeGeneration
 {
     using System;
     using System.Linq;
@@ -26,9 +26,9 @@ namespace OBeautifulCode.Representation.Test
             this Type type)
         {
             var properties = type.GetPropertiesOfConcernFromType();
-            var hashLines  = properties.Select(_ => _.GenerateHashCodeMethodCodeForProperty()).ToList();
-            var hashToken  = string.Join(Environment.NewLine + "            .", hashLines);
-            var result     = HashMethodCodeTemplate.Replace(HashToken, hashToken);
+            var hashLines = properties.Select(_ => _.GenerateHashCodeMethodCodeForProperty()).ToList();
+            var hashToken = string.Join(Environment.NewLine + "            .", hashLines);
+            var result = HashMethodCodeTemplate.Replace(HashToken, hashToken);
 
             return result;
         }

@@ -4,12 +4,13 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace OBeautifulCode.Representation.Test
+namespace OBeautifulCode.Bootstrapper.Test.CodeGeneration
 {
     using System;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
+    using System.Diagnostics.CodeAnalysis;
     using System.Globalization;
     using System.Linq;
     using System.Reflection;
@@ -23,21 +24,43 @@ namespace OBeautifulCode.Representation.Test
     /// <summary>
     /// Helper methods for creating object equality and hash code text via reflection.
     /// </summary>
-    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
+    [ExcludeFromCodeCoverage]
     public static partial class CodeGenerator
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1714:FlagsEnumsShouldHavePluralNames", Justification = "Name/spelling is correct.")]
+        /// <summary>
+        /// Enum GenerateFor.
+        /// </summary>
+        [SuppressMessage("Microsoft.Naming", "CA1714:FlagsEnumsShouldHavePluralNames", Justification = "Name/spelling is correct.")]
         [Flags]
         public enum GenerateFor
         {
+            /// <summary>
+            /// The none.
+            /// </summary>
             None = 0,
+
+            /// <summary>
+            /// The model dummy factory snippet.
+            /// </summary>
             ModelDummyFactorySnippet = 1,
+
+            /// <summary>
+            /// The model implementation partial class.
+            /// </summary>
             ModelImplementationPartialClass = 2,
+
+            /// <summary>
+            /// The model implementation tests partial class with serialization.
+            /// </summary>
             ModelImplementationTestsPartialClassWithSerialization = 4,
+
+            /// <summary>
+            /// The model implementation tests partial class without serialization.
+            /// </summary>
             ModelImplementationTestsPartialClassWithoutSerialization = 8,
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1004:GenericMethodsShouldProvideTypeParameter", Justification = "Want generic for future ability.")]
+        [SuppressMessage("Microsoft.Design", "CA1004:GenericMethodsShouldProvideTypeParameter", Justification = "Want generic for future ability.")]
         public static string GenerateForModel<T>(GenerateFor kind)
         {
             var type = typeof(T);
@@ -88,7 +111,7 @@ namespace OBeautifulCode.Representation.Test
         }
 
         private static string GenerateCodeForTests(
-            this Type   type,
+            this Type type,
             GenerateFor kind)
         {
             var items = new List<string>();

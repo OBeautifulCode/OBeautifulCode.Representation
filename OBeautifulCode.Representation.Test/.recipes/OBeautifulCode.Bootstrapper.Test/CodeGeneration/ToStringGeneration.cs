@@ -4,9 +4,10 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace OBeautifulCode.Representation.Test
+namespace OBeautifulCode.Bootstrapper.Test.CodeGeneration
 {
     using System;
+    using System.Globalization;
     using System.Linq;
 
     public static class ToStringGeneration
@@ -26,7 +27,7 @@ namespace OBeautifulCode.Representation.Test
 
         private const string ToStringTestMethodCodeTemplate = @"
         [Fact]
-        public void ToString___Should_generate_friendly_string_representation_of_object___When_called()
+        public static void ToString___Should_generate_friendly_string_representation_of_object___When_called()
         {
             // Arrange
             var systemUnderTest = A.Dummy<" + TypeNameToken + @">();
@@ -75,8 +76,14 @@ namespace OBeautifulCode.Representation.Test
                                      var localResult = _.Key
                                                      + " = {this."
                                                      + _.Key
-                                                     + (!_.Value.PropertyType.IsValueType || _.Value.PropertyType == typeof(string) ? "?" : string.Empty)
-                                                     + ".ToString() ?? \"<null>\"}";
+                                                     + (!_.Value.PropertyType.IsValueType || _.Value.PropertyType == typeof(string)
+                                                           ? "?"
+                                                           : string.Empty)
+                                                     + ".ToString("
+                                                     + (_.Value.PropertyType == typeof(int) || _.Value.PropertyType == typeof(bool)
+                                                           ? "CultureInfo.InvariantCulture"
+                                                           : string.Empty)
+                                                     + ") ?? \"<null>\"}";
 
                                      return localResult;
                                  }))
