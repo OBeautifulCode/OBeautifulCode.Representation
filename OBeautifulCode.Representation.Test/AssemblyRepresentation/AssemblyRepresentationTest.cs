@@ -22,7 +22,33 @@ namespace OBeautifulCode.Representation.Test.AssemblyRepresentationTests
     using Xunit.Abstractions;
     using static System.FormattableString;
 
-    public class AssemblyRepresentationTest
+    public partial class AssemblyRepresentationTest
+    {
+        private readonly ITestOutputHelper testOutputHelper;
+
+        public AssemblyRepresentationTest(
+            ITestOutputHelper testOutputHelper)
+        {
+            this.testOutputHelper = testOutputHelper;
+        }
+
+        [Fact]
+        public void GenerateModel()
+        {
+            var results = CodeGenerator.GenerateForModel<AssemblyRepresentation>(CodeGenerator.GenerateFor.ModelImplementationPartialClass);
+            this.testOutputHelper.WriteLine(results);
+        }
+
+        [Fact]
+        public void GenerateTests()
+        {
+            var results = CodeGenerator.GenerateForModel<AssemblyRepresentation>(
+                CodeGenerator.GenerateFor.ModelImplementationTestsPartialClassWithoutSerialization);
+            this.testOutputHelper.WriteLine(results);
+        }
+    }
+
+    public partial class AssemblyRepresentationTest
     {
         private static readonly AssemblyRepresentation ObjectForEquatableTests = A.Dummy<AssemblyRepresentation>();
 
@@ -59,34 +85,19 @@ namespace OBeautifulCode.Representation.Test.AssemblyRepresentationTests
 
         private static readonly string ObjectThatIsNotTheSameTypeAsObjectForEquatableTests = A.Dummy<string>();
 
-        private readonly ITestOutputHelper testOutputHelper;
-
-        public AssemblyRepresentationTest(
-            ITestOutputHelper testOutputHelper)
-        {
-            this.testOutputHelper = testOutputHelper;
-        }
-
         [Fact]
         public void ToString___Should_generate_friendly_string_representation_of_object___When_called()
         {
             // Arrange
             var systemUnderTest = A.Dummy<AssemblyRepresentation>();
 
-            var expected = Invariant($"Representation.AssemblyRepresentation: Name = {systemUnderTest.Name}), Version = {systemUnderTest.Version}), FilePath = {systemUnderTest.FilePath}), FrameworkVersion = {systemUnderTest.FrameworkVersion}).");
+            var expected = Invariant($"Representation.AssemblyRepresentation: Name = {systemUnderTest.Name}, Version = {systemUnderTest.Version}, FilePath = {systemUnderTest.FilePath}, FrameworkVersion = {systemUnderTest.FrameworkVersion}.");
 
             // Act
             var actual = systemUnderTest.ToString();
 
             // Assert
             actual.Should().Be(expected);
-        }
-
-        [Fact]
-        public void Generate()
-        {
-            var results = ModelObjectCodeGenerator.GenerateCodeForModelObject<AssemblyRepresentation>();
-            this.testOutputHelper.WriteLine(results);
         }
 
         [SuppressMessage("Microsoft.Design", "CA1034:NestedTypesShouldNotBeVisible", Justification = "Grouping construct for unit test runner.")]

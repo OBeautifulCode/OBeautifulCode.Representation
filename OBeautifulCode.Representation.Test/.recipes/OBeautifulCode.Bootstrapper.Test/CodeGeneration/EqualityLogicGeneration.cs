@@ -20,8 +20,7 @@ namespace OBeautifulCode.Representation.Test
         private const string NewObjectForEquatableToken = "<<<NewObjectLogicForEquatableHere>>>";
         private const string UnequalObjectsToken        = "<<<UnequalObjectsCreationHere>>>";
 
-        private const string EqualityMethodsCodeTemplate = @"
-        /// <summary>
+        private const string EqualityMethodsCodeTemplate = @"    /// <summary>
         /// Determines whether two objects of type <see cref=""" + TypeNameToken + @"""/> are equal.
         /// </summary>
         /// <param name=""left"">The object to the left of the operator.</param>
@@ -58,8 +57,7 @@ namespace OBeautifulCode.Representation.Test
         /// <inheritdoc />
         public override bool Equals(object obj) => this == (obj as " + TypeNameToken + @");";
 
-        private const string EqualityTestFieldsCodeTemplate = @"
-        private static readonly " + TypeNameToken + @" ObjectForEquatableTests = A.Dummy<" + TypeNameToken + @">();
+        private const string EqualityTestFieldsCodeTemplate = @"    private static readonly " + TypeNameToken + @" ObjectForEquatableTests = A.Dummy<" + TypeNameToken + @">();
 
         private static readonly " + TypeNameToken + @" ObjectThatIsEqualToButNotTheSameAsObjectForEquatableTests =
             " + NewObjectForEquatableToken + @";

@@ -18,8 +18,7 @@ namespace OBeautifulCode.Representation.Test
 
         private const string SerializationConfigurationPrefixToken = "<<<SerializationConfigurationPrefixHere>>>";
 
-        private const string SerializationFieldsCodeTemplate = @"
-        private static readonly ISerializeAndDeserialize BsonSerializer = new NaosBsonSerializer<" + SerializationConfigurationPrefixToken + @"BsonConfiguration>();
+        private const string SerializationFieldsCodeTemplate = @"private static readonly ISerializeAndDeserialize BsonSerializer = new NaosBsonSerializer<" + SerializationConfigurationPrefixToken + @"BsonConfiguration>();
         
         private static readonly ISerializeAndDeserialize JsonSerializer = new NaosJsonSerializer<" + SerializationConfigurationPrefixToken + @"JsonConfiguration>();";
 

@@ -19,7 +19,7 @@ namespace OBeautifulCode.Representation
     /// <summary>
     /// Representation of <see cref="Assembly" />.
     /// </summary>
-    public class AssemblyRepresentation : IModel<AssemblyRepresentation>
+    public partial class AssemblyRepresentation
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="AssemblyRepresentation"/> class.
@@ -28,13 +28,19 @@ namespace OBeautifulCode.Representation
         /// <param name="version">Version of the assembly.</param>
         /// <param name="filePath">File path of the assembly observed.</param>
         /// <param name="frameworkVersion">Framework of assembly.</param>
-        public AssemblyRepresentation(string name, string version, string filePath, string frameworkVersion)
+        public AssemblyRepresentation(
+            string name,
+            string version,
+            string filePath,
+            string frameworkVersion)
         {
-            new { name }.Must().NotBeNullNorWhiteSpace();
+            name.Named(nameof(name))
+                .Must()
+                .NotBeNullNorWhiteSpace();
 
-            this.Name = name;
-            this.Version = version;
-            this.FilePath = filePath;
+            this.Name             = name;
+            this.Version          = version;
+            this.FilePath         = filePath;
             this.FrameworkVersion = frameworkVersion;
         }
 
@@ -57,7 +63,10 @@ namespace OBeautifulCode.Representation
         /// Gets the .NET framework the assembly was build for.
         /// </summary>
         public string FrameworkVersion { get; private set; }
+    }
 
+    public partial class AssemblyRepresentation : IModel<AssemblyRepresentation>
+    {
         /// <summary>
         /// Determines whether two objects of type <see cref="AssemblyRepresentation"/> are equal.
         /// </summary>
@@ -184,7 +193,7 @@ namespace OBeautifulCode.Representation
         /// <inheritdoc />
         public override string ToString()
         {
-            var result = Invariant($"{nameof(OBeautifulCode.Representation)}.{nameof(AssemblyRepresentation)}: Name = {this.Name?.ToString() ?? "<null>"}), Version = {this.Version?.ToString() ?? "<null>"}), FilePath = {this.FilePath?.ToString() ?? "<null>"}), FrameworkVersion = {this.FrameworkVersion?.ToString() ?? "<null>"}).");
+            var result = Invariant($"{nameof(OBeautifulCode.Representation)}.{nameof(AssemblyRepresentation)}: Name = {this.Name?.ToString() ?? "<null>"}, Version = {this.Version?.ToString() ?? "<null>"}, FilePath = {this.FilePath?.ToString() ?? "<null>"}, FrameworkVersion = {this.FrameworkVersion?.ToString() ?? "<null>"}.");
 
             return result;
         }

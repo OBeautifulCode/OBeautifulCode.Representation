@@ -74,9 +74,16 @@ namespace OBeautifulCode.Representation.Test.ElementInitRepresentationTests
         }
 
         [Fact]
-        public void Generate()
+        public void GenerateModel()
         {
-            var results = ModelObjectCodeGenerator.GenerateCodeForModelObject<ElementInitRepresentation>();
+            var results = CodeGenerator.GenerateForModel<ElementInitRepresentation>(CodeGenerator.GenerateFor.ModelImplementationPartialClass);
+            this.testOutputHelper.WriteLine(results);
+        }
+
+        [Fact]
+        public void GenerateTests()
+        {
+            var results = CodeGenerator.GenerateForModel<ElementInitRepresentation>(CodeGenerator.GenerateFor.ModelImplementationTestsPartialClassWithoutSerialization);
             this.testOutputHelper.WriteLine(results);
         }
 

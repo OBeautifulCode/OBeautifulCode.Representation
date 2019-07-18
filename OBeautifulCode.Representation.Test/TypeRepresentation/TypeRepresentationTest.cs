@@ -21,43 +21,8 @@ namespace OBeautifulCode.Representation.Test.TypeRepresentationTests
     using Xunit.Abstractions;
     using static System.FormattableString;
 
-    public class TypeRepresentationTest
+    public partial class TypeRepresentationTest
     {
-        private static readonly TypeRepresentation ObjectForEquatableTests = A.Dummy<TypeRepresentation>();
-
-        private static readonly TypeRepresentation ObjectThatIsEqualToButNotTheSameAsObjectForEquatableTests =
-            new TypeRepresentation(
-                                 ObjectForEquatableTests.Namespace,
-                                 ObjectForEquatableTests.Name,
-                                 ObjectForEquatableTests.AssemblyQualifiedName,
-                                 ObjectForEquatableTests.GenericArguments);
-
-        private static readonly TypeRepresentation[] ObjectsThatAreNotEqualToObjectForEquatableTests =
-        {
-            new TypeRepresentation(
-                                 ObjectForEquatableTests.Namespace,
-                                 A.Dummy<string>().ThatIsNot(ObjectForEquatableTests.Name),
-                                 A.Dummy<string>().ThatIsNot(ObjectForEquatableTests.AssemblyQualifiedName),
-                                 A.Dummy<IReadOnlyList<TypeRepresentation>>().ThatIsNot(ObjectForEquatableTests.GenericArguments)),
-            new TypeRepresentation(
-                                 A.Dummy<string>().ThatIsNot(ObjectForEquatableTests.Namespace),
-                                 ObjectForEquatableTests.Name,
-                                 A.Dummy<string>().ThatIsNot(ObjectForEquatableTests.AssemblyQualifiedName),
-                                 A.Dummy<IReadOnlyList<TypeRepresentation>>().ThatIsNot(ObjectForEquatableTests.GenericArguments)),
-            new TypeRepresentation(
-                                 A.Dummy<string>().ThatIsNot(ObjectForEquatableTests.Namespace),
-                                 A.Dummy<string>().ThatIsNot(ObjectForEquatableTests.Name),
-                                 ObjectForEquatableTests.AssemblyQualifiedName,
-                                 A.Dummy<IReadOnlyList<TypeRepresentation>>().ThatIsNot(ObjectForEquatableTests.GenericArguments)),
-            new TypeRepresentation(
-                                 A.Dummy<string>().ThatIsNot(ObjectForEquatableTests.Namespace),
-                                 A.Dummy<string>().ThatIsNot(ObjectForEquatableTests.Name),
-                                 A.Dummy<string>().ThatIsNot(ObjectForEquatableTests.AssemblyQualifiedName),
-                                 ObjectForEquatableTests.GenericArguments),
-        };
-
-        private static readonly string ObjectThatIsNotTheSameTypeAsObjectForEquatableTests = A.Dummy<string>();
-
         private readonly ITestOutputHelper testOutputHelper;
 
         public TypeRepresentationTest(
@@ -65,6 +30,58 @@ namespace OBeautifulCode.Representation.Test.TypeRepresentationTests
         {
             this.testOutputHelper = testOutputHelper;
         }
+
+        [Fact]
+        public void GenerateModel()
+        {
+            var results = CodeGenerator.GenerateForModel<TypeRepresentation>(CodeGenerator.GenerateFor.ModelImplementationPartialClass);
+            this.testOutputHelper.WriteLine(results);
+        }
+
+        [Fact]
+        public void GenerateTests()
+        {
+            var results = CodeGenerator.GenerateForModel<TypeRepresentation>(CodeGenerator.GenerateFor.ModelImplementationTestsPartialClassWithSerialization);
+            this.testOutputHelper.WriteLine(results);
+        }
+    }
+
+    public partial class TypeRepresentationTest
+    {
+        private static readonly TypeRepresentation ObjectForEquatableTests = A.Dummy<TypeRepresentation>();
+
+        private static readonly TypeRepresentation ObjectThatIsEqualToButNotTheSameAsObjectForEquatableTests =
+            new TypeRepresentation(
+                ObjectForEquatableTests.Namespace,
+                ObjectForEquatableTests.Name,
+                ObjectForEquatableTests.AssemblyQualifiedName,
+                ObjectForEquatableTests.GenericArguments);
+
+        private static readonly TypeRepresentation[] ObjectsThatAreNotEqualToObjectForEquatableTests =
+        {
+            new TypeRepresentation(
+                ObjectForEquatableTests.Namespace,
+                A.Dummy<string>().ThatIsNot(ObjectForEquatableTests.Name),
+                A.Dummy<string>().ThatIsNot(ObjectForEquatableTests.AssemblyQualifiedName),
+                A.Dummy<IReadOnlyList<TypeRepresentation>>().ThatIsNot(ObjectForEquatableTests.GenericArguments)),
+            new TypeRepresentation(
+                A.Dummy<string>().ThatIsNot(ObjectForEquatableTests.Namespace),
+                ObjectForEquatableTests.Name,
+                A.Dummy<string>().ThatIsNot(ObjectForEquatableTests.AssemblyQualifiedName),
+                A.Dummy<IReadOnlyList<TypeRepresentation>>().ThatIsNot(ObjectForEquatableTests.GenericArguments)),
+            new TypeRepresentation(
+                A.Dummy<string>().ThatIsNot(ObjectForEquatableTests.Namespace),
+                A.Dummy<string>().ThatIsNot(ObjectForEquatableTests.Name),
+                ObjectForEquatableTests.AssemblyQualifiedName,
+                A.Dummy<IReadOnlyList<TypeRepresentation>>().ThatIsNot(ObjectForEquatableTests.GenericArguments)),
+            new TypeRepresentation(
+                A.Dummy<string>().ThatIsNot(ObjectForEquatableTests.Namespace),
+                A.Dummy<string>().ThatIsNot(ObjectForEquatableTests.Name),
+                A.Dummy<string>().ThatIsNot(ObjectForEquatableTests.AssemblyQualifiedName),
+                ObjectForEquatableTests.GenericArguments),
+        };
+
+        private static readonly string ObjectThatIsNotTheSameTypeAsObjectForEquatableTests = A.Dummy<string>();
 
         [Fact]
         public void ToString___Should_generate_friendly_string_representation_of_object___When_called()
@@ -79,13 +96,6 @@ namespace OBeautifulCode.Representation.Test.TypeRepresentationTests
 
             // Assert
             actual.Should().Be(expected);
-        }
-
-        [Fact]
-        public void Generate()
-        {
-            var results = ModelObjectCodeGenerator.GenerateCodeForModelObject<TypeRepresentation>();
-            this.testOutputHelper.WriteLine(results);
         }
 
         [SuppressMessage("Microsoft.Design", "CA1034:NestedTypesShouldNotBeVisible", Justification = "Grouping construct for unit test runner.")]

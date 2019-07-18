@@ -75,9 +75,16 @@ namespace OBeautifulCode.Representation.Test.ConstantExpressionRepresentationTes
         }
 
         [Fact]
-        public void Generate()
+        public void GenerateModel()
         {
-            var results = ModelObjectCodeGenerator.GenerateCodeForModelObject<ConstantExpressionRepresentation<string>>();
+            var results = CodeGenerator.GenerateForModel<ConstantExpressionRepresentation<string>>(CodeGenerator.GenerateFor.ModelImplementationPartialClass);
+            this.testOutputHelper.WriteLine(results);
+        }
+
+        [Fact]
+        public void GenerateTests()
+        {
+            var results = CodeGenerator.GenerateForModel<ConstantExpressionRepresentation<string>>(CodeGenerator.GenerateFor.ModelImplementationTestsPartialClassWithoutSerialization);
             this.testOutputHelper.WriteLine(results);
         }
 

@@ -18,23 +18,6 @@ namespace OBeautifulCode.Representation.Test
     {
         private const string TypeNameToken = "<<<<TypeNameHere>>>";
 
-        private const string WireUpOutputCodeTemplate = @"
-        private readonly ITestOutputHelper testOutputHelper;
-
-        public " + TypeNameToken + @"Test(
-            ITestOutputHelper testOutputHelper)
-        {
-            this.testOutputHelper = testOutputHelper;
-        }";
-
-        private const string GenerationTestMethodCodeTemplate = @"
-        [Fact]
-        public void Generate()
-        {
-            var results = ModelObjectCodeGenerator.GenerateCodeForModelObject<" + TypeNameToken + @">();
-            this.testOutputHelper.WriteLine(results);
-        }";
-
         private static readonly Type[] DictionaryTypes = new[]
                                                          {
                                                              typeof(Dictionary<,>),
@@ -54,22 +37,6 @@ namespace OBeautifulCode.Representation.Test
                                                              typeof(IList<>),
                                                              typeof(IReadOnlyList<>),
                                                          };
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters", Justification = "Want Type to be the type.")]
-        public static string GenerateWireUpOutputLogic(
-            this Type type)
-        {
-            var result = WireUpOutputCodeTemplate.Replace(TypeNameToken, type.TreatedTypeName());
-            return result;
-        }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters", Justification = "Want Type to be the type.")]
-        public static string GenerateGenerationTestMethod(
-            this Type type)
-        {
-            var result = GenerationTestMethodCodeTemplate.Replace(TypeNameToken, type.TreatedTypeName());
-            return result;
-        }
 
         public static string GenerateFluentEqualityStatement(
             this Type type,

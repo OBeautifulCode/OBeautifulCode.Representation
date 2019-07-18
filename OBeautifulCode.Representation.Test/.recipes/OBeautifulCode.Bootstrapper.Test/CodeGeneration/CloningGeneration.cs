@@ -64,8 +64,7 @@ namespace OBeautifulCode.Representation.Test
 
                 // Assert
                actual.Should().Be(systemUnderTest);
-               actual.Should().NotBeSameAs(systemUnderTest);
-               " + AssertDeepCloneToken + @"
+               actual.Should().NotBeSameAs(systemUnderTest);" + AssertDeepCloneToken + @"
             }" + DeepCloneWithTestInflationToken + @"
         }";
 
@@ -139,7 +138,7 @@ namespace OBeautifulCode.Representation.Test
         {
             var properties = type.GetPropertiesOfConcernFromType();
             var assertDeepCloneSet = properties.Where(_ => !_.PropertyType.IsValueType && _.PropertyType != typeof(string)).Select(_ => Invariant($"actual.{_.Name}.Should().NotBeSameAs(systemUnderTest.{_.Name});")).ToList();
-            var assertDeepCloneToken = string.Join(Environment.NewLine + "               ", assertDeepCloneSet);
+            var assertDeepCloneToken = assertDeepCloneSet.Any() ? Environment.NewLine + "               " + string.Join(Environment.NewLine + "               ", assertDeepCloneSet) : string.Empty;
 
             var parameters           = type.GetConstructors().SingleOrDefault(_ => _.GetParameters().Length > 1)?.GetParameters().ToList();
             var deepCloneWithTestMethods = new List<string>();
@@ -180,10 +179,6 @@ namespace OBeautifulCode.Representation.Test
             }
 
             var deepCloneWithTestInflationToken = string.Join(Environment.NewLine, deepCloneWithTestMethods);
-            if (string.IsNullOrWhiteSpace(deepCloneWithTestInflationToken))
-            {
-                deepCloneWithTestInflationToken = string.Empty;
-            }
 
             var result = CloningTestMethodsCodeTemplate.Replace(TypeNameToken, type.TreatedTypeName())
                                                        .Replace(AssertDeepCloneToken, assertDeepCloneToken)
