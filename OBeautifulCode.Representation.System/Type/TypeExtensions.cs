@@ -29,7 +29,7 @@ namespace OBeautifulCode.Representation.Recipes
 #endif
         static class TypeExtensions
     {
-        private static readonly Regex TypeFriendlyNameGenericArgumentsRegex = new Regex("<.*>", RegexOptions.Compiled);
+        private static readonly Regex GenericBracketsRegex = new Regex("<.*>", RegexOptions.Compiled);
 
         private static readonly CodeDomProvider CodeDomProvider = CodeDomProvider.CreateProvider("CSharp");
 
@@ -71,6 +71,10 @@ namespace OBeautifulCode.Representation.Recipes
         public static string ToStringCompilable(
             this Type type)
         {
+            // A copy of this method exists in OBC.Validation.
+            // Any bug fixes made here should also be applied to OBC.Validation.
+            // OBC.Validation cannot take a reference to OBC.Representation because it creates a circular reference
+            // since OBC.Representation itself depends on OBC.Validation.
             new { type }.Must().NotBeNull();
 
             string result;
@@ -112,7 +116,7 @@ namespace OBeautifulCode.Representation.Recipes
                     {
                         var genericParameters = type.GetGenericArguments().Select(_ => _.ToStringCompilable()).ToArray();
 
-                        result = TypeFriendlyNameGenericArgumentsRegex.Replace(result, "<" + string.Join(", ", genericParameters) + ">");
+                        result = GenericBracketsRegex.Replace(result, "<" + string.Join(", ", genericParameters) + ">");
                     }
                 }
             }
