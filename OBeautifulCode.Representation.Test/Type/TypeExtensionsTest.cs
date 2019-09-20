@@ -50,7 +50,8 @@ namespace OBeautifulCode.Representation.Test
             };
 
             // Act
-            var actuals = types.Select(_ => Record.Exception(_.ToStringCompilable)).ToList();
+            // ReSharper disable once ConvertClosureToMethodGroup
+            var actuals = types.Select(_ => Record.Exception(() => _.ToStringCompilable())).ToList();
 
             // Assert
             actuals.Should().AllBeOfType<NotSupportedException>();
@@ -71,7 +72,8 @@ namespace OBeautifulCode.Representation.Test
             };
 
             // Act
-            var actuals = types.Select(_ => Record.Exception(_.ToStringCompilable)).ToList();
+            // ReSharper disable once ConvertClosureToMethodGroup
+            var actuals = types.Select(_ => Record.Exception(() => _.ToStringCompilable())).ToList();
 
             // Assert
             actuals.Should().AllBeOfType<NotSupportedException>();
