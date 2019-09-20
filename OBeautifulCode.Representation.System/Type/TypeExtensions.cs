@@ -83,7 +83,18 @@ namespace OBeautifulCode.Representation.Recipes
 
             string result;
 
-            if (type.IsGenericParameter)
+            if (type.IsAnonymous())
+            {
+                if (throwIfNoCompilableStringExists)
+                {
+                    throw new NotSupportedException("Anonymous types are not supported.");
+                }
+                else
+                {
+                    result = null;
+                }
+            }
+            else if (type.IsGenericParameter)
             {
                 if (throwIfNoCompilableStringExists)
                 {

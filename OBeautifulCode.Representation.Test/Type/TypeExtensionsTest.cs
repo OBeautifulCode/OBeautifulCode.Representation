@@ -31,6 +31,39 @@ namespace OBeautifulCode.Representation.Test
         }
 
         [Fact]
+        public static void ToStringCompilable___Should_throw_NotSupportedException___When_parameter_throwIfNoCompilableStringExists_is_true_and_parameter_type_is_an_anonymous_type()
+        {
+            // Arrange
+            var types = new[]
+            {
+                new { Anonymous = true }.GetType(),
+            };
+
+            // Act
+            var actuals = types.Select(_ => Record.Exception(() => _.ToStringCompilable(throwIfNoCompilableStringExists: true))).ToList();
+
+            // Assert
+            actuals.Should().AllBeOfType<NotSupportedException>();
+            actuals.Select(_ => _.Message.Should().Be("Anonymous types are not supported.")).ToList();
+        }
+
+        [Fact]
+        public static void ToStringCompilable___Should_return_null___When_parameter_throwIfNoCompilableStringExists_is_false_and_parameter_type_is_an_anonymous_type()
+        {
+            // Arrange
+            var types = new[]
+            {
+                new { Anonymous = true }.GetType(),
+            };
+
+            // Act
+            var actuals = types.Select(_ => Record.Exception(() => _.ToStringCompilable(throwIfNoCompilableStringExists: false))).ToList();
+
+            // Assert
+            actuals.Select(_ => _.Should().BeNull()).ToList();
+        }
+
+        [Fact]
         public static void ToStringCompilable___Should_throw_NotSupportedException___When_parameter_throwIfNoCompilableStringExists_is_true_and_parameter_type_is_a_generic_open_constructed_type()
         {
             // Arrange
@@ -124,6 +157,7 @@ namespace OBeautifulCode.Representation.Test
             // Assert
             actuals.Select(_ => _.Should().BeNull()).ToList();
         }
+
         [Fact]
         public static void ToStringCompilable___Should_return_compilable_string_representation_of_the_specified_type___When_called()
         {
