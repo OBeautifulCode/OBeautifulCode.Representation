@@ -31,7 +31,7 @@ namespace OBeautifulCode.Representation.Test
         }
 
         [Fact]
-        public static void ToStringCompilable___Should_throw_NotSupportedException___When_parameter_type_is_a_generic_open_constructed_type()
+        public static void ToStringCompilable___Should_throw_NotSupportedException___When_parameter_throwIfNoCompilableStringExists_is_true_and_parameter_type_is_a_generic_open_constructed_type()
         {
             // Arrange
             var types = new[]
@@ -50,8 +50,7 @@ namespace OBeautifulCode.Representation.Test
             };
 
             // Act
-            // ReSharper disable once ConvertClosureToMethodGroup
-            var actuals = types.Select(_ => Record.Exception(() => _.ToStringCompilable())).ToList();
+            var actuals = types.Select(_ => Record.Exception(() => _.ToStringCompilable(throwIfNoCompilableStringExists: true))).ToList();
 
             // Assert
             actuals.Should().AllBeOfType<NotSupportedException>();
@@ -59,7 +58,54 @@ namespace OBeautifulCode.Representation.Test
         }
 
         [Fact]
-        public static void ToStringCompilable___Should_throw_NotSupportedException___When_parameter_type_is_a_generic_parameter()
+        public static void ToStringCompilable___Should_return_null___When_parameter_throwIfNoCompilableStringExists_is_false_and_parameter_type_is_a_generic_open_constructed_type()
+        {
+            // Arrange
+            var types = new[]
+            {
+                // IsGenericType: True
+                // IsGenericTypeDefinition: False
+                // ContainsGenericParameters: True
+                // IsGenericParameter: False
+                typeof(Derived<>).BaseType,
+
+                // IsGenericType: True
+                // IsGenericTypeDefinition: False
+                // ContainsGenericParameters: True
+                // IsGenericParameter: False
+                typeof(Derived<>).GetField("F").FieldType,
+            };
+
+            // Act
+            var actuals = types.Select(_ => Record.Exception(() => _.ToStringCompilable(throwIfNoCompilableStringExists: false))).ToList();
+
+            // Assert
+            actuals.Select(_ => _.Should().BeNull()).ToList();
+        }
+
+        [Fact]
+        public static void ToStringCompilable___Should_throw_NotSupportedException___When_parameter_throwIfNoCompilableStringExists_is_true_and_type_is_a_generic_parameter()
+        {
+            // Arrange
+            var types = new[]
+            {
+                // IsGenericType: False
+                // IsGenericTypeDefinition: False
+                // ContainsGenericParameters: True
+                // IsGenericParameter: True
+                typeof(Base<,>).GetGenericArguments()[0],
+            };
+
+            // Act
+            var actuals = types.Select(_ => Record.Exception(() => _.ToStringCompilable(throwIfNoCompilableStringExists: true))).ToList();
+
+            // Assert
+            actuals.Should().AllBeOfType<NotSupportedException>();
+            actuals.Select(_ => _.Message.Should().Be("Generic parameters not supported.")).ToList();
+        }
+
+        [Fact]
+        public static void ToStringCompilable___Should_return_null___When_parameter_throwIfNoCompilableStringExists_is_false_and_type_is_a_generic_parameter()
         {
             // Arrange
             var types = new[]
@@ -73,13 +119,11 @@ namespace OBeautifulCode.Representation.Test
 
             // Act
             // ReSharper disable once ConvertClosureToMethodGroup
-            var actuals = types.Select(_ => Record.Exception(() => _.ToStringCompilable())).ToList();
+            var actuals = types.Select(_ => Record.Exception(() => _.ToStringCompilable(throwIfNoCompilableStringExists: false))).ToList();
 
             // Assert
-            actuals.Should().AllBeOfType<NotSupportedException>();
-            actuals.Select(_ => _.Message.Should().Be("Generic parameters not supported.")).ToList();
+            actuals.Select(_ => _.Should().BeNull()).ToList();
         }
-
         [Fact]
         public static void ToStringCompilable___Should_return_compilable_string_representation_of_the_specified_type___When_called()
         {

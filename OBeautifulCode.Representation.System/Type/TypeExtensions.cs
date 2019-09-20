@@ -62,14 +62,18 @@ namespace OBeautifulCode.Representation.Recipes
         /// Helpful breakdown of generics: <a href="https://docs.microsoft.com/en-us/dotnet/api/system.type.isgenerictype" />.
         /// </remarks>
         /// <param name="type">The type.</param>
+        /// <param name="throwIfNoCompilableStringExists">Optional value indicating whether to throw a <see cref="NotSupportedException"/> if there's no compilable representation of the specified type.</param>
         /// <returns>
-        /// A compilable, readability-optimized string representation of the specified type.
+        /// A compilable, readability-optimized string representation of the specified type
+        /// OR
+        /// null if there is no compilable representation and <paramref name="throwIfNoCompilableStringExists"/> is true.
         /// </returns>
         /// <exception cref="ArgumentNullException"><paramref name="type"/> is null.</exception>
-        /// <exception cref="NotSupportedException"><paramref name="type"/> is a generic open constructed type, which is not supported.</exception>
-        /// <exception cref="NotSupportedException"><paramref name="type"/> is a generic parameter.</exception>
+        /// <exception cref="NotSupportedException"><paramref name="throwIfNoCompilableStringExists"/> is true and <paramref name="type"/> is a generic open constructed type, which is not supported.</exception>
+        /// <exception cref="NotSupportedException"><paramref name="throwIfNoCompilableStringExists"/> is true and <paramref name="type"/> is a generic parameter.</exception>
         public static string ToStringCompilable(
-            this Type type)
+            this Type type,
+            bool throwIfNoCompilableStringExists = false)
         {
             // A copy of this method exists in OBC.Validation.
             // Any bug fixes made here should also be applied to OBC.Validation.
@@ -81,42 +85,58 @@ namespace OBeautifulCode.Representation.Recipes
 
             if (type.IsGenericParameter)
             {
-                // note that IsGenericParameter and ContainsGenericParameters will return true for generic parameters,
-                // hence we order the IsGenericParameter check first.
-                throw new NotSupportedException("Generic parameters not supported.");
-            }
-
-            if (Aliases.ContainsKey(type))
-            {
-                result = Aliases[type];
-            }
-            else if (type.IsNullableType())
-            {
-                result = Nullable.GetUnderlyingType(type).ToStringCompilable() + "?";
-            }
-            else if (type.IsArray)
-            {
-                result = type.GetElementType().ToStringCompilable() + "[]";
+                if (throwIfNoCompilableStringExists)
+                {
+                    // note that IsGenericParameter and ContainsGenericParameters will return true for generic parameters,
+                    // hence we order the IsGenericParameter check first.
+                    throw new NotSupportedException("Generic parameters not supported.");
+                }
+                else
+                {
+                    result = null;
+                }
             }
             else
             {
-                result = CodeDomProvider.GetTypeOutput(new CodeTypeReference(type.FullName?.Replace(type.Namespace + ".", string.Empty)));
-
-                if (type.IsGenericType)
+                if (Aliases.ContainsKey(type))
                 {
-                    if (type.IsGenericTypeDefinition)
-                    {
-                        result = result.Replace(" ", string.Empty);
-                    }
-                    else if (type.ContainsGenericParameters)
-                    {
-                        throw new NotSupportedException("Generic open constructed types are not supported.");
-                    }
-                    else
-                    {
-                        var genericParameters = type.GetGenericArguments().Select(_ => _.ToStringCompilable()).ToArray();
+                    result = Aliases[type];
+                }
+                else if (type.IsNullableType())
+                {
+                    result = Nullable.GetUnderlyingType(type).ToStringCompilable() + "?";
+                }
+                else if (type.IsArray)
+                {
+                    result = type.GetElementType().ToStringCompilable() + "[]";
+                }
+                else
+                {
+                    result = CodeDomProvider.GetTypeOutput(new CodeTypeReference(type.FullName?.Replace(type.Namespace + ".", string.Empty)));
 
-                        result = GenericBracketsRegex.Replace(result, "<" + string.Join(", ", genericParameters) + ">");
+                    if (type.IsGenericType)
+                    {
+                        if (type.IsGenericTypeDefinition)
+                        {
+                            result = result.Replace(" ", string.Empty);
+                        }
+                        else if (type.ContainsGenericParameters)
+                        {
+                            if (throwIfNoCompilableStringExists)
+                            {
+                                throw new NotSupportedException("Generic open constructed types are not supported.");
+                            }
+                            else
+                            {
+                                result = null;
+                            }
+                        }
+                        else
+                        {
+                            var genericParameters = type.GetGenericArguments().Select(_ => _.ToStringCompilable()).ToArray();
+
+                            result = GenericBracketsRegex.Replace(result, "<" + string.Join(", ", genericParameters) + ">");
+                        }
                     }
                 }
             }
