@@ -223,7 +223,7 @@
       This becomes a problem with alignment of variables like below,
       because there are multiple spaces between the name and the '=' symbol:
       
-        public ProcessRepresentation(
+        public ProcessDescription(
             string name,
             string filePath,
             string fileVersion,
