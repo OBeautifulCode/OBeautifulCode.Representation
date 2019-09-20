@@ -20,7 +20,7 @@ namespace OBeautifulCode.Representation.Recipes
     using OBeautifulCode.Validation.Recipes;
 
     /// <summary>
-    /// Extensions methods on type <see cref="OBeautifulCode.Type"/>.
+    /// Extensions methods on type <see cref="Type"/>.
     /// </summary>
 #if !OBeautifulCodeRepresentationRecipesProject
     internal
