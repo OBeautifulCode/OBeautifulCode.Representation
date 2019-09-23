@@ -7,7 +7,11 @@
 // </auto-generated>
 // --------------------------------------------------------------------------------------------------------------------
 
+#if !OBeautifulCodeRepresentationRecipesProject
 namespace OBeautifulCode.Representation.Recipes
+#else
+namespace OBeautifulCode.Representation
+#endif
 {
     using System;
     using System.CodeDom;

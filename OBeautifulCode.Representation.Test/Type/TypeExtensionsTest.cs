@@ -14,8 +14,6 @@ namespace OBeautifulCode.Representation.Test
 
     using FluentAssertions;
 
-    using OBeautifulCode.Representation.Recipes;
-
     using Xunit;
 
     public static class TypeExtensionsTest
@@ -24,7 +22,7 @@ namespace OBeautifulCode.Representation.Test
         public static void ToStringCompilable___Should_throw_ArgumentNullException___When_parameter_type_is_null()
         {
             // Arrange, Act
-            var actual = Record.Exception(() => Recipes.TypeExtensions.ToStringCompilable(null));
+            var actual = Record.Exception(() => Representation.TypeExtensions.ToStringCompilable(null));
 
             // Assert
             actual.Should().BeOfType<ArgumentNullException>();
@@ -203,7 +201,7 @@ namespace OBeautifulCode.Representation.Test
         public static void ToStringReadable___Should_throw_ArgumentNullException___When_parameter_type_is_null()
         {
             // Arrange, Act
-            var actual = Record.Exception(() => Recipes.TypeExtensions.ToStringReadable(null));
+            var actual = Record.Exception(() => Representation.TypeExtensions.ToStringReadable(null));
 
             // Assert
             actual.Should().BeOfType<ArgumentNullException>();
