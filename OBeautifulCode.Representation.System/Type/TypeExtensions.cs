@@ -187,11 +187,11 @@ namespace OBeautifulCode.Representation.Recipes
                 }
                 else if (type.IsNullableType())
                 {
-                    result = Nullable.GetUnderlyingType(type).ToStringCompilable() + "?";
+                    result = Nullable.GetUnderlyingType(type).ToStringReadable() + "?";
                 }
                 else if (type.IsArray)
                 {
-                    result = type.GetElementType().ToStringCompilable() + "[]";
+                    result = type.GetElementType().ToStringReadable() + "[]";
                 }
                 else
                 {
