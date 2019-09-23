@@ -195,7 +195,7 @@ namespace OBeautifulCode.Representation
                                  this.Namespace?.Clone().ToString(),
                                  this.Name?.Clone().ToString(),
                                  this.AssemblyQualifiedName?.Clone().ToString(),
-                                 genericArguments);
+                                 genericArguments?.Select(_ => _.DeepClone()).ToList());
             return result;
         }
 
