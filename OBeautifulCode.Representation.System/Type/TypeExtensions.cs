@@ -75,10 +75,6 @@ namespace OBeautifulCode.Representation.Recipes
             this Type type,
             bool throwIfNoCompilableStringExists = false)
         {
-            // A copy of this method exists in OBC.Validation.
-            // Any bug fixes made here should also be applied to OBC.Validation.
-            // OBC.Validation cannot take a reference to OBC.Representation because it creates a circular reference
-            // since OBC.Representation itself depends on OBC.Validation.
             new { type }.Must().NotBeNull();
 
             string result;
@@ -148,6 +144,69 @@ namespace OBeautifulCode.Representation.Recipes
 
                             result = GenericBracketsRegex.Replace(result, "<" + string.Join(", ", genericParameters) + ">");
                         }
+                    }
+                }
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Gets a readability-optimized string representation of the specified type.
+        /// </summary>
+        /// <remarks>
+        /// Adapted from: <a href="https://stackoverflow.com/a/6402967/356790" />.
+        /// Adapted from: <a href="https://stackoverflow.com/questions/1362884/is-there-a-way-to-get-a-types-alias-through-reflection" />.
+        /// Helpful breakdown of generics: <a href="https://docs.microsoft.com/en-us/dotnet/api/system.type.isgenerictype" />.
+        /// </remarks>
+        /// <param name="type">The type.</param>
+        /// <returns>
+        /// A readability-optimized string representation of the specified type
+        /// </returns>
+        /// <exception cref="ArgumentNullException"><paramref name="type"/> is null.</exception>
+        public static string ToStringReadable(
+            this Type type)
+        {
+            // A copy of this method exists in OBC.Validation.
+            // Any bug fixes made here should also be applied to OBC.Validation.
+            // OBC.Validation cannot take a reference to OBC.Representation because it creates a circular reference
+            // since OBC.Representation itself depends on OBC.Validation.
+            new { type }.Must().NotBeNull();
+
+            string result;
+
+            if (type.IsGenericParameter)
+            {
+                result = type.Name;
+            }
+            else
+            {
+                if (Aliases.ContainsKey(type))
+                {
+                    result = Aliases[type];
+                }
+                else if (type.IsNullableType())
+                {
+                    result = Nullable.GetUnderlyingType(type).ToStringCompilable() + "?";
+                }
+                else if (type.IsArray)
+                {
+                    result = type.GetElementType().ToStringCompilable() + "[]";
+                }
+                else
+                {
+                    result = CodeDomProvider.GetTypeOutput(new CodeTypeReference(type.FullName?.Replace(type.Namespace + ".", string.Empty) ?? type.Name));
+
+                    if (type.IsAnonymous())
+                    {
+                        result = result.Replace("<>f__", string.Empty);
+                    }
+
+                    if (type.IsGenericType)
+                    {
+                        var genericParameters = type.GetGenericArguments().Select(_ => _.ToStringReadable()).ToArray();
+
+                        result = GenericBracketsRegex.Replace(result, "<" + string.Join(", ", genericParameters) + ">");
                     }
                 }
             }

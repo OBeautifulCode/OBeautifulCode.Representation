@@ -10,6 +10,7 @@ namespace OBeautifulCode.Representation.Test
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
     using System.Linq;
+    using System.Text.RegularExpressions;
 
     using FluentAssertions;
 
@@ -188,10 +189,80 @@ namespace OBeautifulCode.Representation.Test
                 new { Type = typeof(List<>), Expected = "List<>" },
                 new { Type = typeof(IReadOnlyDictionary<,>), Expected = "IReadOnlyDictionary<,>" },
                 new { Type = typeof(IReadOnlyDictionary<IReadOnlyDictionary<Guid[], int?>, IList<IList<short>>[]>), Expected = "IReadOnlyDictionary<IReadOnlyDictionary<Guid[], int?>, IList<IList<short>>[]>" },
+                new { Type = (first: "one", second: 10).GetType(), Expected = "ValueTuple<string, int>" },
             };
 
             // Act
             var actuals = typesAndExpected.Select(_ => _.Type.ToStringCompilable()).ToList();
+
+            // Assert
+            typesAndExpected.Select(_ => _.Expected).Should().Equal(actuals);
+        }
+
+        [Fact]
+        public static void ToStringReadable___Should_throw_ArgumentNullException___When_parameter_type_is_null()
+        {
+            // Arrange, Act
+            var actual = Record.Exception(() => Recipes.TypeExtensions.ToStringReadable(null));
+
+            // Assert
+            actual.Should().BeOfType<ArgumentNullException>();
+            actual.Message.Should().Contain("type");
+        }
+
+        [Fact]
+        public static void ToStringReadable___Should_return_readable_string_representation_of_the_specified_type___When_called()
+        {
+            // Arrange
+            var anonymousObject = new { Anonymous = true };
+            var anonymousTypeName = new Regex("AnonymousType\\d*").Match(anonymousObject.GetType().Name);
+
+            var typesAndExpected = new[]
+            {
+                // value tuple:
+                new { Type = (first: "one", second: 7).GetType(), Expected = "ValueTuple<string, int>" },
+
+                // anonymous type:
+                new { Type = anonymousObject.GetType(), Expected = anonymousTypeName + "<bool>" },
+
+                // generic open constructed types:
+                new { Type = typeof(Derived<>).BaseType, Expected = "Base<string, V>" },
+                new { Type = typeof(Derived<>).GetField("F").FieldType, Expected = "G<Derived<V>>" },
+
+                // generic parameter:
+                new { Type = typeof(Base<,>).GetGenericArguments()[0], Expected = "T" },
+
+                // generic type definitions:
+                new { Type = typeof(IList<>), Expected = "IList<T>" },
+                new { Type = typeof(List<>), Expected = "List<T>" },
+                new { Type = typeof(IReadOnlyDictionary<,>), Expected = "IReadOnlyDictionary<TKey, TValue>" },
+                new { Type = typeof(Derived<>), Expected = "Derived<V>" },
+
+                // other types
+                new { Type = new Derived<int>[0].GetType(), Expected = "Derived<int>[]" },
+                new { Type = typeof(Derived<>.Nested), Expected = "Derived<V>.Nested" },
+                new { Type = typeof(string), Expected = "string" },
+                new { Type = typeof(int), Expected = "int" },
+                new { Type = typeof(int?), Expected = "int?" },
+                new { Type = typeof(Guid), Expected = "Guid" },
+                new { Type = typeof(Guid?), Expected = "Guid?" },
+                new { Type = typeof(MyNonNestedClass), Expected = "MyNonNestedClass" },
+                new { Type = typeof(MyNestedClass), Expected = "TypeExtensionsTest.MyNestedClass" },
+                new { Type = typeof(IReadOnlyDictionary<string, int?>), Expected = "IReadOnlyDictionary<string, int?>" },
+                new { Type = typeof(IReadOnlyDictionary<string, Guid?>), Expected = "IReadOnlyDictionary<string, Guid?>" },
+                new { Type = typeof(string[]), Expected = "string[]" },
+                new { Type = typeof(int?[]), Expected = "int?[]" },
+                new { Type = typeof(MyNonNestedClass[]), Expected = "MyNonNestedClass[]" },
+                new { Type = typeof(Guid?[]), Expected = "Guid?[]" },
+                new { Type = typeof(IList<int?[]>), Expected = "IList<int?[]>" },
+                new { Type = typeof(IReadOnlyDictionary<MyNonNestedClass, bool?>[]), Expected = "IReadOnlyDictionary<MyNonNestedClass, bool?>[]" },
+                new { Type = typeof(IReadOnlyDictionary<bool[], MyNonNestedClass>), Expected = "IReadOnlyDictionary<bool[], MyNonNestedClass>" },
+                new { Type = typeof(IReadOnlyDictionary<MyNonNestedClass, bool[]>), Expected = "IReadOnlyDictionary<MyNonNestedClass, bool[]>" },
+                new { Type = typeof(IReadOnlyDictionary<IReadOnlyDictionary<Guid[], int?>, IList<IList<short>>[]>), Expected = "IReadOnlyDictionary<IReadOnlyDictionary<Guid[], int?>, IList<IList<short>>[]>" },
+            };
+
+            // Act
+            var actuals = typesAndExpected.Select(_ => _.Type.ToStringReadable()).ToList();
 
             // Assert
             typesAndExpected.Select(_ => _.Expected).Should().Equal(actuals);
