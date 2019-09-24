@@ -10,6 +10,7 @@ namespace OBeautifulCode.Representation.Test
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
     using System.Linq;
+    using System.Reflection;
     using System.Text.RegularExpressions;
 
     using FakeItEasy;
@@ -18,8 +19,13 @@ namespace OBeautifulCode.Representation.Test
 
     using Xunit;
 
+    using static System.FormattableString;
+
     public static class TypeExtensionsTest
     {
+        private static readonly string MsCorLibNameAndVersion = "mscorlib (4.0.0.0)";
+        private static readonly string ThisAssemblyNameAndVersion = "OBeautifulCode.Representation.Test" + " (" + Assembly.GetExecutingAssembly().GetName().Version + ")";
+
         [Fact]
         public static void ToStringCompilable___Should_throw_ArgumentNullException___When_parameter_type_is_null()
         {
@@ -214,7 +220,10 @@ namespace OBeautifulCode.Representation.Test
         public static void ToStringReadable___Should_return_readable_string_representation_of_the_specified_type___When_parameter_options_is_None()
         {
             // Arrange
-            var anonymousObject = new { Anonymous = true };
+            var innerAnonymousObject = new { InnerAnonymous = 6 };
+            var innerAnonymousTypeName = new Regex("AnonymousType\\d*").Match(innerAnonymousObject.GetType().Name);
+
+            var anonymousObject = new { Anonymous = true, Inner = innerAnonymousObject };
             var anonymousTypeName = new Regex("AnonymousType\\d*").Match(anonymousObject.GetType().Name);
 
             var typesAndExpected = new[]
@@ -223,7 +232,10 @@ namespace OBeautifulCode.Representation.Test
                 new { Type = (first: "one", second: 7).GetType(), Expected = "ValueTuple<string, int>" },
 
                 // anonymous type:
-                new { Type = anonymousObject.GetType(), Expected = anonymousTypeName + "<bool>" },
+                new { Type = anonymousObject.GetType(), Expected = Invariant($"{anonymousTypeName}<bool, {innerAnonymousTypeName}<int>>") },
+
+                // anonymous type generic type definition:
+                new { Type = anonymousObject.GetType().GetGenericTypeDefinition(), Expected = Invariant($"{anonymousTypeName}<T1, T2>") },
 
                 // generic open constructed types:
                 new { Type = typeof(Derived<>).BaseType, Expected = "Base<string, V>" },
@@ -269,10 +281,13 @@ namespace OBeautifulCode.Representation.Test
         }
 
         [Fact]
-        public static void ToStringReadable___Should_return_readable_string_representation_of_the_specified_type___When_parameter_options_is_IncludeNamespace()
+        public static void ToStringReadable___Should_return_readable_string_representation_of_the_specified_type_with_namespaces_included___When_parameter_options_is_IncludeNamespace()
         {
             // Arrange
-            var anonymousObject = new { Anonymous = true };
+            var innerAnonymousObject = new { InnerAnonymous = 6 };
+            var innerAnonymousTypeName = new Regex("AnonymousType\\d*").Match(innerAnonymousObject.GetType().Name);
+
+            var anonymousObject = new { Anonymous = true, Inner = innerAnonymousObject };
             var anonymousTypeName = new Regex("AnonymousType\\d*").Match(anonymousObject.GetType().Name);
 
             var typesAndExpected = new[]
@@ -281,7 +296,10 @@ namespace OBeautifulCode.Representation.Test
                 new { Type = (first: "one", second: 7).GetType(), Expected = "System.ValueTuple<string, int>" },
 
                 // anonymous type:
-                new { Type = anonymousObject.GetType(), Expected = anonymousTypeName + "<bool>" },
+                new { Type = anonymousObject.GetType(), Expected = anonymousTypeName + "<bool, " + innerAnonymousTypeName + "<int>>" },
+
+                // anonymous type generic type definition:
+                new { Type = anonymousObject.GetType().GetGenericTypeDefinition(), Expected = Invariant($"{anonymousTypeName}<T1, T2>") },
 
                 // generic open constructed types:
                 new { Type = typeof(Derived<>).BaseType, Expected = "OBeautifulCode.Representation.Test.Base<string, V>" },
@@ -321,6 +339,70 @@ namespace OBeautifulCode.Representation.Test
 
             // Act
             var actuals = typesAndExpected.Select(_ => _.Type.ToStringReadable(ToStringReadableOptions.IncludeNamespace)).ToList();
+
+            // Assert
+            typesAndExpected.Select(_ => _.Expected).Should().Equal(actuals);
+        }
+
+        [Fact]
+        public static void ToStringReadable___Should_return_readable_string_representation_of_the_specified_type_with_assembly_details_included___When_parameter_options_is_IncludeAssemblyDetails()
+        {
+            // Arrange
+            var innerAnonymousObject = new { InnerAnonymous = 6 };
+            var innerAnonymousTypeName = new Regex("AnonymousType\\d*").Match(innerAnonymousObject.GetType().Name);
+
+            var anonymousObject = new { Anonymous = true, Inner = innerAnonymousObject };
+            var anonymousTypeName = new Regex("AnonymousType\\d*").Match(anonymousObject.GetType().Name);
+
+            var typesAndExpected = new[]
+            {
+                // value tuple:
+                new { Type = (first: "one", second: 7).GetType(), Expected = Invariant($"ValueTuple<string, int> || System.ValueTuple<T1, T2> => {MsCorLibNameAndVersion} | string => {MsCorLibNameAndVersion} | int => {MsCorLibNameAndVersion}") },
+
+                // anonymous type:
+                new { Type = anonymousObject.GetType(), Expected = Invariant($"{anonymousTypeName}<bool, {innerAnonymousTypeName}<int>> || {anonymousTypeName}<T1, T2> => {ThisAssemblyNameAndVersion} | bool => {MsCorLibNameAndVersion} | {innerAnonymousTypeName}<T1> => {ThisAssemblyNameAndVersion} | int => {MsCorLibNameAndVersion}") },
+
+                // anonymous type generic type definition:
+                new { Type = anonymousObject.GetType().GetGenericTypeDefinition(), Expected = Invariant($"{anonymousTypeName}<T1, T2> || {anonymousTypeName}<T1, T2> => {ThisAssemblyNameAndVersion}") },
+
+                // generic open constructed types:
+                new { Type = typeof(Derived<>).BaseType, Expected = Invariant($"Base<string, V> || OBeautifulCode.Representation.Test.Base<T, U> => {ThisAssemblyNameAndVersion} | string => {MsCorLibNameAndVersion}") },
+                new { Type = typeof(Derived<>).GetField("F").FieldType, Expected = Invariant($"G<Derived<V>> || OBeautifulCode.Representation.Test.G<T> => {ThisAssemblyNameAndVersion} | OBeautifulCode.Representation.Test.Derived<V> => {ThisAssemblyNameAndVersion}") },
+
+                // generic parameter:
+                new { Type = typeof(Base<,>).GetGenericArguments()[0], Expected = "T" },
+
+                // generic type definitions:
+                new { Type = typeof(IList<>), Expected = Invariant($"IList<T> || System.Collections.Generic.IList<T> => {MsCorLibNameAndVersion}") },
+                new { Type = typeof(List<>), Expected = Invariant($"List<T> || System.Collections.Generic.List<T> => {MsCorLibNameAndVersion}") },
+                new { Type = typeof(IReadOnlyDictionary<,>), Expected = Invariant($"IReadOnlyDictionary<TKey, TValue> || System.Collections.Generic.IReadOnlyDictionary<TKey, TValue> => {MsCorLibNameAndVersion}") },
+                new { Type = typeof(Derived<>), Expected = Invariant($"Derived<V> || OBeautifulCode.Representation.Test.Derived<V> => {ThisAssemblyNameAndVersion}") },
+
+                // other types
+                new { Type = new Derived<int>[0].GetType(), Expected = Invariant($"Derived<int>[] || OBeautifulCode.Representation.Test.Derived<V> => {ThisAssemblyNameAndVersion} | int => {MsCorLibNameAndVersion}") },
+                new { Type = typeof(Derived<>.Nested), Expected = Invariant($"Derived<V>.Nested || OBeautifulCode.Representation.Test.Derived<V>.Nested => {ThisAssemblyNameAndVersion}") },
+                new { Type = typeof(string), Expected = Invariant($"string || string => {MsCorLibNameAndVersion}") },
+                new { Type = typeof(int), Expected = Invariant($"int || int => {MsCorLibNameAndVersion}") },
+                new { Type = typeof(int?), Expected = Invariant($"int? || int => {MsCorLibNameAndVersion}") },
+                new { Type = typeof(Guid), Expected = Invariant($"Guid || System.Guid => {MsCorLibNameAndVersion}") },
+                new { Type = typeof(Guid?), Expected = Invariant($"Guid? || System.Guid => {MsCorLibNameAndVersion}") },
+                new { Type = typeof(MyNonNestedClass), Expected = Invariant($"MyNonNestedClass || OBeautifulCode.Representation.Test.MyNonNestedClass => {ThisAssemblyNameAndVersion}") },
+                new { Type = typeof(MyNestedClass), Expected = Invariant($"TypeExtensionsTest.MyNestedClass || OBeautifulCode.Representation.Test.TypeExtensionsTest.MyNestedClass => {ThisAssemblyNameAndVersion}") },
+                new { Type = typeof(IReadOnlyDictionary<string, int?>), Expected = Invariant($"IReadOnlyDictionary<string, int?> || System.Collections.Generic.IReadOnlyDictionary<TKey, TValue> => {MsCorLibNameAndVersion} | string => {MsCorLibNameAndVersion} | int => {MsCorLibNameAndVersion}") },
+                new { Type = typeof(IReadOnlyDictionary<string, Guid?>), Expected = Invariant($"IReadOnlyDictionary<string, Guid?> || System.Collections.Generic.IReadOnlyDictionary<TKey, TValue> => {MsCorLibNameAndVersion} | string => {MsCorLibNameAndVersion} | System.Guid => {MsCorLibNameAndVersion}") },
+                new { Type = typeof(string[]), Expected = Invariant($"string[] || string => {MsCorLibNameAndVersion}") },
+                new { Type = typeof(int?[]), Expected = Invariant($"int?[] || int => {MsCorLibNameAndVersion}") },
+                new { Type = typeof(MyNonNestedClass[]), Expected = Invariant($"MyNonNestedClass[] || OBeautifulCode.Representation.Test.MyNonNestedClass => {ThisAssemblyNameAndVersion}") },
+                new { Type = typeof(Guid?[]), Expected = Invariant($"Guid?[] || System.Guid => {MsCorLibNameAndVersion}") },
+                new { Type = typeof(IList<int?[]>), Expected = Invariant($"IList<int?[]> || System.Collections.Generic.IList<T> => {MsCorLibNameAndVersion} | int => {MsCorLibNameAndVersion}") },
+                new { Type = typeof(IReadOnlyDictionary<MyNonNestedClass, bool?>[]), Expected = Invariant($"IReadOnlyDictionary<MyNonNestedClass, bool?>[] || System.Collections.Generic.IReadOnlyDictionary<TKey, TValue> => {MsCorLibNameAndVersion} | OBeautifulCode.Representation.Test.MyNonNestedClass => {ThisAssemblyNameAndVersion} | bool => {MsCorLibNameAndVersion}") },
+                new { Type = typeof(IReadOnlyDictionary<bool[], MyNonNestedClass>), Expected = Invariant($"IReadOnlyDictionary<bool[], MyNonNestedClass> || System.Collections.Generic.IReadOnlyDictionary<TKey, TValue> => {MsCorLibNameAndVersion} | bool => {MsCorLibNameAndVersion} | OBeautifulCode.Representation.Test.MyNonNestedClass => {ThisAssemblyNameAndVersion}") },
+                new { Type = typeof(IReadOnlyDictionary<MyNonNestedClass, bool[]>), Expected = Invariant($"IReadOnlyDictionary<MyNonNestedClass, bool[]> || System.Collections.Generic.IReadOnlyDictionary<TKey, TValue> => {MsCorLibNameAndVersion} | OBeautifulCode.Representation.Test.MyNonNestedClass => {ThisAssemblyNameAndVersion} | bool => {MsCorLibNameAndVersion}") },
+                new { Type = typeof(IReadOnlyDictionary<IReadOnlyDictionary<Guid[], int?>, IList<IList<short>>[]>), Expected = Invariant($"IReadOnlyDictionary<IReadOnlyDictionary<Guid[], int?>, IList<IList<short>>[]> || System.Collections.Generic.IReadOnlyDictionary<TKey, TValue> => {MsCorLibNameAndVersion} | System.Collections.Generic.IReadOnlyDictionary<TKey, TValue> => {MsCorLibNameAndVersion} | System.Guid => {MsCorLibNameAndVersion} | int => {MsCorLibNameAndVersion} | System.Collections.Generic.IList<T> => {MsCorLibNameAndVersion} | System.Collections.Generic.IList<T> => {MsCorLibNameAndVersion} | short => {MsCorLibNameAndVersion}") },
+            };
+
+            // Act
+            var actuals = typesAndExpected.Select(_ => _.Type.ToStringReadable(ToStringReadableOptions.IncludeAssemblyDetails)).ToList();
 
             // Assert
             typesAndExpected.Select(_ => _.Expected).Should().Equal(actuals);

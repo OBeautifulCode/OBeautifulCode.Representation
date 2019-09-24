@@ -8,6 +8,7 @@
     <dependencies>
       <dependency id="OBeautifulCode.Validation.Recipes.ParameterValidator" version="1.0.25" />
       <dependency id="OBeautifulCode.Reflection.Recipes.TypeHelper" version="1.0.67" />
+      <dependency id="OBeautifulCode.Collection.Recipes.EnumerableExtensions" version="1.0.30" />
     </dependencies>
   </metadata>
   <files>
