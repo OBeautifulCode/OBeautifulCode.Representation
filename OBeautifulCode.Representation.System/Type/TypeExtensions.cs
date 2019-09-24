@@ -164,12 +164,14 @@ namespace OBeautifulCode.Representation
         /// Helpful breakdown of generics: <a href="https://docs.microsoft.com/en-us/dotnet/api/system.type.isgenerictype" />.
         /// </remarks>
         /// <param name="type">The type.</param>
+        /// <param name="options">The options to use when generating the string representation.</param>
         /// <returns>
         /// A readability-optimized string representation of the specified type
         /// </returns>
         /// <exception cref="ArgumentNullException"><paramref name="type"/> is null.</exception>
         public static string ToStringReadable(
-            this Type type)
+            this Type type,
+            ToStringReadableOptions options = ToStringReadableOptions.None)
         {
             // A copy of this method exists in OBC.Validation.
             // Any bug fixes made here should also be applied to OBC.Validation.
@@ -183,35 +185,39 @@ namespace OBeautifulCode.Representation
             {
                 result = type.Name;
             }
+            else if (Aliases.ContainsKey(type))
+            {
+                result = Aliases[type];
+            }
+            else if (type.IsNullableType())
+            {
+                result = Nullable.GetUnderlyingType(type).ToStringReadable(options) + "?";
+            }
+            else if (type.IsArray)
+            {
+                result = type.GetElementType().ToStringReadable(options) + "[]";
+            }
             else
             {
-                if (Aliases.ContainsKey(type))
-                {
-                    result = Aliases[type];
-                }
-                else if (type.IsNullableType())
-                {
-                    result = Nullable.GetUnderlyingType(type).ToStringReadable() + "?";
-                }
-                else if (type.IsArray)
-                {
-                    result = type.GetElementType().ToStringReadable() + "[]";
-                }
-                else
-                {
-                    result = CodeDomProvider.GetTypeOutput(new CodeTypeReference(type.FullName?.Replace(type.Namespace + ".", string.Empty) ?? type.Name));
+                var includeNamespace = options.HasFlag(ToStringReadableOptions.IncludeNamespace);
 
-                    if (type.IsAnonymous())
-                    {
-                        result = result.Replace("<>f__", string.Empty);
-                    }
+                result = CodeDomProvider.GetTypeOutput(new CodeTypeReference(type.FullName?.Replace(type.Namespace + ".", string.Empty) ?? type.Name));
 
-                    if (type.IsGenericType)
-                    {
-                        var genericParameters = type.GetGenericArguments().Select(_ => _.ToStringReadable()).ToArray();
+                if (includeNamespace && (type.Namespace != null))
+                {
+                    result = type.Namespace + "." + result;
+                }
 
-                        result = GenericBracketsRegex.Replace(result, "<" + string.Join(", ", genericParameters) + ">");
-                    }
+                if (type.IsAnonymous())
+                {
+                    result = result.Replace("<>f__", string.Empty);
+                }
+
+                if (type.IsGenericType)
+                {
+                    var genericParameters = type.GetGenericArguments().Select(_ => _.ToStringReadable(options)).ToArray();
+
+                    result = GenericBracketsRegex.Replace(result, "<" + string.Join(", ", genericParameters) + ">");
                 }
             }
 

@@ -12,5 +12,6 @@
   </metadata>
   <files>
     <file src="Type\TypeExtensions.cs" target="content\net462\.recipes\OBeautifulCode.Representation\TypeExtensions.cs" />
+    <file src="Type\ToStringReadableOptions.cs" target="content\net462\.recipes\OBeautifulCode.Representation\ToStringReadableOptions.cs" />
   </files>
 </package>

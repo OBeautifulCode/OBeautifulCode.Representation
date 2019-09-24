@@ -12,6 +12,8 @@ namespace OBeautifulCode.Representation.Test
     using System.Linq;
     using System.Text.RegularExpressions;
 
+    using FakeItEasy;
+
     using FluentAssertions;
 
     using Xunit;
@@ -201,7 +203,7 @@ namespace OBeautifulCode.Representation.Test
         public static void ToStringReadable___Should_throw_ArgumentNullException___When_parameter_type_is_null()
         {
             // Arrange, Act
-            var actual = Record.Exception(() => Representation.TypeExtensions.ToStringReadable(null));
+            var actual = Record.Exception(() => Representation.TypeExtensions.ToStringReadable(null, A.Dummy<ToStringReadableOptions>()));
 
             // Assert
             actual.Should().BeOfType<ArgumentNullException>();
@@ -209,7 +211,7 @@ namespace OBeautifulCode.Representation.Test
         }
 
         [Fact]
-        public static void ToStringReadable___Should_return_readable_string_representation_of_the_specified_type___When_called()
+        public static void ToStringReadable___Should_return_readable_string_representation_of_the_specified_type___When_parameter_options_is_None()
         {
             // Arrange
             var anonymousObject = new { Anonymous = true };
@@ -260,7 +262,65 @@ namespace OBeautifulCode.Representation.Test
             };
 
             // Act
-            var actuals = typesAndExpected.Select(_ => _.Type.ToStringReadable()).ToList();
+            var actuals = typesAndExpected.Select(_ => _.Type.ToStringReadable(ToStringReadableOptions.None)).ToList();
+
+            // Assert
+            typesAndExpected.Select(_ => _.Expected).Should().Equal(actuals);
+        }
+
+        [Fact]
+        public static void ToStringReadable___Should_return_readable_string_representation_of_the_specified_type___When_parameter_options_is_IncludeNamespace()
+        {
+            // Arrange
+            var anonymousObject = new { Anonymous = true };
+            var anonymousTypeName = new Regex("AnonymousType\\d*").Match(anonymousObject.GetType().Name);
+
+            var typesAndExpected = new[]
+            {
+                // value tuple:
+                new { Type = (first: "one", second: 7).GetType(), Expected = "System.ValueTuple<string, int>" },
+
+                // anonymous type:
+                new { Type = anonymousObject.GetType(), Expected = anonymousTypeName + "<bool>" },
+
+                // generic open constructed types:
+                new { Type = typeof(Derived<>).BaseType, Expected = "OBeautifulCode.Representation.Test.Base<string, V>" },
+                new { Type = typeof(Derived<>).GetField("F").FieldType, Expected = "OBeautifulCode.Representation.Test.G<OBeautifulCode.Representation.Test.Derived<V>>" },
+
+                // generic parameter:
+                new { Type = typeof(Base<,>).GetGenericArguments()[0], Expected = "T" },
+
+                // generic type definitions:
+                new { Type = typeof(IList<>), Expected = "System.Collections.Generic.IList<T>" },
+                new { Type = typeof(List<>), Expected = "System.Collections.Generic.List<T>" },
+                new { Type = typeof(IReadOnlyDictionary<,>), Expected = "System.Collections.Generic.IReadOnlyDictionary<TKey, TValue>" },
+                new { Type = typeof(Derived<>), Expected = "OBeautifulCode.Representation.Test.Derived<V>" },
+
+                // other types
+                new { Type = new Derived<int>[0].GetType(), Expected = "OBeautifulCode.Representation.Test.Derived<int>[]" },
+                new { Type = typeof(Derived<>.Nested), Expected = "OBeautifulCode.Representation.Test.Derived<V>.Nested" },
+                new { Type = typeof(string), Expected = "string" },
+                new { Type = typeof(int), Expected = "int" },
+                new { Type = typeof(int?), Expected = "int?" },
+                new { Type = typeof(Guid), Expected = "System.Guid" },
+                new { Type = typeof(Guid?), Expected = "System.Guid?" },
+                new { Type = typeof(MyNonNestedClass), Expected = "OBeautifulCode.Representation.Test.MyNonNestedClass" },
+                new { Type = typeof(MyNestedClass), Expected = "OBeautifulCode.Representation.Test.TypeExtensionsTest.MyNestedClass" },
+                new { Type = typeof(IReadOnlyDictionary<string, int?>), Expected = "System.Collections.Generic.IReadOnlyDictionary<string, int?>" },
+                new { Type = typeof(IReadOnlyDictionary<string, Guid?>), Expected = "System.Collections.Generic.IReadOnlyDictionary<string, System.Guid?>" },
+                new { Type = typeof(string[]), Expected = "string[]" },
+                new { Type = typeof(int?[]), Expected = "int?[]" },
+                new { Type = typeof(MyNonNestedClass[]), Expected = "OBeautifulCode.Representation.Test.MyNonNestedClass[]" },
+                new { Type = typeof(Guid?[]), Expected = "System.Guid?[]" },
+                new { Type = typeof(IList<int?[]>), Expected = "System.Collections.Generic.IList<int?[]>" },
+                new { Type = typeof(IReadOnlyDictionary<MyNonNestedClass, bool?>[]), Expected = "System.Collections.Generic.IReadOnlyDictionary<OBeautifulCode.Representation.Test.MyNonNestedClass, bool?>[]" },
+                new { Type = typeof(IReadOnlyDictionary<bool[], MyNonNestedClass>), Expected = "System.Collections.Generic.IReadOnlyDictionary<bool[], OBeautifulCode.Representation.Test.MyNonNestedClass>" },
+                new { Type = typeof(IReadOnlyDictionary<MyNonNestedClass, bool[]>), Expected = "System.Collections.Generic.IReadOnlyDictionary<OBeautifulCode.Representation.Test.MyNonNestedClass, bool[]>" },
+                new { Type = typeof(IReadOnlyDictionary<IReadOnlyDictionary<Guid[], int?>, IList<IList<short>>[]>), Expected = "System.Collections.Generic.IReadOnlyDictionary<System.Collections.Generic.IReadOnlyDictionary<System.Guid[], int?>, System.Collections.Generic.IList<System.Collections.Generic.IList<short>>[]>" },
+            };
+
+            // Act
+            var actuals = typesAndExpected.Select(_ => _.Type.ToStringReadable(ToStringReadableOptions.IncludeNamespace)).ToList();
 
             // Assert
             typesAndExpected.Select(_ => _.Expected).Should().Equal(actuals);

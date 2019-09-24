@@ -102,6 +102,7 @@
     <Compile Include="TypeMember\MemberInfoRepresentation.cs" />
     <Compile Include="TypeMember\MethodInfoRepresentation.cs" />
     <Compile Include="Type\MultipleMatchStrategy.cs" />
+    <Compile Include="Type\ToStringReadableOptions.cs" />
     <Compile Include="Type\TypeComparer.cs" />
     <Compile Include="Type\TypeExtensions.cs" />
     <Compile Include="Type\TypeMatchStrategy.cs" />
