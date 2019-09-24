@@ -23,7 +23,8 @@ namespace OBeautifulCode.Representation.Test
 
     public static class TypeExtensionsTest
     {
-        private static readonly string MsCorLibNameAndVersion = "mscorlib (4.0.0.0)";
+        private const string MsCorLibNameAndVersion = "mscorlib (4.0.0.0)";
+
         private static readonly string ThisAssemblyNameAndVersion = "OBeautifulCode.Representation.Test" + " (" + Assembly.GetExecutingAssembly().GetName().Version + ")";
 
         [Fact]
