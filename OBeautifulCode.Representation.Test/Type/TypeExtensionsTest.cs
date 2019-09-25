@@ -4,7 +4,7 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace OBeautifulCode.Representation.System.Test
+namespace OBeautifulCode.Representation.Test
 {
     using FakeItEasy;
 
@@ -16,6 +16,8 @@ namespace OBeautifulCode.Representation.System.Test
     using global::System.Linq;
     using global::System.Reflection;
     using global::System.Text.RegularExpressions;
+
+    using OBeautifulCode.Representation.System;
 
     using Xunit;
 
