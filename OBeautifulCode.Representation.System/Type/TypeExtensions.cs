@@ -176,10 +176,6 @@ namespace OBeautifulCode.Representation.System
         {
             new { type }.Must().NotBeNull();
 
-            // A copy of this method exists in OBC.Validation.
-            // Any bug fixes made here should also be applied to OBC.Validation.
-            // OBC.Validation cannot take a reference to OBC.Representation because it creates a circular reference
-            // since OBC.Representation itself depends on OBC.Validation.
             var assemblyDetailsTypes = new List<Type>();
 
             var result = type.ToStringReadableInternal(options, assemblyDetailsTypes);
@@ -199,10 +195,10 @@ namespace OBeautifulCode.Representation.System
             ToStringReadableOptions options,
             IList<Type> assemblyDetailsTypes = null)
         {
-            // A copy of this method exists in OBC.Validation.
+            // A paired-down copy of this method exists in OBC.Validation (as ToStringReadable, not ToStringReadableInternal).
             // Any bug fixes made here should also be applied to OBC.Validation.
-            // OBC.Validation cannot take a reference to OBC.Representation because it creates a circular reference
-            // since OBC.Representation itself depends on OBC.Validation.
+            // OBC.Validation cannot take a reference to OBC.Representation.System because it creates a circular reference
+            // since OBC.Representation.System itself depends on OBC.Validation.
             string result;
 
             if (type.IsGenericParameter)
@@ -264,11 +260,6 @@ namespace OBeautifulCode.Representation.System
         private static string ToAssemblyDetails(
             this Type type)
         {
-            // A copy of this method exists in OBC.Validation.
-            // Any bug fixes made here should also be applied to OBC.Validation.
-            // OBC.Validation cannot take a reference to OBC.Representation because it creates a circular reference
-            // since OBC.Representation itself depends on OBC.Validation.
-
             if (type.IsGenericType)
             {
                 type = type.GetGenericTypeDefinition();

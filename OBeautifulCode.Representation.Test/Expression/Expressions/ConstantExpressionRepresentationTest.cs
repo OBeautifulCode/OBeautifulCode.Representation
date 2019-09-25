@@ -4,7 +4,7 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace OBeautifulCode.Representation.System.Test.ConstantExpressionRepresentationTests
+namespace OBeautifulCode.Representation.System.Test
 {
     using Castle.DynamicProxy.Internal;
 
