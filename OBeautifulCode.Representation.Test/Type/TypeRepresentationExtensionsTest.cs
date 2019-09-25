@@ -4,12 +4,13 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace OBeautifulCode.Representation.Test
+namespace OBeautifulCode.Representation.System.Test
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Diagnostics;
     using FluentAssertions;
+
+    using global::System;
+    using global::System.Collections.Generic;
+    using global::System.Diagnostics;
 
     using Xunit;
 

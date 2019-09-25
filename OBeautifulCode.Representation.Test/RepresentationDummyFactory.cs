@@ -4,17 +4,21 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace OBeautifulCode.Representation.Test
+namespace OBeautifulCode.Representation.System.Test
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Linq.Expressions;
-    using System.Reflection;
     using FakeItEasy;
+
+    using global::System;
+    using global::System.Collections.Generic;
+    using global::System.Diagnostics.CodeAnalysis;
+    using global::System.Linq;
+    using global::System.Linq.Expressions;
+    using global::System.Reflection;
+
     using OBeautifulCode.AutoFakeItEasy;
     using OBeautifulCode.Reflection.Recipes;
-    using static System.FormattableString;
+
+    using static global::System.FormattableString;
 
     /// <summary>
     /// Type of how to control how dummy objects get created.
@@ -24,9 +28,9 @@ namespace OBeautifulCode.Representation.Test
         private static readonly List<Type> AppDomainTypes = new List<Type>();
         private static readonly Random Random = new Random();
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1810:InitializeReferenceTypeStaticFieldsInline", Justification = "Prefer this structure.")]
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1804:RemoveUnusedLocals", MessageId = "accumulatedReflectionTypeLoadExceptions", Justification = "Prefer this structure.")]
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1065:DoNotRaiseExceptionsInUnexpectedLocations", Justification = "Prefer this structure.")]
+        [SuppressMessage("Microsoft.Performance", "CA1810:InitializeReferenceTypeStaticFieldsInline", Justification = "Prefer this structure.")]
+        [SuppressMessage("Microsoft.Performance", "CA1804:RemoveUnusedLocals", MessageId = "accumulatedReflectionTypeLoadExceptions", Justification = "Prefer this structure.")]
+        [SuppressMessage("Microsoft.Design", "CA1065:DoNotRaiseExceptionsInUnexpectedLocations", Justification = "Prefer this structure.")]
         static RepresentationDummyFactory()
         {
             var loadedAssemblies             = AssemblyLoader.GetLoadedAssemblies().Distinct().ToList();

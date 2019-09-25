@@ -4,14 +4,15 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace OBeautifulCode.Representation
+namespace OBeautifulCode.Representation.System
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Linq.Expressions;
+    using global::System;
+    using global::System.Collections.Generic;
+    using global::System.Diagnostics.CodeAnalysis;
+    using global::System.Linq;
+    using global::System.Linq.Expressions;
 
-    using static System.FormattableString;
+    using static global::System.FormattableString;
 
     /// <summary>
     /// Representation of <see cref="MemberBinding" />.
@@ -31,7 +32,7 @@ namespace OBeautifulCode.Representation
 
         /// <summary>Gets the type with member.</summary>
         /// <value>The type with member.</value>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1721:PropertyNamesShouldNotMatchGetMethods", Justification = "Name/spelling is correct.")]
+        [SuppressMessage("Microsoft.Naming", "CA1721:PropertyNamesShouldNotMatchGetMethods", Justification = "Name/spelling is correct.")]
         public TypeRepresentation Type { get; private set; }
 
         /// <summary>Gets  the member info representation.</summary>

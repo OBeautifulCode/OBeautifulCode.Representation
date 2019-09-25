@@ -4,25 +4,28 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace OBeautifulCode.Representation.Test.ConstantExpressionRepresentationTests
+namespace OBeautifulCode.Representation.System.Test.ConstantExpressionRepresentationTests
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Diagnostics.CodeAnalysis;
-    using System.IO;
-    using System.Linq;
-    using System.Linq.Expressions;
-    using System.Reflection;
     using Castle.DynamicProxy.Internal;
+
     using FakeItEasy;
+
     using FluentAssertions;
+
+    using global::System.Diagnostics.CodeAnalysis;
+    using global::System.Linq;
+    using global::System.Linq.Expressions;
+    using global::System.Reflection;
+
     using OBeautifulCode.AutoFakeItEasy;
     using OBeautifulCode.Bootstrapper.Test.CodeGeneration;
     using OBeautifulCode.Collection.Recipes;
     using OBeautifulCode.Type;
+
     using Xunit;
     using Xunit.Abstractions;
-    using static System.FormattableString;
+
+    using static global::System.FormattableString;
 
     public class ConstantExpressionRepresentationTest
     {

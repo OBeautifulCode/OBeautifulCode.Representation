@@ -4,11 +4,11 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace OBeautifulCode.Representation
+namespace OBeautifulCode.Representation.System
 {
-    using System;
-    using System.Linq;
-    using System.Linq.Expressions;
+    using global::System;
+    using global::System.Linq;
+    using global::System.Linq.Expressions;
 
     /// <summary>
     /// Representation of <see cref="MemberAssignment" />.
@@ -40,7 +40,7 @@ namespace OBeautifulCode.Representation
         /// <summary>Converts to serializable.</summary>
         /// <param name="memberAssignment">The memberAssignment.</param>
         /// <returns>Serializable version.</returns>
-        public static MemberAssignmentRepresentation ToRepresentation(this System.Linq.Expressions.MemberAssignment memberAssignment)
+        public static MemberAssignmentRepresentation ToRepresentation(this MemberAssignment memberAssignment)
         {
             if (memberAssignment == null)
             {

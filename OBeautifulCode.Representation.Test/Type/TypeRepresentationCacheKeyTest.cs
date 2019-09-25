@@ -4,13 +4,17 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace OBeautifulCode.Representation.Test
+namespace OBeautifulCode.Representation.System.Test
 {
-    using System.Collections.Generic;
     using FakeItEasy;
 
     using FluentAssertions;
+
+    using global::System.Collections.Generic;
+    using global::System.Diagnostics.CodeAnalysis;
+
     using OBeautifulCode.AutoFakeItEasy;
+
     using Xunit;
 
     public static class TypeRepresentationCacheKeyTest
@@ -271,7 +275,7 @@ namespace OBeautifulCode.Representation.Test
             result1.Should().BeTrue();
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "untyped", Justification = "Spelling/name is correct.")]
+        [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "untyped", Justification = "Spelling/name is correct.")]
         [Fact]
         public static void Equals___Should_return_false___When_calling_untyped_overload_and_parameter_other_is_null()
         {
@@ -285,7 +289,7 @@ namespace OBeautifulCode.Representation.Test
             result1.Should().BeFalse();
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "untyped", Justification = "Spelling/name is correct.")]
+        [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "untyped", Justification = "Spelling/name is correct.")]
         [Fact]
         public static void Equals___Should_return_false___When_calling_untyped_overload_and_parameter_other_is_not_of_the_same_type()
         {
@@ -300,7 +304,7 @@ namespace OBeautifulCode.Representation.Test
             result1.Should().BeFalse();
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "untyped", Justification = "Spelling/name is correct.")]
+        [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "untyped", Justification = "Spelling/name is correct.")]
         [Fact]
         public static void Equals___Should_return_true___When_calling_untyped_overload_and_parameter_other_is_same_object()
         {
@@ -314,7 +318,7 @@ namespace OBeautifulCode.Representation.Test
             result.Should().BeTrue();
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "untyped", Justification = "Spelling/name is correct.")]
+        [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "untyped", Justification = "Spelling/name is correct.")]
         [Fact]
         public static void Equals___Should_return_false___When_calling_untyped_overload_and_objects_being_compared_have_different_property_values()
         {
@@ -339,7 +343,7 @@ namespace OBeautifulCode.Representation.Test
             result3.Should().BeFalse();
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "untyped", Justification = "Spelling/name is correct.")]
+        [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "untyped", Justification = "Spelling/name is correct.")]
         [Fact]
         public static void Equals___Should_return_true___When_calling_untyped_overload_and_objects_being_compared_have_same_property_values()
         {

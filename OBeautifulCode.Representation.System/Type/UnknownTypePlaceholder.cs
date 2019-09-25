@@ -4,9 +4,9 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace OBeautifulCode.Representation
+namespace OBeautifulCode.Representation.System
 {
-    using System;
+    using global::System;
 
     /// <summary>
     /// Placeholder type to use when no <see cref="Type" /> is available.

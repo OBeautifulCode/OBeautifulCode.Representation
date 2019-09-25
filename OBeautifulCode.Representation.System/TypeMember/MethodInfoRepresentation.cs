@@ -4,15 +4,16 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace OBeautifulCode.Representation
+namespace OBeautifulCode.Representation.System
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Reflection;
+    using global::System;
+    using global::System.Collections.Generic;
+    using global::System.Diagnostics.CodeAnalysis;
+    using global::System.Linq;
+    using global::System.Reflection;
     using OBeautifulCode.Collection.Recipes;
     using OBeautifulCode.Math.Recipes;
-    using static System.FormattableString;
+    using static global::System.FormattableString;
 
     /// <summary>
     /// Representation of <see cref="MethodInfo" />.
@@ -48,7 +49,7 @@ namespace OBeautifulCode.Representation
         /// Gets the type.
         /// </summary>
         /// <value>The type.</value>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1721:PropertyNamesShouldNotMatchGetMethods", Justification = "Name/spelling is correct.")]
+        [SuppressMessage("Microsoft.Naming", "CA1721:PropertyNamesShouldNotMatchGetMethods", Justification = "Name/spelling is correct.")]
         public TypeRepresentation Type { get; private set; }
 
         /// <summary>

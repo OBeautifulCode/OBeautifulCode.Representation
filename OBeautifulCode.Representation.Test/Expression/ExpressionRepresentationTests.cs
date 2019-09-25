@@ -4,14 +4,14 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace OBeautifulCode.Representation.Test
+namespace OBeautifulCode.Representation.System.Test
 {
-    using System;
-    using System.IO;
-    using System.Linq;
-    using System.Linq.Expressions;
     using FakeItEasy;
+
     using FluentAssertions;
+
+    using global::System.Linq.Expressions;
+
     using Xunit;
 
     public delegate OutputForExample DelegateForExample(

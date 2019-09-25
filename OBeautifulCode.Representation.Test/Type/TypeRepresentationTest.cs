@@ -4,23 +4,28 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace OBeautifulCode.Representation.Test.TypeRepresentationTests
+namespace OBeautifulCode.Representation.System.Test.TypeRepresentationTests
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Diagnostics.CodeAnalysis;
-    using System.Linq;
-    using System.Reflection;
     using Castle.DynamicProxy.Internal;
+
     using FakeItEasy;
+
     using FluentAssertions;
+
+    using global::System.Collections.Generic;
+    using global::System.Diagnostics.CodeAnalysis;
+    using global::System.Linq;
+    using global::System.Reflection;
+
     using OBeautifulCode.AutoFakeItEasy;
     using OBeautifulCode.Bootstrapper.Test.CodeGeneration;
     using OBeautifulCode.Collection.Recipes;
     using OBeautifulCode.Type;
+
     using Xunit;
     using Xunit.Abstractions;
-    using static System.FormattableString;
+
+    using static global::System.FormattableString;
 
     public partial class TypeRepresentationTest
     {

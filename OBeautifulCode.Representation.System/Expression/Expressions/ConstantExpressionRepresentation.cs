@@ -4,14 +4,14 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace OBeautifulCode.Representation
+namespace OBeautifulCode.Representation.System
 {
-    using System;
-    using System.Linq.Expressions;
+    using global::System;
+    using global::System.Linq.Expressions;
     using OBeautifulCode.Math.Recipes;
     using OBeautifulCode.Reflection.Recipes;
     using OBeautifulCode.Type;
-    using static System.FormattableString;
+    using static global::System.FormattableString;
 
     /// <summary>
     /// Representation of <see cref="ConstantExpression" />.

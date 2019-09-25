@@ -4,9 +4,9 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace OBeautifulCode.Representation.Test
+namespace OBeautifulCode.Representation.System.Test
 {
-    using System;
+    using global::System;
 
     using Xunit;
 

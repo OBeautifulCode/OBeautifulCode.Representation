@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0"?>
 <package >
   <metadata>
-    <id>OBeautifulCode.Representation.Recipes.TypeExtensions</id>
+    <id>OBeautifulCode.Representation.System.Recipes.TypeExtensions</id>
     <description>Extension methods to create representations of type Type.</description>
     <tags></tags>
     <iconUrl>https://raw.githubusercontent.com/OBeautifulCode/OBeautifulCode.Representation/master/OBeautifulCode.Representation.System/nuget-icon.png</iconUrl>

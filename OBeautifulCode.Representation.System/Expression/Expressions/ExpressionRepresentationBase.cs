@@ -4,14 +4,15 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace OBeautifulCode.Representation
+namespace OBeautifulCode.Representation.System
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Linq.Expressions;
+    using global::System;
+    using global::System.Collections.Generic;
+    using global::System.Diagnostics.CodeAnalysis;
+    using global::System.Linq;
+    using global::System.Linq.Expressions;
 
-    using static System.FormattableString;
+    using static global::System.FormattableString;
 
     /// <summary>
     /// Representation of <see cref="Expression" />.
@@ -33,7 +34,7 @@ namespace OBeautifulCode.Representation
 
         /// <summary>Gets the type.</summary>
         /// <value>The type.</value>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1721:PropertyNamesShouldNotMatchGetMethods", Justification = "Name/spelling is correct.")]
+        [SuppressMessage("Microsoft.Naming", "CA1721:PropertyNamesShouldNotMatchGetMethods", Justification = "Name/spelling is correct.")]
         public TypeRepresentation Type { get; private set; }
     }
 
@@ -47,7 +48,7 @@ namespace OBeautifulCode.Representation
         /// <summary>Converts to a serializable.</summary>
         /// <param name="expression">The expression.</param>
         /// <returns>Serializable expression.</returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling", Justification = "Highly coupled by its very nature.")]
+        [SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling", Justification = "Highly coupled by its very nature.")]
         public static ExpressionRepresentationBase ToRepresentation(this Expression expression)
         {
             if (expression == null)
@@ -120,7 +121,7 @@ namespace OBeautifulCode.Representation
         /// <summary>Converts from serializable.</summary>
         /// <param name="expressionRepresentation">The serializable expression.</param>
         /// <returns>Converted version.</returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling", Justification = "Highly coupled by its very nature.")]
+        [SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling", Justification = "Highly coupled by its very nature.")]
         public static Expression FromRepresentation(this ExpressionRepresentationBase expressionRepresentation)
         {
             if (expressionRepresentation == null)

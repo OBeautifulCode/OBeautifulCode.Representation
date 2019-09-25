@@ -4,9 +4,9 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace OBeautifulCode.Representation
+namespace OBeautifulCode.Representation.System
 {
-    using System.Collections.Generic;
+    using global::System.Collections.Generic;
 
     /// <summary>
     /// Expression tree visitor for <see cref="ExpressionRepresentationBase" />'s.

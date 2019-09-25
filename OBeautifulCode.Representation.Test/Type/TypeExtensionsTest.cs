@@ -4,22 +4,24 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace OBeautifulCode.Representation.Test
+namespace OBeautifulCode.Representation.System.Test
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Diagnostics.CodeAnalysis;
-    using System.Linq;
-    using System.Reflection;
-    using System.Text.RegularExpressions;
-
     using FakeItEasy;
 
     using FluentAssertions;
 
+    using global::System;
+    using global::System.Collections.Generic;
+    using global::System.Diagnostics.CodeAnalysis;
+    using global::System.Linq;
+    using global::System.Reflection;
+    using global::System.Text.RegularExpressions;
+
     using Xunit;
 
-    using static System.FormattableString;
+    using static global::System.FormattableString;
+
+    using TypeExtensions = OBeautifulCode.Representation.System.TypeExtensions;
 
     public static class TypeExtensionsTest
     {
@@ -31,7 +33,7 @@ namespace OBeautifulCode.Representation.Test
         public static void ToStringCompilable___Should_throw_ArgumentNullException___When_parameter_type_is_null()
         {
             // Arrange, Act
-            var actual = Record.Exception(() => Representation.TypeExtensions.ToStringCompilable(null));
+            var actual = Record.Exception(() => TypeExtensions.ToStringCompilable(null));
 
             // Assert
             actual.Should().BeOfType<ArgumentNullException>();
@@ -210,7 +212,7 @@ namespace OBeautifulCode.Representation.Test
         public static void ToStringReadable___Should_throw_ArgumentNullException___When_parameter_type_is_null()
         {
             // Arrange, Act
-            var actual = Record.Exception(() => Representation.TypeExtensions.ToStringReadable(null, A.Dummy<ToStringReadableOptions>()));
+            var actual = Record.Exception(() => TypeExtensions.ToStringReadable(null, A.Dummy<ToStringReadableOptions>()));
 
             // Assert
             actual.Should().BeOfType<ArgumentNullException>();

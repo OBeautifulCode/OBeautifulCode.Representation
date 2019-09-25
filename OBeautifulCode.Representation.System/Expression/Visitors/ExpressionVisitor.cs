@@ -4,10 +4,10 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace OBeautifulCode.Representation
+namespace OBeautifulCode.Representation.System
 {
-    using System.Collections.Generic;
-    using System.Linq.Expressions;
+    using global::System.Collections.Generic;
+    using global::System.Linq.Expressions;
 
     /// <summary>
     /// Expression tree visitor for <see cref="Expression" />'s.

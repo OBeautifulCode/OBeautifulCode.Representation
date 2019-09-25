@@ -8,12 +8,12 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 #if !OBeautifulCodeRepresentationRecipesProject
-namespace OBeautifulCode.Representation.Recipes
+namespace OBeautifulCode.Representation.System.Recipes
 #else
-namespace OBeautifulCode.Representation
+namespace OBeautifulCode.Representation.System
 #endif
 {
-    using System;
+    using global::System;
     
     /// <summary>
     /// Extensions methods on type <see cref="Type"/>.

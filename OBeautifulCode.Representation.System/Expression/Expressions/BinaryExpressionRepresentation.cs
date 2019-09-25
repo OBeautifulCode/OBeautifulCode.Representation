@@ -4,10 +4,10 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace OBeautifulCode.Representation
+namespace OBeautifulCode.Representation.System
 {
-    using System;
-    using System.Linq.Expressions;
+    using global::System;
+    using global::System.Linq.Expressions;
 
     /// <summary>Representation of <see cref="BinaryExpression" />.</summary>
     public class BinaryExpressionRepresentation : ExpressionRepresentationBase

@@ -8,17 +8,17 @@
 // --------------------------------------------------------------------------------------------------------------------
 
 #if !OBeautifulCodeRepresentationRecipesProject
-namespace OBeautifulCode.Representation.Recipes
+namespace OBeautifulCode.Representation.System.Recipes
 #else
-namespace OBeautifulCode.Representation
+namespace OBeautifulCode.Representation.System
 #endif
 {
-    using System;
-    using System.CodeDom;
-    using System.CodeDom.Compiler;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text.RegularExpressions;
+    using global::System;
+    using global::System.CodeDom;
+    using global::System.CodeDom.Compiler;
+    using global::System.Collections.Generic;
+    using global::System.Linq;
+    using global::System.Text.RegularExpressions;
 
     using OBeautifulCode.Collection.Recipes;
     using OBeautifulCode.Reflection.Recipes;
