@@ -12,7 +12,7 @@
     </dependencies>
   </metadata>
   <files>
-    <file src="Type\TypeExtensions.cs" target="content\net462\.recipes\OBeautifulCode.Representation\TypeExtensions.cs" />
-    <file src="Type\ToStringReadableOptions.cs" target="content\net462\.recipes\OBeautifulCode.Representation\ToStringReadableOptions.cs" />
+    <file src="Type\TypeExtensions.cs" target="content\net462\.recipes\OBeautifulCode.Representation.System\TypeExtensions.cs" />
+    <file src="Type\ToStringReadableOptions.cs" target="content\net462\.recipes\OBeautifulCode.Representation.System\ToStringReadableOptions.cs" />
   </files>
 </package>
