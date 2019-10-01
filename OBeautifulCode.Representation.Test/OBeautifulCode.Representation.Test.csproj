@@ -120,7 +120,6 @@
     <Compile Include=".recipes\OBeautifulCode.Bootstrapper.Test\CodeGeneration\CodeGenerator.cs" />
     <Compile Include="RepresentationDummyFactory.cs" />
     <Compile Include="Type\TypeComparerTests.cs" />
-    <Compile Include="Type\TypeExtensionsTest.cs" />
     <Compile Include="Type\TypeRepresentationExtensionsTest.cs" />
     <Compile Include="Type\TypeRepresentationCacheKeyTest.cs" />
     <Compile Include="Type\TypeRepresentationTest.cs" />

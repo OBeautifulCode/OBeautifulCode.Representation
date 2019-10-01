@@ -103,9 +103,7 @@
     <Compile Include="TypeMember\MemberInfoRepresentation.cs" />
     <Compile Include="TypeMember\MethodInfoRepresentation.cs" />
     <Compile Include="Type\MultipleMatchStrategy.cs" />
-    <Compile Include="Type\ToStringReadableOptions.cs" />
     <Compile Include="Type\TypeComparer.cs" />
-    <Compile Include="Type\TypeExtensions.cs" />
     <Compile Include="Type\TypeMatchStrategy.cs" />
     <Compile Include="Type\TypeRepresentation.cs" />
     <Compile Include="Type\TypeRepresentationCacheKey.cs" />
@@ -118,7 +116,6 @@
     <None Include="nuget-icon.png" />
     <None Include="OBeautifulCode.Representation.System.override-nuspec" />
     <None Include="packages.config" />
-    <None Include="TypeExtensions.recipe-nuspec" />
   </ItemGroup>
   <ItemGroup>
     <Analyzer Include="..\packages\StyleCop.Analyzers.1.1.118\analyzers\dotnet\cs\StyleCop.Analyzers.CodeFixes.dll" />
