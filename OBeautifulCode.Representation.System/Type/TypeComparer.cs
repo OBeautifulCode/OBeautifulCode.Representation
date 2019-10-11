@@ -9,8 +9,8 @@ namespace OBeautifulCode.Representation.System
     using global::System;
     using global::System.Collections.Generic;
     using global::System.Diagnostics.CodeAnalysis;
-    using global::System.Drawing;
-    using OBeautifulCode.Validation.Recipes;
+
+    using OBeautifulCode.Assertion.Recipes;
 
     /// <summary>
     /// Type comparer using the provided strategy.
@@ -115,7 +115,7 @@ namespace OBeautifulCode.Representation.System
         public int GetHashCode(
             TypeRepresentation obj)
         {
-            new { obj }.Must().NotBeNull();
+            new { obj }.AsArg().Must().NotBeNull();
 
             switch (this.typeMatchStrategy)
             {

@@ -11,10 +11,10 @@ namespace OBeautifulCode.Representation.System
     using global::System.Linq;
     using global::System.Reflection;
 
-    using OBeautifulCode.Math.Recipes;
+    using OBeautifulCode.Assertion.Recipes;
+    using OBeautifulCode.Equality.Recipes;
     using OBeautifulCode.Reflection.Recipes;
     using OBeautifulCode.Type;
-    using OBeautifulCode.Validation.Recipes;
 
     using static global::System.FormattableString;
 
@@ -36,7 +36,7 @@ namespace OBeautifulCode.Representation.System
             string filePath,
             string frameworkVersion)
         {
-            name.Named(nameof(name))
+            name.AsArg(nameof(name))
                 .Must()
                 .NotBeNullNorWhiteSpace();
 

@@ -10,9 +10,10 @@ namespace OBeautifulCode.Representation.System
     using global::System.Collections.Generic;
     using global::System.Diagnostics.CodeAnalysis;
     using global::System.Linq;
-    using OBeautifulCode.Collection.Recipes;
-    using OBeautifulCode.Math.Recipes;
+
+    using OBeautifulCode.Equality.Recipes;
     using OBeautifulCode.Type;
+
     using static global::System.FormattableString;
 
     /// <summary>
@@ -97,7 +98,7 @@ namespace OBeautifulCode.Representation.System
             var result = (left.Namespace ?? string.Empty).Equals(right.Namespace                         ?? string.Empty, StringComparison.Ordinal)
                       && (left.Name ?? string.Empty).Equals(right.Name                                   ?? string.Empty, StringComparison.Ordinal)
                       && (left.AssemblyQualifiedName ?? string.Empty).Equals(right.AssemblyQualifiedName ?? string.Empty, StringComparison.Ordinal)
-                      && (left.GenericArguments ?? new TypeRepresentation[0]).SequenceEqualHandlingNulls(
+                      && (left.GenericArguments ?? new TypeRepresentation[0]).IsSequenceEqualTo(
                              right.GenericArguments ?? new TypeRepresentation[0]);
 
             return result;
@@ -122,7 +123,7 @@ namespace OBeautifulCode.Representation.System
             .Hash(this.Namespace)
             .Hash(this.Name)
             .Hash(this.AssemblyQualifiedName)
-            .HashElements(this.GenericArguments)
+            .Hash(this.GenericArguments)
             .Value;
 
         /// <inheritdoc />

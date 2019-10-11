@@ -8,9 +8,11 @@ namespace OBeautifulCode.Representation.System
 {
     using global::System;
     using global::System.Linq.Expressions;
-    using OBeautifulCode.Math.Recipes;
+
+    using OBeautifulCode.Equality.Recipes;
     using OBeautifulCode.Reflection.Recipes;
     using OBeautifulCode.Type;
+
     using static global::System.FormattableString;
 
     /// <summary>

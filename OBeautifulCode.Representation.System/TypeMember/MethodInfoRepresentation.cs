@@ -11,8 +11,9 @@ namespace OBeautifulCode.Representation.System
     using global::System.Diagnostics.CodeAnalysis;
     using global::System.Linq;
     using global::System.Reflection;
-    using OBeautifulCode.Collection.Recipes;
-    using OBeautifulCode.Math.Recipes;
+
+    using OBeautifulCode.Equality.Recipes;
+
     using static global::System.FormattableString;
 
     /// <summary>
@@ -75,7 +76,7 @@ namespace OBeautifulCode.Representation.System
             var result =
                 (left.Type == right.Type) &&
                 (left.MethodHash == right.MethodHash) &&
-                left.GenericArguments.SequenceEqualHandlingNulls(right.GenericArguments);
+                left.GenericArguments.IsSequenceEqualTo(right.GenericArguments);
 
             return result;
         }
@@ -106,7 +107,7 @@ namespace OBeautifulCode.Representation.System
             HashCodeHelper.Initialize()
                 .Hash(this.Type)
                 .Hash(this.MethodHash)
-                .HashElements(this.GenericArguments)
+                .Hash(this.GenericArguments)
                 .Value;
     }
 

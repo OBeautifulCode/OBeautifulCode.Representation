@@ -13,7 +13,9 @@ namespace OBeautifulCode.Bootstrapper.Test.CodeGeneration
     using System.Diagnostics.CodeAnalysis;
     using System.Linq;
     using System.Reflection;
-    using OBeautifulCode.Validation.Recipes;
+
+    using OBeautifulCode.Assertion.Recipes;
+
     using static System.FormattableString;
 
     public static class CodeGenerationShared
@@ -52,7 +54,7 @@ namespace OBeautifulCode.Bootstrapper.Test.CodeGeneration
         public static PropertyInfo[] GetPropertiesOfConcernFromType(
             this Type type)
         {
-            type.Named(nameof(type)).Must().NotBeNull();
+            type.AsArg(nameof(type)).Must().NotBeNull();
 
             var result = type.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.GetProperty | BindingFlags.FlattenHierarchy);
 
@@ -63,7 +65,7 @@ namespace OBeautifulCode.Bootstrapper.Test.CodeGeneration
         public static string TreatedTypeName(
             this Type type)
         {
-            type.Named(nameof(type)).Must().NotBeNull();
+            type.AsArg(nameof(type)).Must().NotBeNull();
 
             if (type == typeof(string))
             {

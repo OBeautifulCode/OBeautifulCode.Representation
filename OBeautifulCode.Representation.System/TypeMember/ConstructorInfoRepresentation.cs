@@ -10,7 +10,9 @@ namespace OBeautifulCode.Representation.System
     using global::System.Diagnostics.CodeAnalysis;
     using global::System.Linq;
     using global::System.Reflection;
-    using OBeautifulCode.Math.Recipes;
+
+    using OBeautifulCode.Equality.Recipes;
+
     using static global::System.FormattableString;
 
     /// <summary>

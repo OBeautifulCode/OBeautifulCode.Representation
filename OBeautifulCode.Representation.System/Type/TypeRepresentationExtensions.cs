@@ -12,8 +12,10 @@ namespace OBeautifulCode.Representation.System
     using global::System.Diagnostics.CodeAnalysis;
     using global::System.Linq;
     using global::System.Reflection;
+
+    using OBeautifulCode.Assertion.Recipes;
     using OBeautifulCode.Reflection.Recipes;
-    using OBeautifulCode.Validation.Recipes;
+
     using static global::System.FormattableString;
 
     /// <summary>
@@ -31,10 +33,7 @@ namespace OBeautifulCode.Representation.System
         public static TypeRepresentation ToRepresentation(
             this Type type)
         {
-            if (type == null)
-            {
-                throw new ArgumentNullException(nameof(type));
-            }
+            new { type }.AsArg().Must().NotBeNull();
 
             TypeRepresentation result;
             if (type.IsGenericType)
@@ -72,7 +71,7 @@ namespace OBeautifulCode.Representation.System
         [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes", Justification = "Want to swallow that specific exception.")]
         public static Type ResolveFromLoadedTypes(this TypeRepresentation typeRepresentation, TypeMatchStrategy typeMatchStrategy = TypeMatchStrategy.NamespaceAndName, MultipleMatchStrategy multipleMatchStrategy = MultipleMatchStrategy.ThrowOnMultiple)
         {
-            new { typeRepresentation }.Must().NotBeNull();
+            new { typeRepresentation }.AsArg().Must().NotBeNull();
 
             Type result;
 

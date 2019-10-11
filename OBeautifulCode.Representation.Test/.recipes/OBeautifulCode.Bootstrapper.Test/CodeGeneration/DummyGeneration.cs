@@ -9,7 +9,8 @@ namespace OBeautifulCode.Bootstrapper.Test.CodeGeneration
     using System;
     using System.Diagnostics.CodeAnalysis;
     using System.Linq;
-    using OBeautifulCode.Validation.Recipes;
+
+    using OBeautifulCode.Assertion.Recipes;
 
     public static class DummyGeneration
     {
@@ -24,7 +25,7 @@ namespace OBeautifulCode.Bootstrapper.Test.CodeGeneration
             this Type type,
             string thatIsNot = null)
         {
-            type.Named(nameof(type)).Must().NotBeNull();
+            type.AsArg(nameof(type)).Must().NotBeNull();
 
             var result =
                 string.IsNullOrWhiteSpace(thatIsNot)

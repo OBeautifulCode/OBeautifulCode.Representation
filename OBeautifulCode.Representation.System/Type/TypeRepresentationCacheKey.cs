@@ -7,7 +7,8 @@
 namespace OBeautifulCode.Representation.System
 {
     using global::System;
-    using OBeautifulCode.Math.Recipes;
+
+    using OBeautifulCode.Equality.Recipes;
 
     /// <summary>
     /// Cache key used to key an already de-referenced type along with its settings.

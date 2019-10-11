@@ -8,9 +8,8 @@ namespace OBeautifulCode.Bootstrapper.Test.CodeGeneration
 {
     using System;
     using System.Linq;
+
     using FluentAssertions;
-    using OBeautifulCode.Validation.Recipes;
-    using static System.FormattableString;
 
     public static class SerializationGeneration
     {
@@ -65,7 +64,7 @@ namespace OBeautifulCode.Bootstrapper.Test.CodeGeneration
         public static string GenerateSerializationTestFields(
             this Type type)
         {
-            type.Named(nameof(type)).Should().NotBeNull();
+            type.Should().NotBeNull();
 
             var prefix = type.Namespace?.Split('.').Last();
             var result = SerializationFieldsCodeTemplate
@@ -78,7 +77,7 @@ namespace OBeautifulCode.Bootstrapper.Test.CodeGeneration
         public static string GenerateSerializationTestMethods(
             this Type type)
         {
-            type.Named(nameof(type)).Should().NotBeNull();
+            type.Should().NotBeNull();
             var result = SerializationTestMethodsCodeTemplate.Replace(TypeNameToken, type.TreatedTypeName());
             return result;
         }

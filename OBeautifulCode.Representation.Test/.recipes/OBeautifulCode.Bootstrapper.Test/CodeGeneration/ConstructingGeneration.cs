@@ -9,8 +9,10 @@ namespace OBeautifulCode.Bootstrapper.Test.CodeGeneration
     using System;
     using System.Collections.Generic;
     using System.Linq;
+
+    using OBeautifulCode.Assertion.Recipes;
     using OBeautifulCode.Collection.Recipes;
-    using OBeautifulCode.Validation.Recipes;
+
     using static System.FormattableString;
 
     public static class ConstructingGeneration
@@ -100,8 +102,8 @@ namespace OBeautifulCode.Bootstrapper.Test.CodeGeneration
             this Type type,
             Dictionary<string, string> propertyNameToSourceCodeMap)
         {
-            type.Named(nameof(type)).Must().NotBeNull();
-            propertyNameToSourceCodeMap.Named(nameof(propertyNameToSourceCodeMap)).Must().NotBeNull();
+            type.AsArg(nameof(type)).Must().NotBeNull();
+            propertyNameToSourceCodeMap.AsArg(nameof(propertyNameToSourceCodeMap)).Must().NotBeNull();
 
             if (type.GetConstructors()
                     .Any(
@@ -136,7 +138,7 @@ namespace OBeautifulCode.Bootstrapper.Test.CodeGeneration
         public static string GenerateConstructorTestMethods(
             this Type type)
         {
-            type.Named(nameof(type)).Must().NotBeNull();
+            type.AsArg(nameof(type)).Must().NotBeNull();
 
             var constructorWithParameters = type.GetConstructors().SingleOrDefault(_ => _.GetParameters().Length > 0);
             var testMethods = new List<string>();

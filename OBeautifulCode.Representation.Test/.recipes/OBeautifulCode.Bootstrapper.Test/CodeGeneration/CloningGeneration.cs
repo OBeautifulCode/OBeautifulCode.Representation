@@ -9,7 +9,9 @@ namespace OBeautifulCode.Bootstrapper.Test.CodeGeneration
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using OBeautifulCode.Validation.Recipes;
+
+    using OBeautifulCode.Assertion.Recipes;
+
     using static System.FormattableString;
 
     public static class CloningGeneration
@@ -191,13 +193,13 @@ namespace OBeautifulCode.Bootstrapper.Test.CodeGeneration
             this Type type,
             string cloneSourceCode)
         {
-            type.Named(nameof(type)).Must().NotBeNull();
+            type.AsArg(nameof(type)).Must().NotBeNull();
 
             string result;
             if (type.IsAssignableToAnyDictionary())
             {
                 var genericArguments = type.GetGenericArguments();
-                genericArguments.Length.Named(Invariant($"Number{nameof(genericArguments)}Of{nameof(type)}.{nameof(type)}For{type.Name}"))
+                genericArguments.Length.AsArg(Invariant($"Number{nameof(genericArguments)}Of{nameof(type)}.{nameof(type)}For{type.Name}"))
                                 .Must()
                                 .BeEqualTo(2);
 

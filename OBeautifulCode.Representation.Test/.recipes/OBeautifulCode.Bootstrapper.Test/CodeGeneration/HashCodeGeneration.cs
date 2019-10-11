@@ -9,7 +9,9 @@ namespace OBeautifulCode.Bootstrapper.Test.CodeGeneration
     using System;
     using System.Linq;
     using System.Reflection;
-    using OBeautifulCode.Validation.Recipes;
+
+    using OBeautifulCode.Assertion.Recipes;
+
     using static System.FormattableString;
 
     public static class HashCodeGeneration
@@ -36,7 +38,7 @@ namespace OBeautifulCode.Bootstrapper.Test.CodeGeneration
         private static string GenerateHashCodeMethodCodeForProperty(
             this PropertyInfo propertyInfo)
         {
-            propertyInfo.Named(nameof(propertyInfo)).Must().NotBeNull();
+            propertyInfo.AsArg(nameof(propertyInfo)).Must().NotBeNull();
 
             if (propertyInfo.PropertyType.IsAssignableToAnyDictionary())
             {
