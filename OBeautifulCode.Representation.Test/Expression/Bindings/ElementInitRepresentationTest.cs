@@ -54,14 +54,6 @@ namespace OBeautifulCode.Representation.System.Test
 
         private static readonly string ObjectThatIsNotTheSameTypeAsObjectForEquatableTests = A.Dummy<string>();
 
-        private readonly ITestOutputHelper testOutputHelper;
-
-        public ElementInitRepresentationTest(
-            ITestOutputHelper testOutputHelper)
-        {
-            this.testOutputHelper = testOutputHelper;
-        }
-
         [Fact]
         public void ToString___Should_generate_friendly_string_representation_of_object___When_called()
         {
@@ -222,7 +214,7 @@ namespace OBeautifulCode.Representation.System.Test
         }
 
         [SuppressMessage("Microsoft.Design", "CA1034:NestedTypesShouldNotBeVisible", Justification = "Grouping construct for unit test runner.")]
-        public static class Equality
+        public static class EqualityTest
         {
             [Fact]
             public static void EqualsOperator___Should_return_true___When_both_sides_of_operator_are_null()

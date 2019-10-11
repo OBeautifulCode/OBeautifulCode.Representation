@@ -22,20 +22,8 @@ namespace OBeautifulCode.Representation.System.Test
     using OBeautifulCode.Type;
 
     using Xunit;
-    using Xunit.Abstractions;
 
     using static global::System.FormattableString;
-
-    public partial class AssemblyRepresentationTest
-    {
-        private readonly ITestOutputHelper testOutputHelper;
-
-        public AssemblyRepresentationTest(
-            ITestOutputHelper testOutputHelper)
-        {
-            this.testOutputHelper = testOutputHelper;
-        }
-    }
 
     public partial class AssemblyRepresentationTest
     {
@@ -313,7 +301,7 @@ namespace OBeautifulCode.Representation.System.Test
         }
 
         [SuppressMessage("Microsoft.Design", "CA1034:NestedTypesShouldNotBeVisible", Justification = "Grouping construct for unit test runner.")]
-        public static class Equality
+        public static class EqualityTest
         {
             [Fact]
             public static void EqualsOperator___Should_return_true___When_both_sides_of_operator_are_null()

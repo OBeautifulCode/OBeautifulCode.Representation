@@ -28,17 +28,6 @@ namespace OBeautifulCode.Representation.System.Test
 
     public partial class TypeRepresentationTest
     {
-        private readonly ITestOutputHelper testOutputHelper;
-
-        public TypeRepresentationTest(
-            ITestOutputHelper testOutputHelper)
-        {
-            this.testOutputHelper = testOutputHelper;
-        }
-    }
-
-    public partial class TypeRepresentationTest
-    {
         private static readonly TypeRepresentation ObjectForEquatableTests = A.Dummy<TypeRepresentation>();
 
         private static readonly TypeRepresentation ObjectThatIsEqualToButNotTheSameAsObjectForEquatableTests =
@@ -290,7 +279,7 @@ namespace OBeautifulCode.Representation.System.Test
         }
 
         [SuppressMessage("Microsoft.Design", "CA1034:NestedTypesShouldNotBeVisible", Justification = "Grouping construct for unit test runner.")]
-        public static class Equality
+        public static class EqualityTest
         {
             [Fact]
             public static void EqualsOperator___Should_return_true___When_both_sides_of_operator_are_null()
