@@ -18,7 +18,6 @@ namespace OBeautifulCode.Representation.System.Test
     using global::System.Reflection;
 
     using OBeautifulCode.AutoFakeItEasy;
-    using OBeautifulCode.Bootstrapper.Test.CodeGeneration;
     using OBeautifulCode.Collection.Recipes;
     using OBeautifulCode.Type;
 
@@ -76,20 +75,6 @@ namespace OBeautifulCode.Representation.System.Test
 
             // Assert
             actual.Should().Be(expected);
-        }
-
-        [Fact]
-        public void GenerateModel()
-        {
-            var results = CodeGenerator.GenerateForModel<ConstantExpressionRepresentation<string>>(CodeGenerator.GenerateFor.ModelImplementationPartialClass);
-            this.testOutputHelper.WriteLine(results);
-        }
-
-        [Fact]
-        public void GenerateTests()
-        {
-            var results = CodeGenerator.GenerateForModel<ConstantExpressionRepresentation<string>>(CodeGenerator.GenerateFor.ModelImplementationTestsPartialClassWithoutSerialization);
-            this.testOutputHelper.WriteLine(results);
         }
 
         [SuppressMessage("Microsoft.Design", "CA1034:NestedTypesShouldNotBeVisible", Justification = "Grouping construct for unit test runner.")]

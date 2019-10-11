@@ -106,14 +106,6 @@
     <Compile Include=".recipes\OBeautifulCode.Assertion\Verifications.Workflow.cs" />
     <Compile Include=".recipes\OBeautifulCode.Assertion\WorkflowExtensions\WorkflowExtensions.cs" />
     <Compile Include=".recipes\OBeautifulCode.AutoFakeItEasy\AutoFakeItEasyBootstrapper.cs" />
-    <Compile Include=".recipes\OBeautifulCode.Bootstrapper.Test\CodeGeneration\SerializationGeneration.cs" />
-    <Compile Include=".recipes\OBeautifulCode.Bootstrapper.Test\CodeGeneration\CloningGeneration.cs" />
-    <Compile Include=".recipes\OBeautifulCode.Bootstrapper.Test\CodeGeneration\EqualityLogicGeneration.cs" />
-    <Compile Include=".recipes\OBeautifulCode.Bootstrapper.Test\CodeGeneration\HashCodeGeneration.cs" />
-    <Compile Include=".recipes\OBeautifulCode.Bootstrapper.Test\CodeGeneration\DummyGeneration.cs" />
-    <Compile Include=".recipes\OBeautifulCode.Bootstrapper.Test\CodeGeneration\ConstructingGeneration.cs" />
-    <Compile Include=".recipes\OBeautifulCode.Bootstrapper.Test\CodeGeneration\CodeGenerationShared.cs" />
-    <Compile Include=".recipes\OBeautifulCode.Bootstrapper.Test\CodeGeneration\ToStringGeneration.cs" />
     <Compile Include=".recipes\OBeautifulCode.Collection\EnumerableExtensions.cs" />
     <Compile Include=".recipes\OBeautifulCode.Equality\DictionaryEqualityComparer.cs" />
     <Compile Include=".recipes\OBeautifulCode.Equality\EnumerableEqualityComparer.cs" />
@@ -136,7 +128,6 @@
     <Compile Include="Expression\Expressions\ConstantExpressionRepresentationTest.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include=".recipes\OBeautifulCode.Bootstrapper.Test\CodeGeneration\CodeGenerator.cs" />
     <Compile Include="RepresentationDummyFactory.cs" />
     <Compile Include="Type\TypeComparerTests.cs" />
     <Compile Include="Type\TypeRepresentationExtensionsTest.cs" />

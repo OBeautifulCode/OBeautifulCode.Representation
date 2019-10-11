@@ -18,7 +18,6 @@ namespace OBeautifulCode.Representation.System.Test
     using global::System.Reflection;
 
     using OBeautifulCode.AutoFakeItEasy;
-    using OBeautifulCode.Bootstrapper.Test.CodeGeneration;
     using OBeautifulCode.Collection.Recipes;
     using OBeautifulCode.Type;
 
@@ -35,20 +34,6 @@ namespace OBeautifulCode.Representation.System.Test
             ITestOutputHelper testOutputHelper)
         {
             this.testOutputHelper = testOutputHelper;
-        }
-
-        [Fact]
-        public void GenerateModel()
-        {
-            var results = CodeGenerator.GenerateForModel<TypeRepresentation>(CodeGenerator.GenerateFor.ModelImplementationPartialClass);
-            this.testOutputHelper.WriteLine(results);
-        }
-
-        [Fact]
-        public void GenerateTests()
-        {
-            var results = CodeGenerator.GenerateForModel<TypeRepresentation>(CodeGenerator.GenerateFor.ModelImplementationTestsPartialClassWithSerialization);
-            this.testOutputHelper.WriteLine(results);
         }
     }
 
