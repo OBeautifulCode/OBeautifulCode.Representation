@@ -1,0 +1,17 @@
+﻿<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>OBeautifulCode.Representation.Recipes.DummyFactory</id>
+    <description>Dummy factory for representation types.</description>
+    <tags>representation dummy factory dummyfactory</tags>
+    <iconUrl>https://raw.githubusercontent.com/OBeautifulCode/OBeautifulCode.Representation/master/OBeautifulCode.Representation.Test/nuget-icon.png</iconUrl>
+    <dependencies>
+      <dependency id="OBeautifulCode.AutoFakeItEasy" version="1.0.118" />
+      <dependency id="OBeautifulCode.Reflection.Recipes.AssemblyLoader" version="1.0.75" />
+      <dependency id="OBeautifulCode.Reflection.Recipes.AssemblyHelper" version="1.0.75" />
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="RepresentationDummyFactory.cs" target="content\net462\.recipes\OBeautifulCode.Representation\RepresentationDummyFactory.cs" />
+  </files>
+</package>
