@@ -9,6 +9,7 @@
       <dependency id="OBeautifulCode.AutoFakeItEasy" version="1.0.118" />
       <dependency id="OBeautifulCode.Reflection.Recipes.AssemblyLoader" version="1.0.75" />
       <dependency id="OBeautifulCode.Reflection.Recipes.AssemblyHelper" version="1.0.75" />
+      <dependency id="OBeautifulCode.Representation.System" version="1.0.33" />
     </dependencies>
   </metadata>
   <files>

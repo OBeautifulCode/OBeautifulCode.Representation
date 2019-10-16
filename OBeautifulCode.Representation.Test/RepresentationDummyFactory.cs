@@ -7,7 +7,7 @@
 // </auto-generated>
 // --------------------------------------------------------------------------------------------------------------------
 
-namespace OBeautifulCode.Representation.System.Test
+namespace OBeautifulCode.Representation.Test
 {
     using FakeItEasy;
 
@@ -20,6 +20,7 @@ namespace OBeautifulCode.Representation.System.Test
 
     using OBeautifulCode.AutoFakeItEasy;
     using OBeautifulCode.Reflection.Recipes;
+    using OBeautifulCode.Representation.System;
 
     using static global::System.FormattableString;
 
