@@ -1,0 +1,18 @@
+﻿<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>OBeautifulCode.Representation.Recipes.DummyFactory</id>
+    <description>A Dummy Factory for types in OBeautifulCode.Representation.System</description>
+    <tags>dummyfactory dummy factory fakeiteasy autofixture snippet codeinclude utility shared recipe Representation</tags>
+    <iconUrl>https://raw.githubusercontent.com/OBeautifulCode/OBeautifulCode.Representation/master/OBeautifulCode.Representation.System.Test/nuget-icon.png</iconUrl>
+    <dependencies>
+        <dependency id="OBeautifulCode.Representation.System" version="$version$" />
+        <dependency id="OBeautifulCode.AutoFakeItEasy" version ="1.0.126" />
+    </dependencies>
+  </metadata>
+  <files>
+    <file src=".analyzers\SuppressBecause.cs" target="content\net462\.recipes\OBeautifulCode.Representation\SuppressBecause.cs" />
+    <file src="RepresentationDummyFactory.cs" target="content\net462\.recipes\OBeautifulCode.Representation\RepresentationDummyFactory.cs" />
+    <file src="RepresentationDummyFactory.designer.cs" target="content\net462\.recipes\OBeautifulCode.Representation\RepresentationDummyFactory.designer.cs" />
+  </files>
+</package>
