@@ -6,71 +6,91 @@
 
 namespace OBeautifulCode.Representation.System
 {
-    using global::System;
     using global::System.Collections.Generic;
     using global::System.Linq;
     using global::System.Linq.Expressions;
 
+    using OBeautifulCode.Assertion.Recipes;
+    using OBeautifulCode.Type;
+
     /// <summary>
     /// Representation of <see cref="MemberMemberBinding" />.
     /// </summary>
-    public class MemberMemberBindingRepresentation : MemberBindingRepresentationBase
+    public partial class MemberMemberBindingRepresentation : MemberBindingRepresentationBase, IModelViaCodeGen
     {
-        /// <summary>Initializes a new instance of the <see cref="MemberMemberBindingRepresentation"/> class.</summary>
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MemberMemberBindingRepresentation"/> class.
+        /// </summary>
         /// <param name="type">The type.</param>
         /// <param name="memberInfo">The member hash.</param>
         /// <param name="bindings">The bindings.</param>
-        public MemberMemberBindingRepresentation(TypeRepresentation type, MemberInfoRepresentation memberInfo, IReadOnlyCollection<MemberBindingRepresentationBase> bindings)
+        public MemberMemberBindingRepresentation(
+            TypeRepresentation type,
+            MemberInfoRepresentation memberInfo,
+            IReadOnlyCollection<MemberBindingRepresentationBase> bindings)
         : base(type, memberInfo, MemberBindingType.MemberBinding)
         {
             this.Bindings = bindings;
         }
 
-        /// <summary>Gets the bindings.</summary>
-        /// <value>The bindings.</value>
+        /// <summary>
+        /// Gets the bindings.
+        /// </summary>
         public IReadOnlyCollection<MemberBindingRepresentationBase> Bindings { get; private set; }
     }
 
 #pragma warning disable SA1204 // Static elements should appear before instance elements
-                              /// <summary>
-                              /// Extensions to <see cref="MemberMemberBindingRepresentation" />.
-                              /// </summary>
+
+    /// <summary>
+    /// Extensions to <see cref="MemberMemberBindingRepresentation" />.
+    /// </summary>
     public static class MemberMemberBindingRepresentationExtensions
-#pragma warning restore SA1204 // Static elements should appear before instance elements
     {
-        /// <summary>Converts to serializable.</summary>
+        /// <summary>
+        /// Converts to serializable.
+        /// </summary>
         /// <param name="memberMemberBinding">The memberMemberBindingRepresentation.</param>
-        /// <returns>Serializable version.</returns>
-        public static MemberMemberBindingRepresentation ToRepresentation(this MemberMemberBinding memberMemberBinding)
+        /// <returns>
+        /// Serializable version.
+        /// </returns>
+        public static MemberMemberBindingRepresentation ToRepresentation(
+            this MemberMemberBinding memberMemberBinding)
         {
-            if (memberMemberBinding == null)
-            {
-                throw new ArgumentNullException(nameof(memberMemberBinding));
-            }
+            new { memberMemberBinding }.AsArg().Must().NotBeNull();
 
             var type = memberMemberBinding.Member.DeclaringType.ToRepresentation();
+
             var memberInfoRepresentation = memberMemberBinding.Member.ToRepresentation();
+
             var bindings = memberMemberBinding.Bindings.ToRepresentation();
+
             var result = new MemberMemberBindingRepresentation(type, memberInfoRepresentation, bindings);
+
             return result;
         }
 
-        /// <summary>From the serializable.</summary>
+        /// <summary>
+        /// From the serializable.
+        /// </summary>
         /// <param name="memberMemberBindingRepresentation">The memberMemberBindingRepresentation.</param>
-        /// <returns>Converted version.</returns>
-        public static MemberMemberBinding FromRepresentation(this MemberMemberBindingRepresentation memberMemberBindingRepresentation)
+        /// <returns>
+        /// Converted version.
+        /// </returns>
+        public static MemberMemberBinding FromRepresentation(
+            this MemberMemberBindingRepresentation memberMemberBindingRepresentation)
         {
-            if (memberMemberBindingRepresentation == null)
-            {
-                throw new ArgumentNullException(nameof(memberMemberBindingRepresentation));
-            }
+            new { memberMemberBindingRepresentation }.AsArg().Must().NotBeNull();
 
             var type = memberMemberBindingRepresentation.Type.ResolveFromLoadedTypes();
+
             var member = type.GetMembers().Single(_ => _.ToRepresentation().Equals(memberMemberBindingRepresentation.MemberInfo));
+
             var bindings = memberMemberBindingRepresentation.Bindings.FromRepresentation();
 
             var result = Expression.MemberBind(member, bindings);
+
             return result;
         }
     }
+#pragma warning restore SA1204 // Static elements should appear before instance elements
 }

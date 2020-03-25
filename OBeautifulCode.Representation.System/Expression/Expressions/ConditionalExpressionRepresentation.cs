@@ -6,21 +6,30 @@
 
 namespace OBeautifulCode.Representation.System
 {
-    using global::System;
     using global::System.Linq.Expressions;
+
+    using OBeautifulCode.Assertion.Recipes;
+    using OBeautifulCode.Type;
 
     /// <summary>
     /// Representation of <see cref="ConditionalExpression" />.
     /// </summary>
-    public class ConditionalExpressionRepresentation : ExpressionRepresentationBase
+    public partial class ConditionalExpressionRepresentation : ExpressionRepresentationBase, IModelViaCodeGen
     {
-        /// <summary>Initializes a new instance of the <see cref="ConditionalExpressionRepresentation"/> class.</summary>
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ConditionalExpressionRepresentation"/> class.
+        /// </summary>
         /// <param name="type">The type of expression.</param>
         /// <param name="nodeType">Type of the node.</param>
         /// <param name="test">The test expression.</param>
         /// <param name="expressionIfTrue">If true expression.</param>
         /// <param name="expressionIfFalse">If false expression.</param>
-        public ConditionalExpressionRepresentation(TypeRepresentation type, ExpressionType nodeType, ExpressionRepresentationBase test, ExpressionRepresentationBase expressionIfTrue, ExpressionRepresentationBase expressionIfFalse)
+        public ConditionalExpressionRepresentation(
+            TypeRepresentation type,
+            ExpressionType nodeType,
+            ExpressionRepresentationBase test,
+            ExpressionRepresentationBase expressionIfTrue,
+            ExpressionRepresentationBase expressionIfFalse)
         : base(type, nodeType)
         {
             this.Test = test;
@@ -48,34 +57,44 @@ namespace OBeautifulCode.Representation.System
     public static class ConditionalExpressionRepresentationExtensions
 #pragma warning restore SA1204 // Static elements should appear before instance elements
     {
-        /// <summary>Converts to serializable.</summary>
+        /// <summary>
+        /// Converts to serializable.
+        /// </summary>
         /// <param name="conditionalExpression">The conditional expression.</param>
-        /// <returns>Serializable expression.</returns>
-        public static ConditionalExpressionRepresentation ToRepresentation(this ConditionalExpression conditionalExpression)
+        /// <returns>
+        /// Serializable expression.
+        /// </returns>
+        public static ConditionalExpressionRepresentation ToRepresentation(
+            this ConditionalExpression conditionalExpression)
         {
-            if (conditionalExpression == null)
-            {
-                throw new ArgumentNullException(nameof(conditionalExpression));
-            }
+            new { conditionalExpression }.AsArg().Must().NotBeNull();
 
             var type = conditionalExpression.Type.ToRepresentation();
+
             var nodeType = conditionalExpression.NodeType;
+
             var test = conditionalExpression.Test.ToRepresentation();
+
             var expressionIfTrue = conditionalExpression.IfTrue.ToRepresentation();
+
             var expressionIfFalse = conditionalExpression.IfFalse.ToRepresentation();
+
             var result = new ConditionalExpressionRepresentation(type, nodeType, test, expressionIfTrue, expressionIfFalse);
+
             return result;
         }
 
-        /// <summary>From the serializable.</summary>
+        /// <summary>
+        /// From the serializable.
+        /// </summary>
         /// <param name="conditionalExpressionRepresentation">The conditional expression.</param>
-        /// <returns>Converted expression.</returns>
-        public static ConditionalExpression FromRepresentation(this ConditionalExpressionRepresentation conditionalExpressionRepresentation)
+        /// <returns>
+        /// Converted expression.
+        /// </returns>
+        public static ConditionalExpression FromRepresentation(
+            this ConditionalExpressionRepresentation conditionalExpressionRepresentation)
         {
-            if (conditionalExpressionRepresentation == null)
-            {
-                throw new ArgumentNullException(nameof(conditionalExpressionRepresentation));
-            }
+            new { conditionalExpressionRepresentation }.AsArg().Must().NotBeNull();
 
             var result = Expression.Condition(
                 conditionalExpressionRepresentation.Test.FromRepresentation(),

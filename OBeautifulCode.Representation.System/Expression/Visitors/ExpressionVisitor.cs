@@ -14,12 +14,18 @@ namespace OBeautifulCode.Representation.System
     /// </summary>
     public static class ExpressionVisitor
     {
-        /// <summary>Visits all connected nodes.</summary>
+        /// <summary>
+        /// Visits all connected nodes.
+        /// </summary>
         /// <param name="root">The root.</param>
-        /// <returns>Collection of the connected nodes.</returns>
-        public static IReadOnlyCollection<Expression> VisitAllConnectedNodes(this Expression root)
+        /// <returns>
+        /// Collection of the connected nodes.
+        /// </returns>
+        public static IReadOnlyCollection<Expression> VisitAllConnectedNodes(
+            this Expression root)
         {
             var result = new List<Expression>();
+
             switch (root)
             {
                 case LambdaExpression lambdaExpression:
@@ -83,18 +89,25 @@ namespace OBeautifulCode.Representation.System
             return result;
         }
 
-        /// <summary>Visits all nodes in the tree.</summary>
+        /// <summary>
+        /// Visits all nodes in the tree.
+        /// </summary>
         /// <param name="root">Node traverse from.</param>
-        /// <returns>Collection of the <see cref="Expression" /> from the tree.</returns>
-        public static IReadOnlyCollection<Expression> VisitAllNodes(this Expression root)
+        /// <returns>
+        /// Collection of the <see cref="Expression" /> from the tree.
+        /// </returns>
+        public static IReadOnlyCollection<Expression> VisitAllNodes(
+            this Expression root)
         {
             var result = new List<Expression>();
+
             foreach (var linkNode in root.VisitAllConnectedNodes())
             {
                 result.AddRange(linkNode.VisitAllNodes());
             }
 
             result.Add(root);
+
             return result;
         }
     }

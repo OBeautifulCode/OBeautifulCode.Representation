@@ -10,14 +10,19 @@ namespace OBeautifulCode.Representation.System
     using global::System.Collections.Generic;
     using global::System.Linq.Expressions;
 
+    using OBeautifulCode.Assertion.Recipes;
+    using OBeautifulCode.Type;
+
     using static global::System.FormattableString;
 
     /// <summary>
     /// Representation of <see cref="NewArrayExpression" />.
     /// </summary>
-    public class NewArrayExpressionRepresentation : ExpressionRepresentationBase
+    public partial class NewArrayExpressionRepresentation : ExpressionRepresentationBase, IModelViaCodeGen
     {
-        /// <summary>Initializes a new instance of the <see cref="NewArrayExpressionRepresentation"/> class.</summary>
+        /// <summary>
+        /// Initializes a new instance of the <see cref="NewArrayExpressionRepresentation"/> class.
+        /// </summary>
         /// <param name="type">The type.</param>
         /// <param name="nodeType">Type of the node.</param>
         /// <param name="expressions">The expressions.</param>
@@ -30,47 +35,57 @@ namespace OBeautifulCode.Representation.System
             this.Expressions = expressions;
         }
 
-        /// <summary>Gets the expressions.</summary>
-        /// <value>The expressions.</value>
+        /// <summary>
+        /// Gets the expressions.
+        /// </summary>
         public IReadOnlyList<ExpressionRepresentationBase> Expressions { get; private set; }
     }
 
 #pragma warning disable SA1204 // Static elements should appear before instance elements
+
     /// <summary>
     /// Extensions to <see cref="NewArrayExpressionRepresentation" />.
     /// </summary>
     public static class NewArrayExpressionRepresentationExtensions
-#pragma warning restore SA1204 // Static elements should appear before instance elements
     {
-        /// <summary>Converts to serializable.</summary>
+        /// <summary>
+        /// Converts to serializable.
+        /// </summary>
         /// <param name="newArrayExpression">The newArray expression.</param>
-        /// <returns>Serializable expression.</returns>
-        public static NewArrayExpressionRepresentation ToRepresentation(this NewArrayExpression newArrayExpression)
+        /// <returns>
+        /// Serializable expression.
+        /// </returns>
+        public static NewArrayExpressionRepresentation ToRepresentation(
+            this NewArrayExpression newArrayExpression)
         {
-            if (newArrayExpression == null)
-            {
-                throw new ArgumentNullException(nameof(newArrayExpression));
-            }
+            new { newArrayExpression }.AsArg().Must().NotBeNull();
 
             var type = newArrayExpression.Type.ToRepresentation();
+
             var nodeType = newArrayExpression.NodeType;
+
             var expressions = newArrayExpression.Expressions.ToRepresentation();
+
             var result = new NewArrayExpressionRepresentation(type, nodeType, expressions);
+
             return result;
         }
 
-        /// <summary>From the serializable.</summary>
+        /// <summary>
+        /// From the serializable.
+        /// </summary>
         /// <param name="newArrayExpressionRepresentation">The newArray expression.</param>
-        /// <returns>Converted expression.</returns>
+        /// <returns>
+        /// Converted expression.
+        /// </returns>
         public static NewArrayExpression FromRepresentation(this NewArrayExpressionRepresentation newArrayExpressionRepresentation)
         {
-            if (newArrayExpressionRepresentation == null)
-            {
-                throw new ArgumentNullException(nameof(newArrayExpressionRepresentation));
-            }
+            new { newArrayExpressionRepresentation }.AsArg().Must().NotBeNull();
 
             NewArrayExpression result;
+
             var nodeType = newArrayExpressionRepresentation.NodeType;
+
             switch (nodeType)
             {
                 case ExpressionType.NewArrayBounds:
@@ -86,4 +101,5 @@ namespace OBeautifulCode.Representation.System
             return result;
         }
     }
+#pragma warning restore SA1204 // Static elements should appear before instance elements
 }

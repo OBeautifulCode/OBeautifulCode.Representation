@@ -20,7 +20,7 @@ namespace OBeautifulCode.Representation.System
     /// </summary>
     /// <typeparam name="T">Type of the value.</typeparam>
     public class ConstantExpressionRepresentation<T> : ExpressionRepresentationBase, IModel<ConstantExpressionRepresentation<T>>
-    where T : ICloneable, IEquatable<T>
+        where T : ICloneable, IEquatable<T>
     {
         /// <summary>Initializes a new instance of the <see cref="ConstantExpressionRepresentation{T}"/> class.</summary>
         /// <param name="value">The value.</param>

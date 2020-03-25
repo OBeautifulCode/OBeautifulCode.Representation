@@ -10,21 +10,24 @@ namespace OBeautifulCode.Representation.System
     using global::System.Linq;
     using global::System.Reflection;
 
-    using OBeautifulCode.Equality.Recipes;
+    using OBeautifulCode.Assertion.Recipes;
+    using OBeautifulCode.Type;
 
     using static global::System.FormattableString;
 
     /// <summary>
     /// Representation of <see cref="MemberInfo" />.
     /// </summary>
-    public class MemberInfoRepresentation : IEquatable<MemberInfoRepresentation>
+    public partial class MemberInfoRepresentation : IModelViaCodeGen
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="MemberInfoRepresentation" /> class.
         /// </summary>
         /// <param name="type">The type.</param>
         /// <param name="memberHash">The member hash.</param>
-        public MemberInfoRepresentation(TypeRepresentation type, string memberHash)
+        public MemberInfoRepresentation(
+            TypeRepresentation type,
+            string memberHash)
         {
             this.Type = type;
             this.MemberHash = memberHash;
@@ -33,69 +36,13 @@ namespace OBeautifulCode.Representation.System
         /// <summary>
         /// Gets the member hash.
         /// </summary>
-        /// <value>The member hash.</value>
         public string MemberHash { get; private set; }
 
         /// <summary>
         /// Gets the type.
         /// </summary>
-        /// <value>The type.</value>
         [SuppressMessage("Microsoft.Naming", "CA1721:PropertyNamesShouldNotMatchGetMethods", Justification = "Spelling/name is correct.")]
         public TypeRepresentation Type { get; private set; }
-
-        /// <summary>
-        /// Determines whether two objects of type <see cref="MemberInfoRepresentation" /> are equal.
-        /// </summary>
-        /// <param name="left">The object to the left of the operator.</param>
-        /// <param name="right">The object to the right of the operator.</param>
-        /// <returns>True if the two object are equal; false otherwise.</returns>
-        public static bool operator ==(
-            MemberInfoRepresentation left,
-            MemberInfoRepresentation right)
-        {
-            if (ReferenceEquals(left, right))
-            {
-                return true;
-            }
-
-            if (ReferenceEquals(left, null) || ReferenceEquals(right, null))
-            {
-                return false;
-            }
-
-            var result = (left.Type == right.Type)
-                      && (left.MemberHash == right.MemberHash);
-
-            return result;
-        }
-
-        /// <summary>
-        /// Determines whether two objects of type <see cref="MemberInfoRepresentation" /> are not equal.
-        /// </summary>
-        /// <param name="left">The object to the left of the operator.</param>
-        /// <param name="right">The object to the right of the operator.</param>
-        /// <returns>True if the two object are not equal; false otherwise.</returns>
-        public static bool operator !=(
-            MemberInfoRepresentation left,
-            MemberInfoRepresentation right)
-            => !(left == right);
-
-        /// <summary>
-        /// Indicates whether the current object is equal to another object of the same type.
-        /// </summary>
-        /// <param name="other">An object to compare with this object.</param>
-        /// <returns>true if the current object is equal to the <paramref name="other" /> parameter; otherwise, false.</returns>
-        public bool Equals(MemberInfoRepresentation other) => this == other;
-
-        /// <inheritdoc />
-        public override bool Equals(object obj) => this == (obj as MemberInfoRepresentation);
-
-        /// <inheritdoc />
-        public override int GetHashCode() =>
-            HashCodeHelper.Initialize()
-                          .Hash(this.Type)
-                          .Hash(this.MemberHash)
-                          .Value;
     }
 
 #pragma warning disable SA1204 // Static elements should appear before instance elements
@@ -104,20 +51,23 @@ namespace OBeautifulCode.Representation.System
     /// Extensions to <see cref="MemberInfoRepresentation" />.
     /// </summary>
     public static class MemberInfoRepresentationExtensions
-#pragma warning restore SA1204 // Static elements should appear before instance elements
     {
-        /// <summary>Gets the member hash.</summary>
+        /// <summary>
+        /// Gets the member hash.
+        /// </summary>
         /// <param name="memberInfo">The member information.</param>
-        /// <returns>Hash of the member.</returns>
-        public static string GetSignatureHash(this MemberInfo memberInfo)
+        /// <returns>
+        /// Hash of the member.
+        /// </returns>
+        public static string GetSignatureHash(
+            this MemberInfo memberInfo)
         {
-            if (memberInfo == null)
-            {
-                throw new ArgumentNullException(nameof(memberInfo));
-            }
+            new { memberInfo }.AsArg().Must().NotBeNull();
 
             var memberName = memberInfo.Name;
+
             var result = Invariant($"{memberName})");
+
             return result;
         }
 
@@ -125,17 +75,20 @@ namespace OBeautifulCode.Representation.System
         /// Converts to representation.
         /// </summary>
         /// <param name="memberInfo">The member information.</param>
-        /// <returns>Converted <see cref="MemberInfoRepresentation" />.</returns>
-        public static MemberInfoRepresentation ToRepresentation(this MemberInfo memberInfo)
+        /// <returns>
+        /// Converted <see cref="MemberInfoRepresentation" />.
+        /// </returns>
+        public static MemberInfoRepresentation ToRepresentation(
+            this MemberInfo memberInfo)
         {
-            if (memberInfo == null)
-            {
-                throw new ArgumentNullException(nameof(memberInfo));
-            }
+            new { memberInfo }.AsArg().Must().NotBeNull();
 
             var type = memberInfo.DeclaringType.ToRepresentation();
+
             var memberHash = memberInfo.GetSignatureHash();
+
             var result = new MemberInfoRepresentation(type, memberHash);
+
             return result;
         }
 
@@ -143,13 +96,13 @@ namespace OBeautifulCode.Representation.System
         /// Converts from representation.
         /// </summary>
         /// <param name="memberInfoRepresentation">The representation.</param>
-        /// <returns>Converted <see cref="MemberInfo" />.</returns>
-        public static MemberInfo FromRepresentation(this MemberInfoRepresentation memberInfoRepresentation)
+        /// <returns>
+        /// Converted <see cref="MemberInfo" />.
+        /// </returns>
+        public static MemberInfo FromRepresentation(
+            this MemberInfoRepresentation memberInfoRepresentation)
         {
-            if (memberInfoRepresentation == null)
-            {
-                throw new ArgumentNullException(nameof(memberInfoRepresentation));
-            }
+            new { memberInfoRepresentation }.AsArg().Must().NotBeNull();
 
             var type = memberInfoRepresentation.Type.ResolveFromLoadedTypes();
             var results = type.GetMembers()
@@ -167,7 +120,10 @@ namespace OBeautifulCode.Representation.System
                 throw new ArgumentException(Invariant($"Found too many members that matched hash '{memberInfoRepresentation.MemberHash}' on type '{type}'; {foundAddIn}."));
             }
 
-            return results.Single();
+            var result = results.Single();
+
+            return result;
         }
     }
+#pragma warning restore SA1204 // Static elements should appear before instance elements
 }

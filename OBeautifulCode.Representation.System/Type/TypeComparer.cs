@@ -68,6 +68,7 @@ namespace OBeautifulCode.Representation.System
                 second.Namespace,
                 second.Name,
                 second.AssemblyQualifiedName);
+
             return result;
         }
 
@@ -80,7 +81,9 @@ namespace OBeautifulCode.Representation.System
         /// <param name="secondNamespace">Namespace of the second type.</param>
         /// <param name="secondName">Name of the second type.</param>
         /// <param name="secondAssemblyQualifiedName">AssemblyQualifiedName of the second type.</param>
-        /// <returns>True for equality and false otherwise.</returns>
+        /// <returns>
+        /// True for equality and false otherwise.
+        /// </returns>
         public bool Equals(
             string firstNamespace,
             string firstName,
@@ -90,6 +93,7 @@ namespace OBeautifulCode.Representation.System
             string secondAssemblyQualifiedName)
         {
             bool result;
+
             switch (this.typeMatchStrategy)
             {
                 case TypeMatchStrategy.NamespaceAndName:

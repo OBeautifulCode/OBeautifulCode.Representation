@@ -12,7 +12,6 @@ namespace OBeautifulCode.Representation.System
     using global::System.Reflection;
 
     using OBeautifulCode.Assertion.Recipes;
-    using OBeautifulCode.Equality.Recipes;
     using OBeautifulCode.Reflection.Recipes;
     using OBeautifulCode.Type;
 
@@ -21,7 +20,7 @@ namespace OBeautifulCode.Representation.System
     /// <summary>
     /// Representation of <see cref="Assembly" />.
     /// </summary>
-    public partial class AssemblyRepresentation
+    public partial class AssemblyRepresentation : IModelViaCodeGen
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="AssemblyRepresentation"/> class.
@@ -36,9 +35,7 @@ namespace OBeautifulCode.Representation.System
             string filePath,
             string frameworkVersion)
         {
-            name.AsArg(nameof(name))
-                .Must()
-                .NotBeNullNorWhiteSpace();
+            name.AsArg(nameof(name)).Must().NotBeNullNorWhiteSpace();
 
             this.Name             = name;
             this.Version          = version;
@@ -67,159 +64,24 @@ namespace OBeautifulCode.Representation.System
         public string FrameworkVersion { get; private set; }
     }
 
-    public partial class AssemblyRepresentation : IModel<AssemblyRepresentation>
-    {
-        /// <summary>
-        /// Determines whether two objects of type <see cref="AssemblyRepresentation"/> are equal.
-        /// </summary>
-        /// <param name="left">The object to the left of the operator.</param>
-        /// <param name="right">The object to the right of the operator.</param>
-        /// <returns>True if the two items are equal; otherwise false.</returns>
-        public static bool operator ==(AssemblyRepresentation left, AssemblyRepresentation right)
-        {
-            if (ReferenceEquals(left, right))
-            {
-                return true;
-            }
-
-            if (ReferenceEquals(left, null) || ReferenceEquals(right, null))
-            {
-                return false;
-            }
-
-            var result = left.Name.Equals(right.Name, StringComparison.Ordinal)
-                      && left.Version.Equals(right.Version, StringComparison.Ordinal)
-                      && left.FilePath.Equals(right.FilePath, StringComparison.Ordinal)
-                      && left.FrameworkVersion.Equals(right.FrameworkVersion, StringComparison.Ordinal);
-
-            return result;
-        }
-
-        /// <summary>
-        /// Determines whether two objects of type <see cref="AssemblyRepresentation"/> are not equal.
-        /// </summary>
-        /// <param name="left">The object to the left of the operator.</param>
-        /// <param name="right">The object to the right of the operator.</param>
-        /// <returns>True if the two items not equal; otherwise false.</returns>
-        public static bool operator !=(AssemblyRepresentation left, AssemblyRepresentation right) => !(left == right);
-
-        /// <inheritdoc />
-        public bool Equals(AssemblyRepresentation other) => this == other;
-
-        /// <inheritdoc />
-        public override bool Equals(object obj) => this == (obj as AssemblyRepresentation);
-
-        /// <inheritdoc />
-        public override int GetHashCode() => HashCodeHelper.Initialize()
-            .Hash(this.Name)
-            .Hash(this.Version)
-            .Hash(this.FilePath)
-            .Hash(this.FrameworkVersion)
-            .Value;
-
-        /// <inheritdoc />
-        public object Clone() => this.DeepClone();
-
-        /// <inheritdoc />
-        public AssemblyRepresentation DeepClone()
-        {
-            var result = new AssemblyRepresentation(
-                                 this.Name?.Clone().ToString(),
-                                 this.Version?.Clone().ToString(),
-                                 this.FilePath?.Clone().ToString(),
-                                 this.FrameworkVersion?.Clone().ToString());
-
-            return result;
-        }
-
-        /// <summary>
-        /// Deep clones this object with a new <paramref name="name" />.
-        /// </summary>
-        /// <param name="name">The new <see cref="Name" />.</param>
-        /// <returns>New <see cref="AssemblyRepresentation" /> using the specified <paramref name="name" /> for <see cref="Name" /> and a deep clone of every other property.</returns>
-        public AssemblyRepresentation DeepCloneWithName(string name)
-        {
-            var result = new AssemblyRepresentation(
-                                 name,
-                                 this.Version?.Clone().ToString(),
-                                 this.FilePath?.Clone().ToString(),
-                                 this.FrameworkVersion?.Clone().ToString());
-            return result;
-        }
-
-        /// <summary>
-        /// Deep clones this object with a new <paramref name="version" />.
-        /// </summary>
-        /// <param name="version">The new <see cref="Version" />.</param>
-        /// <returns>New <see cref="AssemblyRepresentation" /> using the specified <paramref name="version" /> for <see cref="Version" /> and a deep clone of every other property.</returns>
-        public AssemblyRepresentation DeepCloneWithVersion(string version)
-        {
-            var result = new AssemblyRepresentation(
-                                 this.Name?.Clone().ToString(),
-                                 version,
-                                 this.FilePath?.Clone().ToString(),
-                                 this.FrameworkVersion?.Clone().ToString());
-            return result;
-        }
-
-        /// <summary>
-        /// Deep clones this object with a new <paramref name="filePath" />.
-        /// </summary>
-        /// <param name="filePath">The new <see cref="FilePath" />.</param>
-        /// <returns>New <see cref="AssemblyRepresentation" /> using the specified <paramref name="filePath" /> for <see cref="FilePath" /> and a deep clone of every other property.</returns>
-        public AssemblyRepresentation DeepCloneWithFilePath(string filePath)
-        {
-            var result = new AssemblyRepresentation(
-                                 this.Name?.Clone().ToString(),
-                                 this.Version?.Clone().ToString(),
-                                 filePath,
-                                 this.FrameworkVersion?.Clone().ToString());
-            return result;
-        }
-
-        /// <summary>
-        /// Deep clones this object with a new <paramref name="frameworkVersion" />.
-        /// </summary>
-        /// <param name="frameworkVersion">The new <see cref="FrameworkVersion" />.</param>
-        /// <returns>New <see cref="AssemblyRepresentation" /> using the specified <paramref name="frameworkVersion" /> for <see cref="FrameworkVersion" /> and a deep clone of every other property.</returns>
-        public AssemblyRepresentation DeepCloneWithFrameworkVersion(string frameworkVersion)
-        {
-            var result = new AssemblyRepresentation(
-                                 this.Name?.Clone().ToString(),
-                                 this.Version?.Clone().ToString(),
-                                 this.FilePath?.Clone().ToString(),
-                                 frameworkVersion);
-            return result;
-        }
-
-        /// <inheritdoc />
-        public override string ToString()
-        {
-            var result = Invariant($"{nameof(OBeautifulCode.Representation)}.{nameof(AssemblyRepresentation)}: Name = {this.Name?.ToString() ?? "<null>"}, Version = {this.Version?.ToString() ?? "<null>"}, FilePath = {this.FilePath?.ToString() ?? "<null>"}, FrameworkVersion = {this.FrameworkVersion?.ToString() ?? "<null>"}.");
-
-            return result;
-        }
-    }
-
 #pragma warning disable SA1204 // Static elements should appear before instance elements
 
     /// <summary>
     /// Extensions to <see cref="AssemblyRepresentation" />.
     /// </summary>
     public static class AssemblyRepresentationExtensions
-#pragma warning restore SA1204 // Static elements should appear before instance elements
     {
         /// <summary>
         /// Reads the assembly to create a new <see cref="AssemblyRepresentation"/>.
         /// </summary>
         /// <param name="assembly">The assembly object to interrogate.</param>
-        /// <returns>Details about an assembly.</returns>
-        public static AssemblyRepresentation ToRepresentation(this Assembly assembly)
+        /// <returns>
+        /// Details about an assembly.
+        /// </returns>
+        public static AssemblyRepresentation ToRepresentation(
+            this Assembly assembly)
         {
-            if (assembly == null)
-            {
-                throw new ArgumentNullException(nameof(assembly));
-            }
+            new { assembly }.AsArg().Must().NotBeNull();
 
             var codeBasesToIgnore = new List<string>(new[] { "Microsoft.GeneratedCode", "Anonymously Hosted DynamicMethods Assembly" });
 
@@ -228,25 +90,27 @@ namespace OBeautifulCode.Representation.System
             var frameworkVersionNumber = assembly.ImageRuntimeVersion.Substring(1, 3);
 
             var version = asmName.Version.ToString();
+
             var name = asmName.Name;
 
             var codeBase = codeBasesToIgnore.Contains(name) ? name : assembly.GetCodeBaseAsPathInsteadOfUri();
 
-            return new AssemblyRepresentation(name, version, codeBase, frameworkVersionNumber);
+            var result = new AssemblyRepresentation(name, version, codeBase, frameworkVersionNumber);
+
+            return result;
         }
 
         /// <summary>
         /// Converts from the Representation back to the original.
         /// </summary>
         /// <param name="assemblyRepresentation">The assembly representation.</param>
-        /// <returns>System.Reflection.Assembly.</returns>
+        /// <returns>
+        /// The assembly.
+        /// </returns>
         public static Assembly FromRepresentation(
-                    this AssemblyRepresentation assemblyRepresentation)
+            this AssemblyRepresentation assemblyRepresentation)
         {
-            if (assemblyRepresentation == null)
-            {
-                throw new ArgumentNullException(nameof(assemblyRepresentation));
-            }
+            new { assemblyRepresentation }.AsArg().Must().NotBeNull();
 
             var allAssemblies = AppDomain.CurrentDomain.GetAssemblies();
 
@@ -262,10 +126,14 @@ namespace OBeautifulCode.Representation.System
             if (results.Count > 1)
             {
                 var foundAddIn = string.Join(",", results.Select(_ => _.ToString()));
+
                 throw new ArgumentException(Invariant($"Found too many assemblies that matched representation '{assemblyRepresentation}' in '{nameof(AppDomain)}'; {foundAddIn}."));
             }
 
-            return results.Single();
+            var result = results.Single();
+
+            return result;
         }
     }
+#pragma warning restore SA1204 // Static elements should appear before instance elements
 }

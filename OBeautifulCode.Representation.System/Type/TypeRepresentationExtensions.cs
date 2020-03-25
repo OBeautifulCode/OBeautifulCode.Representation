@@ -23,7 +23,8 @@ namespace OBeautifulCode.Representation.System
     /// </summary>
     public static class TypeRepresentationExtensions
     {
-        private static readonly ConcurrentDictionary<TypeRepresentationCacheKey, Type> TypeRepresentationCacheKeyToTypeMap = new ConcurrentDictionary<TypeRepresentationCacheKey, Type>();
+        private static readonly ConcurrentDictionary<TypeRepresentationCacheKey, Type>
+            TypeRepresentationCacheKeyToTypeMap = new ConcurrentDictionary<TypeRepresentationCacheKey, Type>();
 
         /// <summary>
         /// Creates a new type representation from a given type.
@@ -36,11 +37,15 @@ namespace OBeautifulCode.Representation.System
             new { type }.AsArg().Must().NotBeNull();
 
             TypeRepresentation result;
+
             if (type.IsGenericType)
             {
                 var genericType = type.GetGenericTypeDefinition();
+
                 var genericArguments = type.GetGenericArguments();
+
                 var genericArgumentDefinitions = genericArguments.Select(_ => _.ToRepresentation()).ToList();
+
                 result = new TypeRepresentation(
                     genericType.Namespace,
                     genericType.Name,
@@ -89,7 +94,9 @@ namespace OBeautifulCode.Representation.System
                 var arrayItemTypeRepresentation = new TypeRepresentation
                 {
                     AssemblyQualifiedName = typeRepresentation.AssemblyQualifiedName.Replace("[]", string.Empty),
+
                     Namespace = typeRepresentation.Namespace,
+
                     Name = typeRepresentation.Name.Replace("[]", string.Empty),
                 };
 
@@ -101,8 +108,11 @@ namespace OBeautifulCode.Representation.System
             {
                 // if it's not an array type then run normal logic
                 var loadedAssemblies = AssemblyLoader.GetLoadedAssemblies().Distinct().ToList();
+
                 var allTypes = new List<Type>();
+
                 var reflectionTypeLoadExceptions = new List<ReflectionTypeLoadException>();
+
                 foreach (var assembly in loadedAssemblies)
                 {
                     try
@@ -112,7 +122,9 @@ namespace OBeautifulCode.Representation.System
                     catch (TypeLoadException ex) when (ex.InnerException?.GetType() == typeof(ReflectionTypeLoadException))
                     {
                         var reflectionTypeLoadException = (ReflectionTypeLoadException)ex.InnerException;
+
                         allTypes.AddRange(reflectionTypeLoadException.Types);
+
                         reflectionTypeLoadExceptions.Add(reflectionTypeLoadException);
                     }
                 }
@@ -122,7 +134,9 @@ namespace OBeautifulCode.Representation.System
                     : null;
 
                 allTypes = allTypes.Where(_ => _ != null).Distinct().ToList();
+
                 var typeComparer = new TypeComparer(typeMatchStrategy);
+
                 var allMatchingTypes = allTypes.Where(_ =>
                 {
                     TypeRepresentation representation = null;
@@ -155,7 +169,9 @@ namespace OBeautifulCode.Representation.System
                         if (allMatchingTypes.Count > 1)
                         {
                             var message = "Found multiple versions and multiple match strategy was: " + multipleMatchStrategy;
+
                             var types = string.Join(",", allMatchingTypes.Select(_ => _.AssemblyQualifiedName + " at " + _.Assembly.CodeBase));
+
                             throw new InvalidOperationException(message + "; types found: " + types, accumulatedReflectionTypeLoadExceptions);
                         }
                         else

@@ -6,18 +6,22 @@
 
 namespace OBeautifulCode.Representation.System
 {
-    using global::System;
     using global::System.Collections.Generic;
     using global::System.Linq;
     using global::System.Linq.Expressions;
+
+    using OBeautifulCode.Assertion.Recipes;
+    using OBeautifulCode.Type;
 
     /// <summary>
     /// Representation of <see cref="ListInitExpression" />.
     /// </summary>
     /// <seealso cref="ExpressionRepresentationBase" />
-    public class ListInitExpressionRepresentation : ExpressionRepresentationBase
+    public partial class ListInitExpressionRepresentation : ExpressionRepresentationBase, IModelViaCodeGen
     {
-        /// <summary>Initializes a new instance of the <see cref="ListInitExpressionRepresentation"/> class.</summary>
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ListInitExpressionRepresentation"/> class.
+        /// </summary>
         /// <param name="type">The type of expression.</param>
         /// <param name="newExpressionRepresentation">The new expression.</param>
         /// <param name="initializers">The initializers.</param>
@@ -31,48 +35,57 @@ namespace OBeautifulCode.Representation.System
             this.Initializers = initializers;
         }
 
-        /// <summary>Gets the new expression representation.</summary>
-        /// <value>The new expression representation.</value>
+        /// <summary>
+        /// Gets the new expression representation.
+        /// </summary>
         public NewExpressionRepresentation NewExpressionRepresentation { get; private set; }
 
-        /// <summary>Gets the initializers.</summary>
-        /// <value>The initializers.</value>
+        /// <summary>
+        /// Gets the initializers.
+        /// </summary>
         public IReadOnlyList<ElementInitRepresentation> Initializers { get; private set; }
     }
 
 #pragma warning disable SA1204 // Static elements should appear before instance elements
-                              /// <summary>
-                              /// Extensions to <see cref="ListInitExpressionRepresentation" />.
-                              /// </summary>
+
+    /// <summary>
+    /// Extensions to <see cref="ListInitExpressionRepresentation" />.
+    /// </summary>
     public static class ListInitExpressionRepresentationExtensions
-#pragma warning restore SA1204 // Static elements should appear before instance elements
     {
-        /// <summary>Converts to serializable.</summary>
+        /// <summary>
+        /// Converts to serializable.
+        /// </summary>
         /// <param name="listInitExpression">The listInit expression.</param>
-        /// <returns>Serializable expression.</returns>
-        public static ListInitExpressionRepresentation ToRepresentation(this ListInitExpression listInitExpression)
+        /// <returns>
+        /// Serializable expression.
+        /// </returns>
+        public static ListInitExpressionRepresentation ToRepresentation(
+            this ListInitExpression listInitExpression)
         {
-            if (listInitExpression == null)
-            {
-                throw new ArgumentNullException(nameof(listInitExpression));
-            }
+            new { listInitExpression }.AsArg().Must().NotBeNull();
 
             var type = listInitExpression.Type.ToRepresentation();
+
             var newExpression = listInitExpression.NewExpression.ToRepresentation();
+
             var initializers = listInitExpression.Initializers.ToRepresentation();
+
             var result = new ListInitExpressionRepresentation(type, newExpression, initializers);
+
             return result;
         }
 
-        /// <summary>From the serializable.</summary>
+        /// <summary>
+        /// From the serializable.
+        /// </summary>
         /// <param name="listInitExpressionRepresentation">The listInit expression.</param>
-        /// <returns>Converted expression.</returns>
+        /// <returns>
+        /// Converted expression.
+        /// </returns>
         public static ListInitExpression FromRepresentation(this ListInitExpressionRepresentation listInitExpressionRepresentation)
         {
-            if (listInitExpressionRepresentation == null)
-            {
-                throw new ArgumentNullException(nameof(listInitExpressionRepresentation));
-            }
+            new { listInitExpressionRepresentation }.AsArg().Must().NotBeNull();
 
             var result = Expression.ListInit(
                 listInitExpressionRepresentation.NewExpressionRepresentation.FromRepresentation(),
@@ -80,5 +93,6 @@ namespace OBeautifulCode.Representation.System
 
             return result;
         }
+#pragma warning restore SA1204 // Static elements should appear before instance elements
     }
 }

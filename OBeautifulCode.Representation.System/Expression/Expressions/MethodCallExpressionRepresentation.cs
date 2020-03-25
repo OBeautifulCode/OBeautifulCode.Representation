@@ -6,16 +6,20 @@
 
 namespace OBeautifulCode.Representation.System
 {
-    using global::System;
     using global::System.Collections.Generic;
     using global::System.Linq.Expressions;
+
+    using OBeautifulCode.Assertion.Recipes;
+    using OBeautifulCode.Type;
 
     /// <summary>
     /// Representation of <see cref="MethodCallExpression" />.
     /// </summary>
-    public class MethodCallExpressionRepresentation : ExpressionRepresentationBase
+    public partial class MethodCallExpressionRepresentation : ExpressionRepresentationBase, IModelViaCodeGen
     {
-        /// <summary>Initializes a new instance of the <see cref="MethodCallExpressionRepresentation"/> class.</summary>
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MethodCallExpressionRepresentation"/> class.
+        /// </summary>
         /// <param name="type">The type.</param>
         /// <param name="nodeType">Type of the node.</param>
         /// <param name="parentObject">The object.</param>
@@ -34,59 +38,74 @@ namespace OBeautifulCode.Representation.System
             this.Arguments = arguments;
         }
 
-        /// <summary>Gets the object.</summary>
-        /// <value>The object.</value>
+        /// <summary>
+        /// Gets the object.
+        /// </summary>
         public ExpressionRepresentationBase ParentObject { get; private set; }
 
-        /// <summary>Gets the method hash.</summary>
-        /// <value>The method hash.</value>
+        /// <summary>
+        /// Gets the method hash.
+        /// </summary>
         public MethodInfoRepresentation Method { get; private set; }
 
-        /// <summary>Gets the arguments.</summary>
-        /// <value>The arguments.</value>
+        /// <summary>
+        /// Gets the arguments.
+        /// </summary>
         public IReadOnlyList<ExpressionRepresentationBase> Arguments { get; private set; }
     }
 
 #pragma warning disable SA1204 // Static elements should appear before instance elements
-                              /// <summary>
-                              /// Extensions to <see cref="MethodCallExpressionRepresentation" />.
-                              /// </summary>
+
+    /// <summary>
+    /// Extensions to <see cref="MethodCallExpressionRepresentation" />.
+    /// </summary>
     public static class MethodCallExpressionRepresentationExtensions
-#pragma warning restore SA1204 // Static elements should appear before instance elements
     {
-        /// <summary>Converts to serializable.</summary>
+        /// <summary>
+        /// Converts to serializable.
+        /// </summary>
         /// <param name="methodCallExpression">The methodCall expression.</param>
-        /// <returns>Serializable expression.</returns>
-        public static MethodCallExpressionRepresentation ToRepresentation(this MethodCallExpression methodCallExpression)
+        /// <returns>
+        /// Serializable expression.
+        /// </returns>
+        public static MethodCallExpressionRepresentation ToRepresentation(
+            this MethodCallExpression methodCallExpression)
         {
-            if (methodCallExpression == null)
-            {
-                throw new ArgumentNullException(nameof(methodCallExpression));
-            }
+            new { methodCallExpression }.AsArg().Must().NotBeNull();
 
             var type = methodCallExpression.Type.ToRepresentation();
+
             var nodeType = methodCallExpression.NodeType;
+
             var parentObject = methodCallExpression.Object.ToRepresentation();
+
             var method = methodCallExpression.Method.ToRepresentation();
+
             var parameters = methodCallExpression.Arguments.ToRepresentation();
 
             var result = new MethodCallExpressionRepresentation(type, nodeType, parentObject, method, parameters);
+
             return result;
         }
 
-        /// <summary>From the serializable.</summary>
+        /// <summary>
+        /// From the serializable.
+        /// </summary>
         /// <param name="methodCallExpressionRepresentation">The methodCall expression.</param>
-        /// <returns>Converted expression.</returns>
-        public static MethodCallExpression FromRepresentation(this MethodCallExpressionRepresentation methodCallExpressionRepresentation)
+        /// <returns>
+        /// Converted expression.
+        /// </returns>
+        public static MethodCallExpression FromRepresentation(
+            this MethodCallExpressionRepresentation methodCallExpressionRepresentation)
         {
-            if (methodCallExpressionRepresentation == null)
-            {
-                throw new ArgumentNullException(nameof(methodCallExpressionRepresentation));
-            }
+            new { methodCallExpressionRepresentation }.AsArg().Must().NotBeNull();
 
             var instance = methodCallExpressionRepresentation.ParentObject.FromRepresentation();
+
             var method = methodCallExpressionRepresentation.Method.FromRepresentation();
+
             var arguments = methodCallExpressionRepresentation.Arguments.FromRepresentation();
+
             var result = Expression.Call(
                 instance,
                 method,
@@ -95,4 +114,5 @@ namespace OBeautifulCode.Representation.System
             return result;
         }
     }
+#pragma warning restore SA1204 // Static elements should appear before instance elements
 }

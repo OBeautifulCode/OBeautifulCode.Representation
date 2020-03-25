@@ -12,49 +12,60 @@ namespace OBeautifulCode.Representation.System
     using global::System.Linq;
     using global::System.Linq.Expressions;
 
+    using OBeautifulCode.Assertion.Recipes;
+    using OBeautifulCode.Type;
+
     using static global::System.FormattableString;
 
     /// <summary>
     /// Representation of <see cref="Expression" />.
     /// </summary>
-    public abstract class ExpressionRepresentationBase
+    public abstract partial class ExpressionRepresentationBase : IModelViaCodeGen
     {
-        /// <summary>Initializes a new instance of the <see cref="ExpressionRepresentationBase"/> class.</summary>
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ExpressionRepresentationBase"/> class.
+        /// </summary>
         /// <param name="type">The type of expression.</param>
         /// <param name="nodeType">The node type.</param>
-        protected ExpressionRepresentationBase(TypeRepresentation type, ExpressionType nodeType)
+        protected ExpressionRepresentationBase(
+            TypeRepresentation type,
+            ExpressionType nodeType)
         {
             this.Type = type;
             this.NodeType = nodeType;
         }
 
-        /// <summary>Gets the type of the node.</summary>
-        /// <value>The type of the node.</value>
+        /// <summary>
+        /// Gets the type of the node.
+        /// </summary>
         public ExpressionType NodeType { get; private set; }
 
-        /// <summary>Gets the type.</summary>
-        /// <value>The type.</value>
+        /// <summary>
+        /// Gets the type.
+        /// </summary>
         [SuppressMessage("Microsoft.Naming", "CA1721:PropertyNamesShouldNotMatchGetMethods", Justification = "Name/spelling is correct.")]
         public TypeRepresentation Type { get; private set; }
     }
 
 #pragma warning disable SA1204 // Static elements should appear before instance elements
-                              /// <summary>
-                              /// Extensions to <see cref="ExpressionRepresentationBase" />.
-                              /// </summary>
+
+    /// <summary>
+    /// Extensions to <see cref="ExpressionRepresentationBase" />.
+    /// </summary>
     public static class ExpressionRepresentationExtensions
-#pragma warning restore SA1204 // Static elements should appear before instance elements
     {
-        /// <summary>Converts to a serializable.</summary>
+        /// <summary>
+        /// Converts to a serializable.
+        /// </summary>
         /// <param name="expression">The expression.</param>
-        /// <returns>Serializable expression.</returns>
+        /// <returns>
+        /// Serializable expression.
+        /// </returns>
         [SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling", Justification = "Highly coupled by its very nature.")]
-        public static ExpressionRepresentationBase ToRepresentation(this Expression expression)
+        public static ExpressionRepresentationBase ToRepresentation(
+            this Expression expression)
         {
-            if (expression == null)
-            {
-                throw new ArgumentNullException(nameof(expression));
-            }
+            new { expression }.AsArg().Must().NotBeNull();
 
             if (expression is BinaryExpression binaryExpression)
             {
@@ -118,16 +129,18 @@ namespace OBeautifulCode.Representation.System
             }
         }
 
-        /// <summary>Converts from serializable.</summary>
+        /// <summary>
+        /// Converts from serializable.
+        /// </summary>
         /// <param name="expressionRepresentation">The serializable expression.</param>
-        /// <returns>Converted version.</returns>
+        /// <returns>
+        /// Converted version.
+        /// </returns>
         [SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling", Justification = "Highly coupled by its very nature.")]
-        public static Expression FromRepresentation(this ExpressionRepresentationBase expressionRepresentation)
+        public static Expression FromRepresentation(
+            this ExpressionRepresentationBase expressionRepresentation)
         {
-            if (expressionRepresentation == null)
-            {
-                throw new ArgumentNullException(nameof(expressionRepresentation));
-            }
+            new { expressionRepresentation }.AsArg().Must().NotBeNull();
 
             if (expressionRepresentation is BinaryExpressionRepresentation binaryExpression)
             {
@@ -206,7 +219,10 @@ namespace OBeautifulCode.Representation.System
         public static IReadOnlyList<ExpressionRepresentationBase> ToRepresentation(
             this IReadOnlyList<Expression> expressions)
         {
+            new { expressions }.AsArg().Must().NotBeNull().And().NotContainAnyNullElements();
+
             var result = expressions.Select(_ => _.ToRepresentation()).ToList();
+
             return result;
         }
 
@@ -216,8 +232,12 @@ namespace OBeautifulCode.Representation.System
         public static IReadOnlyList<Expression> FromRepresentation(
             this IReadOnlyList<ExpressionRepresentationBase> expressions)
         {
+            new { expressions }.AsArg().Must().NotBeNull().And().NotContainAnyNullElements();
+
             var result = expressions.Select(_ => _.FromRepresentation()).ToList();
+
             return result;
         }
     }
+#pragma warning restore SA1204 // Static elements should appear before instance elements
 }

@@ -12,54 +12,63 @@ namespace OBeautifulCode.Representation.System
     using global::System.Linq;
     using global::System.Linq.Expressions;
 
+    using OBeautifulCode.Assertion.Recipes;
+    using OBeautifulCode.Type;
+
     using static global::System.FormattableString;
 
     /// <summary>
     /// Representation of <see cref="MemberBinding" />.
     /// </summary>
-    public abstract class MemberBindingRepresentationBase
+    public abstract partial class MemberBindingRepresentationBase : IModelViaCodeGen
     {
-        /// <summary>Initializes a new instance of the <see cref="MemberBindingRepresentationBase"/> class.</summary>
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MemberBindingRepresentationBase"/> class.
+        /// </summary>
         /// <param name="type">The type with member.</param>
         /// <param name="memberInfo">The member info representation.</param>
         /// <param name="bindingType">Type of the binding.</param>
-        protected MemberBindingRepresentationBase(TypeRepresentation type, MemberInfoRepresentation memberInfo, MemberBindingType bindingType)
+        protected MemberBindingRepresentationBase(
+            TypeRepresentation type,
+            MemberInfoRepresentation memberInfo,
+            MemberBindingType bindingType)
         {
             this.Type = type;
             this.MemberInfo = memberInfo;
             this.BindingType = bindingType;
         }
 
-        /// <summary>Gets the type with member.</summary>
-        /// <value>The type with member.</value>
+        /// <summary>
+        /// Gets the type with member.
+        /// </summary>
         [SuppressMessage("Microsoft.Naming", "CA1721:PropertyNamesShouldNotMatchGetMethods", Justification = "Name/spelling is correct.")]
         public TypeRepresentation Type { get; private set; }
 
-        /// <summary>Gets  the member info representation.</summary>
-        /// <value>The member hash.</value>
+        /// <summary>
+        /// Gets the member info representation.
+        /// </summary>
         public MemberInfoRepresentation MemberInfo { get; private set; }
 
-        /// <summary>Gets the type of the binding.</summary>
-        /// <value>The type of the binding.</value>
+        /// <summary>
+        /// Gets the type of the binding.
+        /// </summary>
         public MemberBindingType BindingType { get; private set; }
     }
 
 #pragma warning disable SA1204 // Static elements should appear before instance elements
-                              /// <summary>
-                              /// Extensions to <see cref="MemberBindingRepresentationBase" />.
-                              /// </summary>
+
+    /// <summary>
+    /// Extensions to <see cref="MemberBindingRepresentationBase" />.
+    /// </summary>
     public static class MemberBindingRepresentationExtensions
-#pragma warning restore SA1204 // Static elements should appear before instance elements
     {
         /// <summary>Converts to serializable.</summary>
         /// <param name="memberBinding">The memberBindings.</param>
         /// <returns>Serializable version.</returns>
-        public static MemberBindingRepresentationBase ToRepresentation(this MemberBinding memberBinding)
+        public static MemberBindingRepresentationBase ToRepresentation(
+            this MemberBinding memberBinding)
         {
-            if (memberBinding == null)
-            {
-                throw new ArgumentNullException(nameof(memberBinding));
-            }
+            new { memberBinding }.AsArg().Must().NotBeNull();
 
             if (memberBinding is MemberAssignment memberAssignment)
             {
@@ -79,15 +88,17 @@ namespace OBeautifulCode.Representation.System
             }
         }
 
-        /// <summary>From the serializable.</summary>
+        /// <summary>
+        /// From the serializable.
+        /// </summary>
         /// <param name="memberBindingRepresentation">The memberBindings.</param>
-        /// <returns>Converted version.</returns>
-        public static MemberBinding FromRepresentation(this MemberBindingRepresentationBase memberBindingRepresentation)
+        /// <returns>
+        /// Converted version.
+        /// </returns>
+        public static MemberBinding FromRepresentation(
+            this MemberBindingRepresentationBase memberBindingRepresentation)
         {
-            if (memberBindingRepresentation == null)
-            {
-                throw new ArgumentNullException(nameof(memberBindingRepresentation));
-            }
+            new { memberBindingRepresentation }.AsArg().Must().NotBeNull();
 
             if (memberBindingRepresentation is MemberAssignmentRepresentation memberAssignment)
             {
@@ -107,22 +118,39 @@ namespace OBeautifulCode.Representation.System
             }
         }
 
-        /// <summary>Converts to serializable.</summary>
+        /// <summary>
+        /// Converts to serializable.
+        /// </summary>
         /// <param name="memberBindings">The memberBindings.</param>
-        /// <returns>Serializable version.</returns>
-        public static IReadOnlyCollection<MemberBindingRepresentationBase> ToRepresentation(this IReadOnlyCollection<MemberBinding> memberBindings)
+        /// <returns>
+        /// Serializable version.
+        /// </returns>
+        public static IReadOnlyCollection<MemberBindingRepresentationBase> ToRepresentation(
+            this IReadOnlyCollection<MemberBinding> memberBindings)
         {
+            new { memberBindings }.AsArg().Must().NotBeNull().And().NotContainAnyNullElements();
+
             var result = memberBindings.Select(_ => _.ToRepresentation()).ToList();
+
             return result;
         }
 
-        /// <summary>From the serializable.</summary>
+        /// <summary>
+        /// From the serializable.
+        /// </summary>
         /// <param name="memberBindings">The memberBindings.</param>
-        /// <returns>Converted version.</returns>
-        public static IReadOnlyCollection<MemberBinding> FromRepresentation(this IReadOnlyCollection<MemberBindingRepresentationBase> memberBindings)
+        /// <returns>
+        /// Converted version.
+        /// </returns>
+        public static IReadOnlyCollection<MemberBinding> FromRepresentation(
+            this IReadOnlyCollection<MemberBindingRepresentationBase> memberBindings)
         {
+            new { memberBindings }.AsArg().Must().NotBeNull().And().NotContainAnyNullElements();
+
             var result = memberBindings.Select(_ => _.FromRepresentation()).ToList();
+
             return result;
         }
     }
+#pragma warning restore SA1204 // Static elements should appear before instance elements
 }

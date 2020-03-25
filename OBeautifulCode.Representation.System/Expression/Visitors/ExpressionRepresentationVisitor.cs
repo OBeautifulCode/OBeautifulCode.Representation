@@ -13,12 +13,18 @@ namespace OBeautifulCode.Representation.System
     /// </summary>
     public static class ExpressionRepresentationVisitor
     {
-        /// <summary>Visits all connected nodes.</summary>
+        /// <summary>
+        /// Visits all connected nodes.
+        /// </summary>
         /// <param name="root">The root.</param>
-        /// <returns>Collection of the connected nodes.</returns>
-        public static IReadOnlyCollection<ExpressionRepresentationBase> VisitAllConnectedNodes(this ExpressionRepresentationBase root)
+        /// <returns>
+        /// Collection of the connected nodes.
+        /// </returns>
+        public static IReadOnlyCollection<ExpressionRepresentationBase> VisitAllConnectedNodes(
+            this ExpressionRepresentationBase root)
         {
             var result = new List<ExpressionRepresentationBase>();
+
             switch (root)
             {
                 case LambdaExpressionRepresentation lambdaExpressionRepresentation:
@@ -82,18 +88,25 @@ namespace OBeautifulCode.Representation.System
             return result;
         }
 
-        /// <summary>Visits all nodes in the tree.</summary>
+        /// <summary>
+        /// Visits all nodes in the tree.
+        /// </summary>
         /// <param name="root">Node traverse from.</param>
-        /// <returns>Collection of the <see cref="ExpressionRepresentationBase" /> from the tree.</returns>
-        public static IReadOnlyCollection<ExpressionRepresentationBase> VisitAllNodes(this ExpressionRepresentationBase root)
+        /// <returns>
+        /// Collection of the <see cref="ExpressionRepresentationBase" /> from the tree.
+        /// </returns>
+        public static IReadOnlyCollection<ExpressionRepresentationBase> VisitAllNodes(
+            this ExpressionRepresentationBase root)
         {
             var result = new List<ExpressionRepresentationBase>();
+
             foreach (var linkNode in root.VisitAllConnectedNodes())
             {
                 result.AddRange(linkNode.VisitAllNodes());
             }
 
             result.Add(root);
+
             return result;
         }
     }
