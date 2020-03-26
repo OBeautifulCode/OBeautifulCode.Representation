@@ -22,20 +22,22 @@ namespace OBeautifulCode.Representation.System
         /// <param name="type">The type of expression.</param>
         /// <param name="nodeType">Type of the node.</param>
         /// <param name="test">The test expression.</param>
-        /// <param name="expressionIfTrue">If true expression.</param>
-        /// <param name="expressionIfFalse">If false expression.</param>
+        /// <param name="ifTrue">If true expression.</param>
+        /// <param name="ifFalse">If false expression.</param>
+        #pragma warning disable SA1305 // Field names should not use Hungarian notation
         public ConditionalExpressionRepresentation(
             TypeRepresentation type,
             ExpressionType nodeType,
             ExpressionRepresentationBase test,
-            ExpressionRepresentationBase expressionIfTrue,
-            ExpressionRepresentationBase expressionIfFalse)
+            ExpressionRepresentationBase ifTrue,
+            ExpressionRepresentationBase ifFalse)
         : base(type, nodeType)
         {
             this.Test = test;
-            this.IfTrue = expressionIfTrue;
-            this.IfFalse = expressionIfFalse;
+            this.IfTrue = ifTrue;
+            this.IfFalse = ifFalse;
         }
+        #pragma warning restore SA1305 // Field names should not use Hungarian notation
 
         /// <summary>Gets the test expression.</summary>
         /// <value>The test expression.</value>
