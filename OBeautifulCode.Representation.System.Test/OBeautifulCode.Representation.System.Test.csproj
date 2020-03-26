@@ -132,6 +132,7 @@
     <Compile Include=".recipes\OBeautifulCode.Equality\SuppressBecause.cs" />
     <Compile Include=".recipes\OBeautifulCode.Math\SuppressBecause.cs" />
     <Compile Include=".recipes\OBeautifulCode.Math\ThreadSafeRandom.cs" />
+    <Compile Include=".recipes\OBeautifulCode.Type\ArrayKind.cs" />
     <Compile Include=".recipes\OBeautifulCode.Type\SuppressBecause.cs" />
     <Compile Include=".recipes\OBeautifulCode.Type\ToStringReadableOptions.cs" />
     <Compile Include=".recipes\OBeautifulCode.Type\TypeExtensions.cs" />

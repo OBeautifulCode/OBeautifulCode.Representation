@@ -9,6 +9,7 @@ namespace OBeautifulCode.Representation.System
     using global::System;
     using global::System.Linq.Expressions;
 
+    using OBeautifulCode.Assertion.Recipes;
     using OBeautifulCode.Equality.Recipes;
     using OBeautifulCode.Reflection.Recipes;
     using OBeautifulCode.Type;
@@ -23,20 +24,21 @@ namespace OBeautifulCode.Representation.System
         where T : ICloneable, IEquatable<T>
     {
         /// <summary>Initializes a new instance of the <see cref="ConstantExpressionRepresentation{T}"/> class.</summary>
-        /// <param name="value">The value.</param>
-        /// <param name="nodeType">The node type.</param>
         /// <param name="type">The type of expression.</param>
+        /// <param name="nodeType">The node type.</param>
+        /// <param name="value">The value.</param>
         public ConstantExpressionRepresentation(
-            T                  value,
-            ExpressionType     nodeType,
-            TypeRepresentation type)
+            TypeRepresentation type,
+            ExpressionType nodeType,
+            T value)
             : base(type, nodeType)
         {
             this.Value = value;
         }
 
-        /// <summary>Gets the value.</summary>
-        /// <value>The value.</value>
+        /// <summary>
+        /// Gets the value.
+        /// </summary>
         public T Value { get; private set; }
 
         /// <summary>
@@ -57,7 +59,7 @@ namespace OBeautifulCode.Representation.System
                 return false;
             }
 
-            var result = left.Value.Equals(right.Value)
+            var result = left.Value.IsEqualTo(right.Value)
                       && left.NodeType == right.NodeType
                       && left.Type == right.Type;
 
@@ -91,103 +93,86 @@ namespace OBeautifulCode.Representation.System
         /// <inheritdoc />
         public ConstantExpressionRepresentation<T> DeepClone()
         {
-            var result = new ConstantExpressionRepresentation<T>(
-                                 (T)this.Value?.Clone(),
-                                 this.NodeType,
-                                 this.Type.DeepClone());
+            var type = typeof(T);
 
-            return result;
-        }
+            T deepClonedValue;
 
-        /// <summary>
-        /// Deep clones this object with a new <paramref name="value" />.
-        /// </summary>
-        /// <param name="value">The new <see cref="Value" />.</param>
-        /// <returns>New <see cref="ConstantExpressionRepresentation{T}" /> using the specified <paramref name="value" /> for <see cref="Value" /> and a deep clone of every other property.</returns>
-        public ConstantExpressionRepresentation<T> DeepCloneWithValue(T value)
-        {
-            var result = new ConstantExpressionRepresentation<T>(
-                                 value,
-                                 this.NodeType,
-                                 this.Type);
-            return result;
-        }
+            if (type.IsValueType)
+            {
+                deepClonedValue = this.Value;
+            }
+            else
+            {
+                if (ReferenceEquals(this.Value, null))
+                {
+                    deepClonedValue = default(T);
+                }
+                else if (this.Value is IDeepCloneable<T> deepCloneable)
+                {
+                    deepClonedValue = deepCloneable.DeepClone();
+                }
+                else
+                {
+                    throw new NotSupportedException("I do not know how to deep clone object of type: " + type);
+                }
+            }
 
-        /// <summary>
-        /// Deep clones this object with a new <paramref name="nodeType" />.
-        /// </summary>
-        /// <param name="nodeType">The new <see cref="ExpressionType" />.</param>
-        /// <returns>New <see cref="ConstantExpressionRepresentation{T}" /> using the specified <paramref name="nodeType" /> for <see cref="ExpressionType" /> and a deep clone of every other property.</returns>
-        public ConstantExpressionRepresentation<T> DeepCloneWithNodeType(ExpressionType nodeType)
-        {
-            var result = new ConstantExpressionRepresentation<T>(
-                                 this.Value,
-                                 nodeType,
-                                 this.Type);
-            return result;
-        }
-
-        /// <summary>
-        /// Deep clones this object with a new <paramref name="type" />.
-        /// </summary>
-        /// <param name="type">The new <see cref="Type" />.</param>
-        /// <returns>New <see cref="ConstantExpressionRepresentation{T}" /> using the specified <paramref name="type" /> for <see cref="Type" /> and a deep clone of every other property.</returns>
-        public ConstantExpressionRepresentation<T> DeepCloneWithType(TypeRepresentation type)
-        {
-            var result = new ConstantExpressionRepresentation<T>(
-                                 (T)this.Value?.Clone(),
-                                 this.NodeType,
-                                 type);
-            return result;
-        }
-
-        /// <inheritdoc />
-        public override string ToString()
-        {
-            var result = Invariant($"{nameof(OBeautifulCode.Representation)}.{nameof(ConstantExpressionRepresentation<T>)}: Value = {this.Value?.ToString() ?? "<null>"}, NodeType = {this.NodeType.ToString() ?? "<null>"}, Type = {this.Type.ToString() ?? "<null>"}.");
-
-            return result;
+            // var result = new ConstantExpressionRepresentation<T>(
+            //    this.Type?.DeepClone(),
+            //    this.NodeType,
+            //    deepClonedValue);
+            return null;
         }
     }
 
 #pragma warning disable SA1204 // Static elements should appear before instance elements
+
     /// <summary>
     /// Extensions to <see cref="ConstantExpressionRepresentation{T}" />.
     /// </summary>
     public static class ConstantExpressionRepresentationExtensions
-#pragma warning restore SA1204 // Static elements should appear before instance elements
     {
-        /// <summary>Converts to serializable.</summary>
+        /// <summary>
+        /// Converts to serializable.
+        /// </summary>
         /// <param name="constantExpression">The constant expression.</param>
-        /// <returns>Converted expression.</returns>
-        public static ExpressionRepresentationBase ToRepresentation(this ConstantExpression constantExpression)
+        /// <returns>
+        /// Converted expression.
+        /// </returns>
+        public static ExpressionRepresentationBase ToRepresentation(
+            this ConstantExpression constantExpression)
         {
-            if (constantExpression == null)
-            {
-                throw new ArgumentNullException(nameof(constantExpression));
-            }
+            new { constantExpression }.AsArg().Must().NotBeNull();
 
             var type = constantExpression.Type.ToRepresentation();
+
             var value = constantExpression.Value;
+
             var resultType = typeof(ConstantExpressionRepresentation<>).MakeGenericType(value.GetType());
-            var result = resultType.Construct(value, ExpressionType.Constant, type);
-            return (ExpressionRepresentationBase)result;
+
+            var result = (ExpressionRepresentationBase)resultType.Construct(value, ExpressionType.Constant, type);
+
+            return result;
         }
 
-        /// <summary>From the serializable.</summary>
+        /// <summary>
+        /// From the serializable.
+        /// </summary>
         /// <param name="constantExpressionRepresentation">The constant expression.</param>
         /// <typeparam name="T">Type of constant.</typeparam>
-        /// <returns>Converted expression.</returns>
-        public static ConstantExpression FromRepresentation<T>(this ConstantExpressionRepresentation<T> constantExpressionRepresentation)
+        /// <returns>
+        /// Converted expression.
+        /// </returns>
+        public static ConstantExpression FromRepresentation<T>(
+            this ConstantExpressionRepresentation<T> constantExpressionRepresentation)
             where T : ICloneable, IEquatable<T>
         {
-            if (constantExpressionRepresentation == null)
-            {
-                throw new ArgumentNullException(nameof(constantExpressionRepresentation));
-            }
+            new { constantExpressionRepresentation }.AsArg().Must().NotBeNull();
 
             var result = Expression.Constant(constantExpressionRepresentation.Value);
+
             return result;
         }
     }
+#pragma warning restore SA1204 // Static elements should appear before instance elements
 }

@@ -94,6 +94,7 @@
     <Compile Include=".recipes\OBeautifulCode.Reflection\SuppressBecause.cs" />
     <Compile Include=".recipes\OBeautifulCode.String\StringExtensions.cs" />
     <Compile Include=".recipes\OBeautifulCode.String\SuppressBecause.cs" />
+    <Compile Include=".recipes\OBeautifulCode.Type\ArrayKind.cs" />
     <Compile Include=".recipes\OBeautifulCode.Type\SuppressBecause.cs" />
     <Compile Include=".recipes\OBeautifulCode.Type\ToStringReadableOptions.cs" />
     <Compile Include=".recipes\OBeautifulCode.Type\TypeExtensions.cs" />
@@ -132,6 +133,7 @@
     <Compile Include="Type\TypeRepresentationCacheKey.cs" />
     <Compile Include="Type\TypeRepresentationExtensions.cs" />
     <Compile Include="Type\UnknownTypePlaceholder.cs" />
+    <Compile Include="Type\ArrayRepresentation.cs" />
   </ItemGroup>
   <ItemGroup>
     <AdditionalFiles Include=".analyzers\stylecop.json" />

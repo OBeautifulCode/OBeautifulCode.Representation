@@ -9,9 +9,8 @@ namespace OBeautifulCode.Representation.System
     using global::System.Collections.Generic;
     using global::System.Diagnostics.CodeAnalysis;
 
+    using OBeautifulCode.Assertion.Recipes;
     using OBeautifulCode.Type;
-
-    using static global::System.FormattableString;
 
     /// <summary>
     /// Model object containing a representation of a type that can be serialized without knowledge of the type.
@@ -27,13 +26,6 @@ namespace OBeautifulCode.Representation.System
         /// <summary>
         /// Initializes a new instance of the <see cref="TypeRepresentation" /> class.
         /// </summary>
-        public TypeRepresentation()
-        {
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="TypeRepresentation" /> class.
-        /// </summary>
         /// <param name="namespace">Namespace of type.</param>
         /// <param name="name">Name of type.</param>
         /// <param name="assemblyQualifiedName">Assembly qualified name of type.</param>
@@ -44,6 +36,11 @@ namespace OBeautifulCode.Representation.System
             string assemblyQualifiedName,
             IReadOnlyList<TypeRepresentation> genericArguments)
         {
+            new { @namespace }.AsArg().Must().NotBeNullNorWhiteSpace();
+            new { name }.AsArg().Must().NotBeNullNorWhiteSpace();
+            new { assemblyQualifiedName }.AsArg().Must().NotBeNullNorWhiteSpace();
+            new { genericArguments }.AsArg().Must().NotBeNull().And().NotContainAnyNullElements();
+
             this.Namespace = @namespace;
             this.Name = name;
             this.AssemblyQualifiedName = assemblyQualifiedName;
@@ -51,27 +48,23 @@ namespace OBeautifulCode.Representation.System
         }
 
         /// <summary>
-        /// Gets or sets the namespace of the type.
+        /// Gets the namespace of the type.
         /// </summary>
-        /// <value>The namespace.</value>
-        public string Namespace { get; set; }
+        public string Namespace { get; private set; }
 
         /// <summary>
-        /// Gets or sets the name of the type.
+        /// Gets the name of the type.
         /// </summary>
-        /// <value>The name.</value>
-        public string Name { get; set; }
+        public string Name { get; private set; }
 
         /// <summary>
-        /// Gets or sets the qualified name of the assembly of the type.
+        /// Gets the qualified name of the assembly of the type.
         /// </summary>
-        /// <value>The name of the assembly qualified.</value>
-        public string AssemblyQualifiedName { get; set; }
+        public string AssemblyQualifiedName { get; private set; }
 
         /// <summary>
-        /// Gets or sets the generic arguments.
+        /// Gets the generic arguments.
         /// </summary>
-        /// <value>The generic arguments.</value>
-        public IReadOnlyList<TypeRepresentation> GenericArguments { get; set; }
+        public IReadOnlyList<TypeRepresentation> GenericArguments { get; private set; }
     }
 }

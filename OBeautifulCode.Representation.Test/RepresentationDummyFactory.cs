@@ -60,7 +60,7 @@ namespace OBeautifulCode.Representation.Test
                 }
             }
 
-            AggregateException accumulatedReflectionTypeLoadExceptions = reflectionTypeLoadExceptions.Any()
+            var accumulatedReflectionTypeLoadExceptions = reflectionTypeLoadExceptions.Any()
                 ? new AggregateException(Invariant($"Getting types from assemblies threw one or more {nameof(ReflectionTypeLoadException)}.  See inner exceptions."), reflectionTypeLoadExceptions)
                 : null;
         }
@@ -94,15 +94,15 @@ namespace OBeautifulCode.Representation.Test
 
             AutoFixtureBackedDummyFactory.AddDummyCreator(
                 () => (ExpressionRepresentationBase)new ConstantExpressionRepresentation<string>(
-                    A.Dummy<string>(),
+                    A.Dummy<TypeRepresentation>(),
                     A.Dummy<ExpressionType>(),
-                    A.Dummy<TypeRepresentation>()));
+                    A.Dummy<string>()));
 
             AutoFixtureBackedDummyFactory.AddDummyCreator(
                 () => new ConstantExpressionRepresentation<string>(
-                    A.Dummy<string>(),
+                    A.Dummy<TypeRepresentation>(),
                     A.Dummy<ExpressionType>(),
-                    A.Dummy<TypeRepresentation>()));
+                    A.Dummy<string>()));
         }
 
         /// <inheritdoc />
