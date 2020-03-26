@@ -13,7 +13,15 @@ namespace OBeautifulCode.Representation.System.Test
 
     using FakeItEasy;
 
+    using global::System;
+    using global::System.Collections.Generic;
+    using global::System.Linq;
+    using global::System.Linq.Expressions;
+
     using OBeautifulCode.AutoFakeItEasy;
+    using OBeautifulCode.Math.Recipes;
+    using OBeautifulCode.Reflection.Recipes;
+    using OBeautifulCode.Type.Recipes;
 
     /// <summary>
     /// A Dummy Factory for types in <see cref="OBeautifulCode.Representation.System"/>.
@@ -24,9 +32,36 @@ namespace OBeautifulCode.Representation.System.Test
 #endif
     public class RepresentationDummyFactory : DefaultRepresentationDummyFactory
     {
+        private static readonly IReadOnlyList<Type> AppDomainClosedTypes = AssemblyLoader
+            .GetLoadedAssemblies()
+            .GetTypesFromAssemblies()
+            .Where(_ => !_.ContainsGenericParameters)
+            .Where(_ => !_.IsClosedAnonymousType())
+            .ToList();
+
         public RepresentationDummyFactory()
         {
-            /* Add any overriding or custom registrations here. */
+            AutoFixtureBackedDummyFactory.AddDummyCreator(
+                () =>
+                {
+                    var index = ThreadSafeRandom.Next(0, AppDomainClosedTypes.Count);
+
+                    var result = AppDomainClosedTypes[index];
+
+                    return result.ToRepresentation();
+                });
+
+            AutoFixtureBackedDummyFactory.AddDummyCreator(
+                () => (ExpressionRepresentationBase)new ConstantExpressionRepresentation<string>(
+                    A.Dummy<TypeRepresentation>(),
+                    A.Dummy<ExpressionType>(),
+                    A.Dummy<string>()));
+
+            AutoFixtureBackedDummyFactory.AddDummyCreator(
+                () => new ConstantExpressionRepresentation<string>(
+                    A.Dummy<TypeRepresentation>(),
+                    A.Dummy<ExpressionType>(),
+                    A.Dummy<string>()));
         }
     }
 }

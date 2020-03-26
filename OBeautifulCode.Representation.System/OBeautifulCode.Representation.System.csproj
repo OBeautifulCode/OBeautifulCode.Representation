@@ -106,7 +106,7 @@
     <Compile Include="Expression\Bindings\MemberMemberBindingRepresentation.cs" />
     <Compile Include="Expression\Expressions\BinaryExpressionRepresentation.cs" />
     <Compile Include="Expression\Expressions\ConditionalExpressionRepresentation.cs" />
-    <Compile Include="Expression\Expressions\ConstantExpressionRepresentation.cs" />
+    <Compile Include="Expression\Expressions\ConstantExpressionRepresentation{T}.cs" />
     <Compile Include="Expression\Expressions\ExpressionRepresentationBase.cs" />
     <Compile Include="Expression\Expressions\InvocationExpressionRepresentation.cs" />
     <Compile Include="Expression\Expressions\LambdaExpressionRepresentation.cs" />

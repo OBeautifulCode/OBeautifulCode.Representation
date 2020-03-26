@@ -37,6 +37,7 @@ namespace OBeautifulCode.Representation.Test
     class RepresentationDummyFactory : IDummyFactory
     {
         private static readonly List<Type> AppDomainTypes = new List<Type>();
+
         private static readonly Random Random = new Random();
 
         [SuppressMessage("Microsoft.Performance", "CA1810:InitializeReferenceTypeStaticFieldsInline", Justification = "Prefer this structure.")]
@@ -76,6 +77,7 @@ namespace OBeautifulCode.Representation.Test
                     var index = Random.Next(0, AppDomainTypes.Count - 1);
 
                     var result = AppDomainTypes[index];
+
                     return result.ToRepresentation();
                 });
 
