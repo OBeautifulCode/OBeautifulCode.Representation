@@ -144,6 +144,27 @@
     <Compile Include=".recipes\OBeautifulCode.Type\SuppressBecause.cs" />
     <Compile Include=".recipes\OBeautifulCode.Type\ToStringReadableOptions.cs" />
     <Compile Include=".recipes\OBeautifulCode.Type\TypeExtensions.cs" />
+    <Compile Include="Assembly\AssemblyRepresentationTest.cs" />
+    <Compile Include="Expression\Expressions\BinaryExpressionRepresentationTest.cs" />
+    <Compile Include="Expression\Expressions\ConditionalExpressionRepresentationTest.cs" />
+    <Compile Include="TypeMember\ConstructorInfoRepresentationTest.cs" />
+    <Compile Include="Expression\Bindings\ElementInitRepresentationTest.cs" />
+    <Compile Include="Expression\Expressions\ExpressionRepresentationBaseTest.cs" />
+    <Compile Include="Expression\Expressions\InvocationExpressionRepresentationTest.cs" />
+    <Compile Include="Expression\Expressions\LambdaExpressionRepresentationTest.cs" />
+    <Compile Include="Expression\Expressions\ListInitExpressionRepresentationTest.cs" />
+    <Compile Include="Expression\Bindings\MemberAssignmentRepresentationTest.cs" />
+    <Compile Include="Expression\Bindings\MemberBindingRepresentationBaseTest.cs" />
+    <Compile Include="Expression\Expressions\MemberExpressionRepresentationTest.cs" />
+    <Compile Include="TypeMember\MemberInfoRepresentationTest.cs" />
+    <Compile Include="Expression\Expressions\MemberInitExpressionRepresentationTest.cs" />
+    <Compile Include="Expression\Bindings\MemberListBindingRepresentationTest.cs" />
+    <Compile Include="Expression\Bindings\MemberMemberBindingRepresentationTest.cs" />
+    <Compile Include="Expression\Expressions\MethodCallExpressionRepresentationTest.cs" />
+    <Compile Include="TypeMember\MethodInfoRepresentationTest.cs" />
+    <Compile Include="Expression\Expressions\NewArrayExpressionRepresentationTest.cs" />
+    <Compile Include="Expression\Expressions\NewExpressionRepresentationTest.cs" />
+    <Compile Include="Expression\Expressions\ParameterExpressionRepresentationTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="RepresentationDummyFactory.cs" />
@@ -152,6 +173,13 @@
     </Compile>
     <Compile Include="RepresentationDummyFactoryTest.cs" />
     <AdditionalFiles Include=".analyzers\stylecop.json" />
+    <Compile Include="RepresentationDummyFactoryTest.designer.cs">
+      <DependentUpon>RepresentationDummyFactoryTest.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Expression\Expressions\TypeBinaryExpressionRepresentationTest.cs" />
+    <Compile Include="Type\TypeRepresentationCacheKeyTest.cs" />
+    <Compile Include="Type\TypeRepresentationTest.cs" />
+    <Compile Include="Expression\Expressions\UnaryExpressionRepresentationTest.cs" />
     <None Include=".analyzers\test.ruleset" />
     <None Include="DummyFactory.recipe-nuspec" />
     <None Include="packages.config" />
@@ -170,6 +198,7 @@
   <ItemGroup>
     <Content Include=".analyzers\dictionary.xml" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

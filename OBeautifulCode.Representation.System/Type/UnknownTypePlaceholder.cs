@@ -8,10 +8,12 @@ namespace OBeautifulCode.Representation.System
 {
     using global::System;
 
+    using OBeautifulCode.Type;
+
     /// <summary>
     /// Placeholder type to use when no <see cref="Type" /> is available.
     /// </summary>
-    public class UnknownTypePlaceholder
+    public class UnknownTypePlaceholder : IModelViaCodeGen
     {
     }
 }

@@ -1,13 +1,12 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="RepresentationDummyFactoryTest.cs" company="OBeautifulCode">
+// <copyright file="ConstructorInfoRepresentationTest.cs" company="OBeautifulCode">
 //   Copyright (c) OBeautifulCode 2018. All rights reserved.
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
 namespace OBeautifulCode.Representation.System.Test
 {
-    public static partial class RepresentationDummyFactoryTest
+    public static partial class ConstructorInfoRepresentationTest
     {
-        /* Add your Dummy Factory tests, if any, here. */
     }
 }

@@ -13,6 +13,7 @@ namespace OBeautifulCode.Representation.System
     using OBeautifulCode.Equality.Recipes;
     using OBeautifulCode.Reflection.Recipes;
     using OBeautifulCode.Type;
+    using OBeautifulCode.Type.Recipes;
 
     using static global::System.FormattableString;
 
@@ -21,7 +22,6 @@ namespace OBeautifulCode.Representation.System
     /// </summary>
     /// <typeparam name="T">Type of the value.</typeparam>
     public class ConstantExpressionRepresentation<T> : ExpressionRepresentationBase, IModel<ConstantExpressionRepresentation<T>>
-        where T : ICloneable, IEquatable<T>
     {
         /// <summary>Initializes a new instance of the <see cref="ConstantExpressionRepresentation{T}"/> class.</summary>
         /// <param name="type">The type of expression.</param>
@@ -44,9 +44,9 @@ namespace OBeautifulCode.Representation.System
         /// <summary>
         /// Determines whether two objects of type <see cref="ConstantExpressionRepresentation{T}"/> are equal.
         /// </summary>
-        /// <param name="left">The object to the left of the operator.</param>
-        /// <param name="right">The object to the right of the operator.</param>
-        /// <returns>True if the two items are equal; otherwise false.</returns>
+        /// <param name="left">The object to the left of the equality operator.</param>
+        /// <param name="right">The object to the right of the equality operator.</param>
+        /// <returns>true if the two items are equal; otherwise false.</returns>
         public static bool operator ==(ConstantExpressionRepresentation<T> left, ConstantExpressionRepresentation<T> right)
         {
             if (ReferenceEquals(left, right))
@@ -59,9 +59,7 @@ namespace OBeautifulCode.Representation.System
                 return false;
             }
 
-            var result = left.Value.IsEqualTo(right.Value)
-                      && left.NodeType == right.NodeType
-                      && left.Type == right.Type;
+            var result = left.Equals(right);
 
             return result;
         }
@@ -69,13 +67,30 @@ namespace OBeautifulCode.Representation.System
         /// <summary>
         /// Determines whether two objects of type <see cref="ConstantExpressionRepresentation{T}"/> are not equal.
         /// </summary>
-        /// <param name="left">The object to the left of the operator.</param>
-        /// <param name="right">The object to the right of the operator.</param>
-        /// <returns>True if the two items not equal; otherwise false.</returns>
+        /// <param name="left">The object to the left of the equality operator.</param>
+        /// <param name="right">The object to the right of the equality operator.</param>
+        /// <returns>true if the two items are not equal; otherwise false.</returns>
         public static bool operator !=(ConstantExpressionRepresentation<T> left, ConstantExpressionRepresentation<T> right) => !(left == right);
 
         /// <inheritdoc />
-        public bool Equals(ConstantExpressionRepresentation<T> other) => this == other;
+        public bool Equals(ConstantExpressionRepresentation<T> other)
+        {
+            if (ReferenceEquals(this, other))
+            {
+                return true;
+            }
+
+            if (ReferenceEquals(other, null))
+            {
+                return false;
+            }
+
+            var result = this.NodeType.IsEqualTo(other.NodeType)
+                      && this.Type.IsEqualTo(other.Type)
+                      && this.Value.IsEqualTo(other.Value);
+
+            return result;
+        }
 
         /// <inheritdoc />
         public override bool Equals(object obj) => this == (obj as ConstantExpressionRepresentation<T>);
@@ -88,28 +103,85 @@ namespace OBeautifulCode.Representation.System
             .Value;
 
         /// <inheritdoc />
-        public object Clone() => this.DeepClone();
+        public new ConstantExpressionRepresentation<T> DeepClone() => (ConstantExpressionRepresentation<T>)this.DeepCloneInternal();
 
         /// <inheritdoc />
-        public ConstantExpressionRepresentation<T> DeepClone()
+        public override ExpressionRepresentationBase DeepCloneWithNodeType(ExpressionType nodeType)
         {
-            var type = typeof(T);
+            var result = new ConstantExpressionRepresentation<T>(
+                this.Type?.DeepClone(),
+                nodeType,
+                this.DeepCloneValue());
 
-            T deepClonedValue;
+            return result;
+        }
+
+        /// <inheritdoc />
+        public override ExpressionRepresentationBase DeepCloneWithType(TypeRepresentation type)
+        {
+            var result = new ConstantExpressionRepresentation<T>(
+                type,
+                this.NodeType,
+                this.DeepCloneValue());
+
+            return result;
+        }
+
+        /// <summary>
+        /// Deep clones this object with a new <see cref="Value" />.
+        /// </summary>
+        /// <param name="value">The new <see cref="Value" />.  This object will NOT be deep cloned; it is used as-is.</param>
+        /// <returns>New <see cref="ConstantExpressionRepresentation{T}" /> using the specified <paramref name="value" /> for <see cref="Value" /> and a deep clone of every other property.</returns>
+        public ConstantExpressionRepresentation<T> DeepCloneWithValue(T value)
+        {
+            var result = new ConstantExpressionRepresentation<T>(
+                                 this.Type?.DeepClone(),
+                                 this.NodeType,
+                                 value);
+
+            return result;
+        }
+
+        /// <inheritdoc />
+        public override string ToString()
+        {
+            var result = Invariant($"OBeautifulCode.Representation.System.ConstantExpressionRepresentation{typeof(T).ToStringCompilable()}: NodeType = {this.NodeType.ToString() ?? "<null>"}, Type = {this.Type?.ToString() ?? "<null>"}, Value = {this.Value?.ToString() ?? "<null>"}.");
+
+            return result;
+        }
+
+        /// <inheritdoc />
+        protected override ExpressionRepresentationBase DeepCloneInternal()
+        {
+            var deepClonedValue = this.DeepCloneValue();
+
+            var result = new ConstantExpressionRepresentation<T>(
+               this.Type?.DeepClone(),
+               this.NodeType,
+               deepClonedValue);
+
+            return result;
+        }
+
+        private T DeepCloneValue()
+        {
+            T result;
+
+            var type = typeof(T);
 
             if (type.IsValueType)
             {
-                deepClonedValue = this.Value;
+                result = this.Value;
             }
             else
             {
                 if (ReferenceEquals(this.Value, null))
                 {
-                    deepClonedValue = default(T);
+                    result = default(T);
                 }
                 else if (this.Value is IDeepCloneable<T> deepCloneable)
                 {
-                    deepClonedValue = deepCloneable.DeepClone();
+                    result = deepCloneable.DeepClone();
                 }
                 else
                 {
@@ -117,11 +189,7 @@ namespace OBeautifulCode.Representation.System
                 }
             }
 
-            // var result = new ConstantExpressionRepresentation<T>(
-            //    this.Type?.DeepClone(),
-            //    this.NodeType,
-            //    deepClonedValue);
-            return null;
+            return result;
         }
     }
 

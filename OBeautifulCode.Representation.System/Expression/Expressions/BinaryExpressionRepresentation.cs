@@ -46,11 +46,11 @@ namespace OBeautifulCode.Representation.System
     }
 
 #pragma warning disable SA1204 // Static elements should appear before instance elements
+
     /// <summary>
     /// Extensions to <see cref="BinaryExpressionRepresentation" />.
     /// </summary>
     public static class BinaryExpressionRepresentationExtensions
-#pragma warning restore SA1204 // Static elements should appear before instance elements
     {
         /// <summary>
         /// Converts to serializable.
@@ -94,4 +94,5 @@ namespace OBeautifulCode.Representation.System
             return result;
         }
     }
+#pragma warning restore SA1204 // Static elements should appear before instance elements
 }
