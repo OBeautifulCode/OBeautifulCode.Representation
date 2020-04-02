@@ -9,14 +9,17 @@ namespace OBeautifulCode.Representation.System.Test
     using FakeItEasy;
 
     using global::System;
+    using global::System.Diagnostics.CodeAnalysis;
     using global::System.Linq;
 
     using OBeautifulCode.CodeGen.ModelObject.Recipes;
+    using OBeautifulCode.Representation.System.Test.Internal;
 
     using static global::System.FormattableString;
 
     public static partial class TypeRepresentationTest
     {
+        [SuppressMessage("Microsoft.Performance", "CA1810:InitializeReferenceTypeStaticFieldsInline", Justification = ObcSuppressBecause.CA1810_InitializeReferenceTypeStaticFieldsInline_FieldsDeclaredInCodeGeneratedPartialTestClass)]
         static TypeRepresentationTest()
         {
             ConstructorArgumentValidationTestScenarios

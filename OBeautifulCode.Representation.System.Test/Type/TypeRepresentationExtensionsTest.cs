@@ -8,10 +8,11 @@ namespace OBeautifulCode.Representation.System.Test
 {
     using global::System;
     using global::System.Collections.Generic;
+    using global::System.Diagnostics.CodeAnalysis;
     using global::System.Linq;
 
     using OBeautifulCode.Assertion.Recipes;
-
+    using OBeautifulCode.Representation.System.Test.Internal;
     using Xunit;
 
     public static class TypeRepresentationExtensionsTest
@@ -266,6 +267,7 @@ namespace OBeautifulCode.Representation.System.Test
             actual.Must().BeEqualTo(expected);
         }
 
+        [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses", Justification = ObcSuppressBecause.CA1812_AvoidUninstantiatedInternalClasses_ClassExistsToUseItsTypeInUnitTests)]
         private class TestClass
         {
             public class NestedTestClass

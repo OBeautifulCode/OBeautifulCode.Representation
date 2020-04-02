@@ -15,6 +15,7 @@ namespace OBeautifulCode.Representation.System
 
     using OBeautifulCode.Assertion.Recipes;
     using OBeautifulCode.Reflection.Recipes;
+    using OBeautifulCode.Representation.System.Internal;
     using OBeautifulCode.Type.Recipes;
 
     using static global::System.FormattableString;
@@ -246,6 +247,8 @@ namespace OBeautifulCode.Representation.System
             return result;
         }
 
+        [SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling", Justification = ObcSuppressBecause.CA_ALL_SeeOtherSuppressionMessages)]
+        [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity", Justification = ObcSuppressBecause.CA1502_AvoidExcessiveComplexity_DisagreeWithAssessment)]
         private static Type GetArrayRankType(
             this int rank)
         {
@@ -316,10 +319,12 @@ namespace OBeautifulCode.Representation.System
                 case 32:
                     return typeof(ArrayRank32);
                 default:
-                    throw new NotSupportedException("This rank is not supported: " + rank);
+                    throw new NotSupportedException(Invariant($"This rank is not supported: {rank}."));
             }
         }
 
+        [SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling", Justification = ObcSuppressBecause.CA_ALL_SeeOtherSuppressionMessages)]
+        [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity", Justification = ObcSuppressBecause.CA1502_AvoidExcessiveComplexity_DisagreeWithAssessment)]
         private static int GetArrayRankFromArrayRankType(
             this Type type)
         {

@@ -6,6 +6,10 @@
 
 namespace OBeautifulCode.Representation.System
 {
+    using global::System.Diagnostics.CodeAnalysis;
+
+    using OBeautifulCode.Representation.System.Internal;
+
     /// <summary>
     /// Represents a vector array and is used to create a representation of a vector array type.
     /// </summary>
@@ -29,7 +33,8 @@ namespace OBeautifulCode.Representation.System
     /// <summary>
     /// The rank (dimensions) of an array.
     /// </summary>
-    #pragma warning disable SA1201 // Elements should appear in the correct order
+#pragma warning disable SA1201 // Elements should appear in the correct order
+    [SuppressMessage("Microsoft.Design", "CA1040:AvoidEmptyInterfaces", Justification = ObcSuppressBecause.CA1040_AvoidEmptyInterfaces_NeedToIdentifyGroupOfTypesAndPreferInterfaceOverAttribute)]
     public interface IArrayRank
     {
     }
