@@ -185,7 +185,7 @@ namespace OBeautifulCode.Representation.System
                 }
                 else if (this.Value is string stringValue)
                 {
-                    result = (T)(object)stringValue;
+                    result = (T)(object)stringValue.Clone().ToString();
                 }
                 else
                 {
@@ -222,7 +222,7 @@ namespace OBeautifulCode.Representation.System
 
             var resultType = typeof(ConstantExpressionRepresentation<>).MakeGenericType(value.GetType());
 
-            var result = (ExpressionRepresentationBase)resultType.Construct(value, ExpressionType.Constant, type);
+            var result = (ExpressionRepresentationBase)resultType.Construct(type, ExpressionType.Constant, value);
 
             return result;
         }
