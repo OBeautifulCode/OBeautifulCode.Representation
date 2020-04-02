@@ -30,6 +30,9 @@ namespace OBeautifulCode.Representation.System
             IReadOnlyList<ExpressionRepresentationBase> arguments)
             : base(type, ExpressionType.Invoke)
         {
+            new { expressionRepresentation }.AsArg().Must().NotBeNull();
+            new { arguments }.AsArg().Must().NotBeNullNorEmptyEnumerableNorContainAnyNulls();
+
             this.ExpressionRepresentation = expressionRepresentation;
             this.Arguments = arguments;
         }

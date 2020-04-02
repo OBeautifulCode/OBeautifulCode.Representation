@@ -30,6 +30,9 @@ namespace OBeautifulCode.Representation.System
             ExpressionRepresentationBase right)
             : base(type, nodeType)
         {
+            new { left }.AsArg().Must().NotBeNull();
+            new { right }.AsArg().Must().NotBeNull();
+
             this.Left = left;
             this.Right = right;
         }

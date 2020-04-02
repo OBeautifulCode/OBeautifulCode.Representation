@@ -31,6 +31,8 @@ namespace OBeautifulCode.Representation.System
             TypeRepresentation type,
             ExpressionType nodeType)
         {
+            new { type }.AsArg().Must().NotBeNull();
+
             this.Type = type;
             this.NodeType = nodeType;
         }

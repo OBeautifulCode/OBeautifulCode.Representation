@@ -30,6 +30,9 @@ namespace OBeautifulCode.Representation.System
             TypeRepresentation type,
             string constructorHash)
         {
+            new { type }.AsArg().Must().NotBeNull();
+            new { constructorHash }.AsArg().Must().NotBeNullNorWhiteSpace();
+
             this.Type = type;
             this.ConstructorHash = constructorHash;
         }

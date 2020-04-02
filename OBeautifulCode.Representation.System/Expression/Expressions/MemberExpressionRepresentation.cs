@@ -29,6 +29,9 @@ namespace OBeautifulCode.Representation.System
             MemberInfoRepresentation memberInfo)
             : base(type, ExpressionType.MemberAccess)
         {
+            new { expression }.AsArg().Must().NotBeNull();
+            new { memberInfo }.AsArg().Must().NotBeNull();
+
             this.Expression = expression;
             this.MemberInfo = memberInfo;
         }

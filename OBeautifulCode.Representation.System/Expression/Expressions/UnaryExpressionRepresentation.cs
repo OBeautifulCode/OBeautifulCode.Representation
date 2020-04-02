@@ -28,6 +28,8 @@ namespace OBeautifulCode.Representation.System
             ExpressionRepresentationBase operand)
             : base(type, nodeType)
         {
+            new { operand }.AsArg().Must().NotBeNull();
+
             this.Operand = operand;
         }
 

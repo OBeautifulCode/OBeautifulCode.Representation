@@ -30,6 +30,10 @@ namespace OBeautifulCode.Representation.System
             MethodInfoRepresentation addMethod,
             IReadOnlyList<ExpressionRepresentationBase> arguments)
         {
+            new { type }.AsArg().Must().NotBeNull();
+            new { addMethod }.AsArg().Must().NotBeNull();
+            new { arguments }.AsArg().Must().NotBeNullNorEmptyEnumerableNorContainAnyNulls();
+
             this.Type = type;
             this.AddMethod = addMethod;
             this.Arguments = arguments;

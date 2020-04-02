@@ -30,6 +30,9 @@ namespace OBeautifulCode.Representation.System
             IReadOnlyList<ExpressionRepresentationBase> arguments)
             : base(type, ExpressionType.New)
         {
+            new { constructorInfo }.AsArg().Must().NotBeNull();
+            new { arguments }.AsArg().Must().NotBeNullNorEmptyEnumerableNorContainAnyNulls();
+
             this.ConstructorInfo = constructorInfo;
             this.Arguments = arguments;
         }

@@ -30,6 +30,8 @@ namespace OBeautifulCode.Representation.System
             IReadOnlyCollection<MemberBindingRepresentationBase> bindings)
         : base(type, memberInfo, MemberBindingType.MemberBinding)
         {
+            new { bindings }.AsArg().Must().NotBeNullNorEmptyEnumerableNorContainAnyNulls();
+
             this.Bindings = bindings;
         }
 

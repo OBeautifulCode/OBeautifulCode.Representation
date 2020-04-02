@@ -29,6 +29,9 @@ namespace OBeautifulCode.Representation.System
             IReadOnlyCollection<MemberBindingRepresentationBase> bindings)
             : base(type, ExpressionType.MemberInit)
         {
+            new { newExpressionRepresentation }.AsArg().Must().NotBeNull();
+            new { bindings }.AsArg().Must().NotBeNullNorEmptyEnumerableNorContainAnyNulls();
+
             this.NewExpressionRepresentation = newExpressionRepresentation;
             this.Bindings = bindings;
         }

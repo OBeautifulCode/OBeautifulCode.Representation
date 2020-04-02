@@ -6,6 +6,7 @@
 
 namespace OBeautifulCode.Representation.System
 {
+    using OBeautifulCode.Assertion.Recipes;
     using OBeautifulCode.Type;
 
     /// <summary>
@@ -24,6 +25,8 @@ namespace OBeautifulCode.Representation.System
             TypeMatchStrategy typeMatchStrategy,
             MultipleMatchStrategy multipleMatchStrategy)
         {
+            new { typeRepresentation }.AsArg().Must().NotBeNull();
+
             this.TypeRepresentation = typeRepresentation;
             this.TypeMatchStrategy = typeMatchStrategy;
             this.MultipleMatchStrategy = multipleMatchStrategy;

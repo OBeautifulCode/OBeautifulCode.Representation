@@ -31,6 +31,9 @@ namespace OBeautifulCode.Representation.System
             IReadOnlyList<ElementInitRepresentation> initializers)
             : base(type, ExpressionType.ListInit)
         {
+            new { newExpressionRepresentation }.AsArg().Must().NotBeNull();
+            new { initializers }.AsArg().Must().NotBeNullNorEmptyEnumerableNorContainAnyNulls();
+
             this.NewExpressionRepresentation = newExpressionRepresentation;
             this.Initializers = initializers;
         }

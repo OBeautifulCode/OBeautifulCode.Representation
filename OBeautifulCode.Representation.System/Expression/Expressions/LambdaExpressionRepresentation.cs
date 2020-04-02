@@ -30,6 +30,9 @@ namespace OBeautifulCode.Representation.System
             IReadOnlyList<ParameterExpressionRepresentation> parameters)
         : base(type, ExpressionType.Lambda)
         {
+            new { body }.AsArg().Must().NotBeNull();
+            new { parameters }.AsArg().Must().NotBeNullNorEmptyEnumerableNorContainAnyNulls();
+
             this.Body = body;
             this.Parameters = parameters;
         }

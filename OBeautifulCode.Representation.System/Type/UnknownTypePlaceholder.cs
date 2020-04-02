@@ -13,7 +13,7 @@ namespace OBeautifulCode.Representation.System
     /// <summary>
     /// Placeholder type to use when no <see cref="Type" /> is available.
     /// </summary>
-    public class UnknownTypePlaceholder : IModelViaCodeGen
+    public partial class UnknownTypePlaceholder : IModelViaCodeGen
     {
     }
 }

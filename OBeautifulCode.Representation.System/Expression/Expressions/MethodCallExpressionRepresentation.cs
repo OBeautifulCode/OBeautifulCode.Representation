@@ -33,6 +33,10 @@ namespace OBeautifulCode.Representation.System
             IReadOnlyList<ExpressionRepresentationBase> arguments)
         : base(type, nodeType)
         {
+            new { parentObject }.AsArg().Must().NotBeNull();
+            new { method }.AsArg().Must().NotBeNull();
+            new { arguments }.AsArg().Must().NotBeNullNorEmptyEnumerableNorContainAnyNulls();
+
             this.ParentObject = parentObject;
             this.Method = method;
             this.Arguments = arguments;

@@ -29,6 +29,9 @@ namespace OBeautifulCode.Representation.System
             TypeRepresentation type,
             string memberHash)
         {
+            new { type }.AsArg().Must().NotBeNull();
+            new { memberHash }.AsArg().Must().NotBeNullNorWhiteSpace();
+
             this.Type = type;
             this.MemberHash = memberHash;
         }

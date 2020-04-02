@@ -32,6 +32,8 @@ namespace OBeautifulCode.Representation.System
             IReadOnlyList<ExpressionRepresentationBase> expressions)
             : base(type, nodeType)
         {
+            new { expressions }.AsArg().Must().NotBeNullNorEmptyEnumerableNorContainAnyNulls();
+
             this.Expressions = expressions;
         }
 

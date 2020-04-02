@@ -35,7 +35,10 @@ namespace OBeautifulCode.Representation.System
             string filePath,
             string frameworkVersion)
         {
-            name.AsArg(nameof(name)).Must().NotBeNullNorWhiteSpace();
+            new { name }.AsArg().Must().NotBeNullNorWhiteSpace();
+            new { version }.AsArg().Must().NotBeNullNorWhiteSpace();
+            new { filePath }.AsArg().Must().NotBeNullNorWhiteSpace();
+            new { frameworkVersion }.AsArg().Must().NotBeNullNorWhiteSpace();
 
             this.Name             = name;
             this.Version          = version;

@@ -179,9 +179,13 @@ namespace OBeautifulCode.Representation.System
                 {
                     result = default(T);
                 }
-                else if (this.Value is IDeepCloneable<T> deepCloneable)
+                else if (this.Value is IDeepCloneable<T> deepCloneableValue)
                 {
-                    result = deepCloneable.DeepClone();
+                    result = deepCloneableValue.DeepClone();
+                }
+                else if (this.Value is string stringValue)
+                {
+                    result = (T)(object)stringValue;
                 }
                 else
                 {

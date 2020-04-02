@@ -30,6 +30,8 @@ namespace OBeautifulCode.Representation.System
             IReadOnlyList<ElementInitRepresentation> initializers)
             : base(type, memberInfo, MemberBindingType.ListBinding)
         {
+            new { initializers }.AsArg().Must().NotBeNullNorEmptyEnumerableNorContainAnyNulls();
+
             this.Initializers = initializers;
         }
 

@@ -29,6 +29,8 @@ namespace OBeautifulCode.Representation.System
             string name)
             : base(type, ExpressionType.Parameter)
         {
+            new { name }.AsArg().Must().NotBeNullNorWhiteSpace();
+
             this.Name = name;
         }
 

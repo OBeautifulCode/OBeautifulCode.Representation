@@ -33,6 +33,9 @@ namespace OBeautifulCode.Representation.System
             MemberInfoRepresentation memberInfo,
             MemberBindingType bindingType)
         {
+            new { type }.AsArg().Must().NotBeNull();
+            new { memberInfo }.AsArg().Must().NotBeNull();
+
             this.Type = type;
             this.MemberInfo = memberInfo;
             this.BindingType = bindingType;

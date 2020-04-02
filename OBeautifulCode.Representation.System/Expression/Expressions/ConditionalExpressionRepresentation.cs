@@ -33,6 +33,10 @@ namespace OBeautifulCode.Representation.System
             ExpressionRepresentationBase ifFalse)
         : base(type, nodeType)
         {
+            new { test }.AsArg().Must().NotBeNull();
+            new { ifTrue }.AsArg().Must().NotBeNull();
+            new { ifFalse }.AsArg().Must().NotBeNull();
+
             this.Test = test;
             this.IfTrue = ifTrue;
             this.IfFalse = ifFalse;

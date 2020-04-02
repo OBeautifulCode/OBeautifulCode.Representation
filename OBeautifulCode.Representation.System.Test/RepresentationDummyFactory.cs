@@ -37,6 +37,14 @@ namespace OBeautifulCode.Representation.System.Test
             .GetTypesFromAssemblies()
             .Where(_ => !_.ContainsGenericParameters)
             .Where(_ => !_.IsClosedAnonymousType())
+            .Where(_=> !string.IsNullOrWhiteSpace(_.Namespace))
+            .ToList();
+
+        private static readonly IReadOnlyList<Type> AppDomainGenericTypeDefinitions = AssemblyLoader
+            .GetLoadedAssemblies()
+            .GetTypesFromAssemblies()
+            .Where(_ => _.IsGenericTypeDefinition)
+            .Where(_ => _.Namespace != null) // eliminate anonymous generic type definitions
             .ToList();
 
         public RepresentationDummyFactory()
@@ -44,24 +52,105 @@ namespace OBeautifulCode.Representation.System.Test
             AutoFixtureBackedDummyFactory.AddDummyCreator(
                 () =>
                 {
-                    var index = ThreadSafeRandom.Next(0, AppDomainClosedTypes.Count);
+                    Type type;
 
-                    var result = AppDomainClosedTypes[index];
+                    if (ThreadSafeRandom.Next(0, 2) == 0)
+                    {
+                        type = GetRandomClosedTypeInAppDomain();
+                    }
+                    else
+                    {
+                        while (true)
+                        {
+                            var genericTypeDefinition = GetRandomGenericTypeDefinitionInAppDomain();
 
-                    return result.ToRepresentation();
+                            var typeArguments = Enumerable.Range(0, genericTypeDefinition.GetGenericArguments().Length).Select(_=> GetRandomClosedTypeInAppDomain()).ToArray();
+
+                            try
+                            {
+                                type = genericTypeDefinition.MakeGenericType(typeArguments);
+
+                                break;
+                            }
+                            catch (Exception)
+                            {
+                            }
+                        }
+                    }
+
+                    var result = type.ToRepresentation();
+
+                    return result;
                 });
 
+            // prevent infinite recursion for some derivatives
             AutoFixtureBackedDummyFactory.AddDummyCreator(
-                () => (ExpressionRepresentationBase)new ConstantExpressionRepresentation<string>(
-                    A.Dummy<TypeRepresentation>(),
-                    A.Dummy<ExpressionType>(),
-                    A.Dummy<string>()));
+                () =>
+                {
+                    ExpressionRepresentationBase result;
 
+                    var randomNumber = ThreadSafeRandom.Next(0, 2);
+
+                    if (randomNumber == 0)
+                    {
+                        result = new ConstantExpressionRepresentation<string>(
+                            A.Dummy<TypeRepresentation>(),
+                            A.Dummy<ExpressionType>(),
+                            A.Dummy<string>());
+                    }
+                    else
+                    {
+                        result = new ParameterExpressionRepresentation(
+                            A.Dummy<TypeRepresentation>(),
+                            A.Dummy<string>());
+                    }
+
+                    return result;
+                });
+
+            // prevent infinite recursion for some derivatives
             AutoFixtureBackedDummyFactory.AddDummyCreator(
-                () => new ConstantExpressionRepresentation<string>(
-                    A.Dummy<TypeRepresentation>(),
-                    A.Dummy<ExpressionType>(),
-                    A.Dummy<string>()));
+                () =>
+                {
+                    MemberBindingRepresentationBase result;
+
+                    var randomNumber = ThreadSafeRandom.Next(0, 2);
+
+                    if (randomNumber == 0)
+                    {
+                        result = new MemberAssignmentRepresentation(
+                            A.Dummy<TypeRepresentation>(),
+                            A.Dummy<MemberInfoRepresentation>(),
+                            A.Dummy<ExpressionRepresentationBase>());
+                    }
+                    else
+                    {
+                        result = new MemberListBindingRepresentation(
+                            A.Dummy<TypeRepresentation>(),
+                            A.Dummy<MemberInfoRepresentation>(),
+                            A.Dummy<IReadOnlyList<ElementInitRepresentation>>());
+                    }
+
+                    return result;
+                });
+        }
+
+        private Type GetRandomClosedTypeInAppDomain()
+        {
+            var randomIndex = ThreadSafeRandom.Next(0, AppDomainClosedTypes.Count);
+
+            var  result = AppDomainClosedTypes[randomIndex];
+
+            return result;
+        }
+
+        private Type GetRandomGenericTypeDefinitionInAppDomain()
+        {
+            var randomIndex = ThreadSafeRandom.Next(0, AppDomainGenericTypeDefinitions.Count);
+
+            var result = AppDomainGenericTypeDefinitions[randomIndex];
+
+            return result;
         }
     }
 }

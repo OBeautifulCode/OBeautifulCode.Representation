@@ -26,6 +26,8 @@ namespace OBeautifulCode.Representation.System
             ExpressionRepresentationBase expression)
             : base(type, ExpressionType.TypeIs)
         {
+            new { expression }.AsArg().Must().NotBeNull();
+
             this.Expression = expression;
         }
 

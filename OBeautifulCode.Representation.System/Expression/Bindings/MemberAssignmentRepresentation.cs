@@ -29,6 +29,8 @@ namespace OBeautifulCode.Representation.System
             ExpressionRepresentationBase expressionRepresentation)
             : base(type, memberInfo, MemberBindingType.Assignment)
         {
+            new { expressionRepresentation }.AsArg().Must().NotBeNull();
+
             this.ExpressionRepresentation = expressionRepresentation;
         }
 

@@ -33,6 +33,10 @@ namespace OBeautifulCode.Representation.System
             string methodHash,
             IReadOnlyList<TypeRepresentation> genericArguments)
         {
+            new { type }.AsArg().Must().NotBeNull();
+            new { methodHash }.AsArg().Must().NotBeNullNorWhiteSpace();
+            new { genericArguments }.AsArg().Must().NotBeNullNorEmptyEnumerableNorContainAnyNulls();
+
             this.Type = type;
             this.MethodHash = methodHash;
             this.GenericArguments = genericArguments;
