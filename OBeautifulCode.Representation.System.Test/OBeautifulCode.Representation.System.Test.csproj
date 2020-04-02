@@ -246,10 +246,12 @@
     <Compile Include="TypeMember\MethodInfoRepresentationTest.designer.cs">
       <DependentUpon>MethodInfoRepresentationTest.cs</DependentUpon>
     </Compile>
+    <Compile Include="Type\TypeComparerTests.cs" />
     <Compile Include="Type\TypeRepresentationCacheKeyTest.cs" />
     <Compile Include="Type\TypeRepresentationCacheKeyTest.designer.cs">
       <DependentUpon>TypeRepresentationCacheKeyTest.cs</DependentUpon>
     </Compile>
+    <Compile Include="Type\TypeRepresentationExtensionsTest.cs" />
     <Compile Include="Type\TypeRepresentationTest.cs" />
     <Compile Include="Expression\Expressions\UnaryExpressionRepresentationTest.cs" />
     <Compile Include="Type\TypeRepresentationTest.designer.cs">
