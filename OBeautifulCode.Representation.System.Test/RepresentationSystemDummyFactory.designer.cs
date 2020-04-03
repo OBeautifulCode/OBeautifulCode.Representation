@@ -25,9 +25,9 @@ namespace OBeautifulCode.Representation.System.Test
     /// </summary>
     [ExcludeFromCodeCoverage]
     [GeneratedCode("OBeautifulCode.CodeGen.ModelObject", "1.0.71.0")]
-    public abstract class DefaultRepresentationDummyFactory : IDummyFactory
+    public abstract class DefaultRepresentationSystemDummyFactory : IDummyFactory
     {
-        public DefaultRepresentationDummyFactory()
+        public DefaultRepresentationSystemDummyFactory()
         {
             AutoFixtureBackedDummyFactory.AddDummyCreator(
                 () => new AssemblyRepresentation(

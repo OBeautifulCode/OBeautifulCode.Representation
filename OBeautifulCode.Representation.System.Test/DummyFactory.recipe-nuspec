@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package>
   <metadata>
-    <id>OBeautifulCode.Representation.Recipes.DummyFactory</id>
+    <id>OBeautifulCode.Representation.System.Recipes.DummyFactory</id>
     <description>A Dummy Factory for types in OBeautifulCode.Representation.System</description>
     <tags>dummyfactory dummy factory fakeiteasy autofixture snippet codeinclude utility shared recipe Representation</tags>
     <iconUrl>https://raw.githubusercontent.com/OBeautifulCode/OBeautifulCode.Representation/master/OBeautifulCode.Representation.System.Test/nuget-icon.png</iconUrl>
@@ -12,7 +12,7 @@
   </metadata>
   <files>
     <file src=".analyzers\SuppressBecause.cs" target="content\net462\.recipes\OBeautifulCode.Representation\SuppressBecause.cs" />
-    <file src="RepresentationDummyFactory.cs" target="content\net462\.recipes\OBeautifulCode.Representation\RepresentationDummyFactory.cs" />
-    <file src="RepresentationDummyFactory.designer.cs" target="content\net462\.recipes\OBeautifulCode.Representation\RepresentationDummyFactory.designer.cs" />
+    <file src="RepresentationSystemDummyFactory.cs" target="content\net462\.recipes\OBeautifulCode.Representation\RepresentationSystemDummyFactory.cs" />
+    <file src="RepresentationSystemDummyFactory.designer.cs" target="content\net462\.recipes\OBeautifulCode.Representation\RepresentationSystemDummyFactory.designer.cs" />
   </files>
 </package>
