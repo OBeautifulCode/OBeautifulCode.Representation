@@ -26,9 +26,9 @@ namespace OBeautifulCode.Representation.System.Test
     /// <summary>
     /// A Dummy Factory for types in <see cref="OBeautifulCode.Representation.System"/>.
     /// </summary>
- #if !OBeautifulCodeRepresentationRecipesProject
-    [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
-    [System.CodeDom.Compiler.GeneratedCode("OBeautifulCode.Representation.System.Test", "See package version number")]
+#if !OBeautifulCodeRepresentationRecipesProject
+    [global::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
+    [global::System.CodeDom.Compiler.GeneratedCode("OBeautifulCode.Representation.System.Test", "See package version number")]
 #endif
     public class RepresentationSystemDummyFactory : DefaultRepresentationSystemDummyFactory
     {
