@@ -21,7 +21,7 @@ namespace OBeautifulCode.Representation.System.Test
     public static class TypeRepresentationExtensionsTest
     {
         [Fact]
-        public static void ToRepresentation_type___Should_throw_ArgumentNullException___When_parameter_type_is_null()
+        public static void ToRepresentation___Should_throw_ArgumentNullException___When_parameter_type_is_null()
         {
             // Arrange, Act
             var actual = Record.Exception(() => ((Type)null).ToRepresentation());
@@ -32,7 +32,7 @@ namespace OBeautifulCode.Representation.System.Test
         }
 
         [Fact]
-        public static void ToRepresentation_type___Should_throw_ArgumentException___When_parameter_type_is_an_open_generic_type()
+        public static void ToRepresentation___Should_throw_ArgumentException___When_parameter_type_is_an_open_generic_type()
         {
             // Arrange
             var types = new[]
@@ -53,7 +53,7 @@ namespace OBeautifulCode.Representation.System.Test
         }
 
         [Fact]
-        public static void ToRepresentation_type___Should_return_expected_representation_of_type___When_type_is_string()
+        public static void ToRepresentation___Should_return_expected_representation_of_type___When_type_is_string()
         {
             // Arrange
             var type = typeof(string);
@@ -70,7 +70,7 @@ namespace OBeautifulCode.Representation.System.Test
         }
 
         [Fact]
-        public static void ToRepresentation_type___Should_return_expected_representation_of_type___When_type_is_generic()
+        public static void ToRepresentation___Should_return_expected_representation_of_type___When_type_is_generic()
         {
             // Arrange
             var type = typeof(IReadOnlyDictionary<string, int>);
@@ -89,7 +89,7 @@ namespace OBeautifulCode.Representation.System.Test
         }
 
         [Fact]
-        public static void ToRepresentation_type___Should_return_expected_representation_of_type___When_type_is_an_array()
+        public static void ToRepresentation___Should_return_expected_representation_of_type___When_type_is_an_array()
         {
             // Arrange
             var type = typeof(int?[]);
@@ -107,7 +107,7 @@ namespace OBeautifulCode.Representation.System.Test
         }
 
         [Fact]
-        public static void ToRepresentation_type___Should_return_expected_representation_of_type___When_type_is_a_jagged_array()
+        public static void ToRepresentation___Should_return_expected_representation_of_type___When_type_is_a_jagged_array()
         {
             // Arrange
             var type = typeof(int?[][][]);
@@ -125,7 +125,7 @@ namespace OBeautifulCode.Representation.System.Test
         }
 
         [Fact]
-        public static void ToRepresentation_type___Should_return_expected_representation_of_type___When_type_is_nested()
+        public static void ToRepresentation___Should_return_expected_representation_of_type___When_type_is_nested()
         {
             // Arrange
             var type = typeof(TypeGenerator.TestClassInStaticClass.NestedClassInTestClassInStaticClass.NestedClassInNestedClassInTestClassInStaticClass[]);
@@ -248,10 +248,10 @@ namespace OBeautifulCode.Representation.System.Test
         }
 
         [Fact]
-        public static void ToRepresentation_assemblyQualifiedName___Should_throw_ArgumentNullException___When_parameter_assemblyQualifiedName_is_null()
+        public static void ToTypeRepresentationFromAssemblyQualifiedName___Should_throw_ArgumentNullException___When_parameter_assemblyQualifiedName_is_null()
         {
             // Arrange, Act
-            var actual = Record.Exception(() => ((string)null).ToRepresentation());
+            var actual = Record.Exception(() => ((string)null).ToTypeRepresentationFromAssemblyQualifiedName());
 
             // Assert
             actual.AsTest().Must().BeOfType<ArgumentNullException>();
@@ -259,10 +259,10 @@ namespace OBeautifulCode.Representation.System.Test
         }
 
         [Fact]
-        public static void ToRepresentation_assemblyQualifiedName___Should_throw_ArgumentException___When_parameter_assemblyQualifiedName_is_white_space()
+        public static void ToTypeRepresentationFromAssemblyQualifiedName___Should_throw_ArgumentException___When_parameter_assemblyQualifiedName_is_white_space()
         {
             // Arrange, Act
-            var actual = Record.Exception(() => "  \r\n ".ToRepresentation());
+            var actual = Record.Exception(() => "  \r\n ".ToTypeRepresentationFromAssemblyQualifiedName());
 
             // Assert
             actual.AsTest().Must().BeOfType<ArgumentException>();
@@ -271,7 +271,7 @@ namespace OBeautifulCode.Representation.System.Test
         }
 
         [Fact]
-        public static void ToRepresentation_assemblyQualifiedName___Should_roundtrip_a_TypeRepresentation___When_using_a_TypeRepresentation_to_output_the_assembly_qualified_name()
+        public static void ToTypeRepresentationFromAssemblyQualifiedName___Should_roundtrip_a_TypeRepresentation___When_using_a_TypeRepresentation_to_output_the_assembly_qualified_name()
         {
             // Arrange
             var types = TypeGenerator.GenerateTypesForTesting().ToList();
@@ -281,7 +281,7 @@ namespace OBeautifulCode.Representation.System.Test
             var assemblyQualifiedNames = expected.Select(_ => _.BuildAssemblyQualifiedName(includeVersion: true)).ToList();
 
             // Act
-            var actual = assemblyQualifiedNames.Select(_ => _.ToRepresentation()).ToList();
+            var actual = assemblyQualifiedNames.Select(_ => _.ToTypeRepresentationFromAssemblyQualifiedName()).ToList();
 
             // Assert
             actual.AsTest().Must().BeEqualTo(expected);

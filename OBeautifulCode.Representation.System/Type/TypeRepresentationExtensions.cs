@@ -204,7 +204,7 @@ namespace OBeautifulCode.Representation.System
         /// <returns>
         /// The <see cref="TypeRepresentation" /> for the specified assembly qualified name.
         /// </returns>
-        public static TypeRepresentation ToRepresentation(
+        public static TypeRepresentation ToTypeRepresentationFromAssemblyQualifiedName(
             this string assemblyQualifiedName)
         {
             new { assemblyQualifiedName }.AsArg().Must().NotBeNullNorWhiteSpace();
@@ -243,7 +243,7 @@ namespace OBeautifulCode.Representation.System
                 genericArguments = assemblyQualifiedName
                     .ToGenericArgumentAssemblyQualifiedNames()
                     .Select(_ => _.Substring(1, _.Length - 2))
-                    .Select(_ => _.ToRepresentation())
+                    .Select(_ => _.ToTypeRepresentationFromAssemblyQualifiedName())
                     .ToList();
             }
             else
