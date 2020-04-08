@@ -105,6 +105,7 @@
     <Compile Include=".recipes\OBeautifulCode.CodeGen\ConstructorArgumentValidation\ConstructorArgumentValidationTestScenarios{T}.cs" />
     <Compile Include=".recipes\OBeautifulCode.CodeGen\ConstructorArgumentValidation\ConstructorArgumentValidationTestScenario{T}.cs" />
     <Compile Include=".recipes\OBeautifulCode.CodeGen\ConstructorArgumentValidation\ValidatedConstructorArgumentValidationTestScenario{T}.cs" />
+    <Compile Include=".recipes\OBeautifulCode.CodeGen\ConstructorPropertyAssignment\CompareActualToExpectedUsing.cs" />
     <Compile Include=".recipes\OBeautifulCode.CodeGen\ConstructorPropertyAssignment\ConstructorPropertyAssignmentTestScenarios{T}.cs" />
     <Compile Include=".recipes\OBeautifulCode.CodeGen\ConstructorPropertyAssignment\ConstructorPropertyAssignmentTestScenario{T}.cs" />
     <Compile Include=".recipes\OBeautifulCode.CodeGen\ConstructorPropertyAssignment\SystemUnderTestExpectedPropertyValue{T}.cs" />
@@ -123,6 +124,8 @@
     <Compile Include=".recipes\OBeautifulCode.CodeGen\SuppressBecause.cs" />
     <Compile Include=".recipes\OBeautifulCode.Collection\EnumerableExtensions.cs" />
     <Compile Include=".recipes\OBeautifulCode.Collection\SuppressBecause.cs" />
+    <Compile Include=".recipes\OBeautifulCode.Enum\EnumExtensions.cs" />
+    <Compile Include=".recipes\OBeautifulCode.Enum\SuppressBecause.cs" />
     <Compile Include=".recipes\OBeautifulCode.Equality\DateTimeEqualityComparer.cs" />
     <Compile Include=".recipes\OBeautifulCode.Equality\DictionaryEqualityComparer.cs" />
     <Compile Include=".recipes\OBeautifulCode.Equality\EnumerableEqualityComparer.cs" />
@@ -245,11 +248,7 @@
     <Compile Include="TypeMember\MethodInfoRepresentationTest.designer.cs">
       <DependentUpon>MethodInfoRepresentationTest.cs</DependentUpon>
     </Compile>
-    <Compile Include="Type\TypeComparerTests.cs" />
-    <Compile Include="Type\TypeRepresentationCacheKeyTest.cs" />
-    <Compile Include="Type\TypeRepresentationCacheKeyTest.designer.cs">
-      <DependentUpon>TypeRepresentationCacheKeyTest.cs</DependentUpon>
-    </Compile>
+    <Compile Include="Type\TypeGenerator.cs" />
     <Compile Include="Type\TypeRepresentationExtensionsTest.cs" />
     <Compile Include="Type\TypeRepresentationTest.cs" />
     <Compile Include="Expression\Expressions\UnaryExpressionRepresentationTest.cs" />

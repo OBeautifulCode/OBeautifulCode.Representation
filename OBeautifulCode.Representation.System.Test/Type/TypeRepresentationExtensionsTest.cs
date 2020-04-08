@@ -6,22 +6,25 @@
 
 namespace OBeautifulCode.Representation.System.Test
 {
+    using FakeItEasy;
+
     using global::System;
     using global::System.Collections.Generic;
-    using global::System.Diagnostics.CodeAnalysis;
     using global::System.Linq;
 
     using OBeautifulCode.Assertion.Recipes;
-    using OBeautifulCode.Representation.System.Test.Internal;
+    using OBeautifulCode.AutoFakeItEasy;
+    using OBeautifulCode.Enum.Recipes;
+
     using Xunit;
 
     public static class TypeRepresentationExtensionsTest
     {
         [Fact]
-        public static void ToTypeRepresentation___Should_throw_ArgumentNullException___When_parameter_type_is_null()
+        public static void ToRepresentation_type___Should_throw_ArgumentNullException___When_parameter_type_is_null()
         {
             // Arrange, Act
-            var actual = Record.Exception(() => TypeRepresentationExtensions.ToRepresentation(null));
+            var actual = Record.Exception(() => ((Type)null).ToRepresentation());
 
             // Assert
             actual.AsTest().Must().BeOfType<ArgumentNullException>();
@@ -29,7 +32,7 @@ namespace OBeautifulCode.Representation.System.Test
         }
 
         [Fact]
-        public static void ToTypeRepresentation___Should_throw_ArgumentException___When_parameter_type_is_an_open_generic_type()
+        public static void ToRepresentation_type___Should_throw_ArgumentException___When_parameter_type_is_an_open_generic_type()
         {
             // Arrange
             var types = new[]
@@ -50,7 +53,7 @@ namespace OBeautifulCode.Representation.System.Test
         }
 
         [Fact]
-        public static void ToTypeRepresentation___Should_return_type_description___When_called()
+        public static void ToRepresentation_type___Should_return_expected_representation_of_type___When_type_is_string()
         {
             // Arrange
             var type = typeof(string);
@@ -59,9 +62,83 @@ namespace OBeautifulCode.Representation.System.Test
             var description = type.ToRepresentation();
 
             // Assert
-            description.AssemblyQualifiedName.AsTest().Must().BeEqualTo(type.AssemblyQualifiedName);
-            description.Namespace.AsTest().Must().BeEqualTo(type.Namespace);
-            description.Name.AsTest().Must().BeEqualTo(type.Name);
+            description.Namespace.AsTest().Must().BeEqualTo("System");
+            description.Name.AsTest().Must().BeEqualTo("String");
+            description.AssemblyName.AsTest().Must().BeEqualTo("mscorlib");
+            description.AssemblyVersion.AsTest().Must().BeEqualTo("4.0.0.0");
+            description.GenericArguments.AsTest().Must().BeEmptyEnumerable();
+        }
+
+        [Fact]
+        public static void ToRepresentation_type___Should_return_expected_representation_of_type___When_type_is_generic()
+        {
+            // Arrange
+            var type = typeof(IReadOnlyDictionary<string, int>);
+
+            // Act
+            var description = type.ToRepresentation();
+
+            // Assert
+            description.Namespace.AsTest().Must().BeEqualTo("System.Collections.Generic");
+            description.Name.AsTest().Must().BeEqualTo("IReadOnlyDictionary`2");
+            description.AssemblyName.AsTest().Must().BeEqualTo("mscorlib");
+            description.AssemblyVersion.AsTest().Must().BeEqualTo("4.0.0.0");
+            description.GenericArguments.AsTest().Must().HaveCount(2);
+            description.GenericArguments.First().Must().BeEqualTo(typeof(string).ToRepresentation());
+            description.GenericArguments.Last().Must().BeEqualTo(typeof(int).ToRepresentation());
+        }
+
+        [Fact]
+        public static void ToRepresentation_type___Should_return_expected_representation_of_type___When_type_is_an_array()
+        {
+            // Arrange
+            var type = typeof(int?[]);
+
+            // Act
+            var description = type.ToRepresentation();
+
+            // Assert
+            description.Namespace.AsTest().Must().BeEqualTo("System");
+            description.Name.AsTest().Must().BeEqualTo("Nullable`1[]");
+            description.AssemblyName.AsTest().Must().BeEqualTo("mscorlib");
+            description.AssemblyVersion.AsTest().Must().BeEqualTo("4.0.0.0");
+            description.GenericArguments.AsTest().Must().HaveCount(1);
+            description.GenericArguments.Single().Must().BeEqualTo(typeof(int).ToRepresentation());
+        }
+
+        [Fact]
+        public static void ToRepresentation_type___Should_return_expected_representation_of_type___When_type_is_a_jagged_array()
+        {
+            // Arrange
+            var type = typeof(int?[][][]);
+
+            // Act
+            var description = type.ToRepresentation();
+
+            // Assert
+            description.Namespace.AsTest().Must().BeEqualTo("System");
+            description.Name.AsTest().Must().BeEqualTo("Nullable`1[][][]");
+            description.AssemblyName.AsTest().Must().BeEqualTo("mscorlib");
+            description.AssemblyVersion.AsTest().Must().BeEqualTo("4.0.0.0");
+            description.GenericArguments.AsTest().Must().HaveCount(1);
+            description.GenericArguments.Single().Must().BeEqualTo(typeof(int).ToRepresentation());
+        }
+
+        [Fact]
+        public static void ToRepresentation_type___Should_return_expected_representation_of_type___When_type_is_nested()
+        {
+            // Arrange
+            var type = typeof(TypeGenerator.TestClassInStaticClass.NestedClassInTestClassInStaticClass.NestedClassInNestedClassInTestClassInStaticClass[]);
+
+            // Act
+            var description = type.ToRepresentation();
+
+            // Assert
+            description.Namespace.AsTest().Must().BeEqualTo("OBeautifulCode.Representation.System.Test");
+            description.Name.AsTest().Must().BeEqualTo("TypeGenerator+TestClassInStaticClass+NestedClassInTestClassInStaticClass+NestedClassInNestedClassInTestClassInStaticClass[]");
+            description.AssemblyName.AsTest().Must().BeEqualTo("OBeautifulCode.Representation.System.Test");
+            description.AssemblyVersion.AsTest().Must().BeEqualTo(typeof(TypeGenerator).Assembly.GetName().Version.ToString());
+            description.GenericArguments.AsTest().Must().BeEmptyEnumerable();
         }
 
         [Fact]
@@ -76,203 +153,138 @@ namespace OBeautifulCode.Representation.System.Test
         }
 
         [Fact]
+        public static void ResolvedFromLoadedTypes___Should_throw_NotSupportedException___When_parameter_assemblyMatchStrategy_is_not_AnySingleVersion()
+        {
+            // Arrange
+            var assemblyMatchStrategy = EnumExtensions.GetDefinedEnumValues<AssemblyMatchStrategy>().Where(_ => _ != AssemblyMatchStrategy.AnySingleVersion).ToList();
+
+            var typeRepresentation = A.Dummy<TypeRepresentation>();
+
+            // Act
+            var actuals1 = assemblyMatchStrategy.Select(_ => Record.Exception(() => typeRepresentation.ResolveFromLoadedTypes(_, throwIfCannotResolve: false)));
+            var actuals2 = assemblyMatchStrategy.Select(_ => Record.Exception(() => typeRepresentation.ResolveFromLoadedTypes(_, throwIfCannotResolve: true)));
+
+            // Assert
+            actuals1.AsTest().Must().Each().BeOfType<NotSupportedException>();
+            actuals2.AsTest().Must().Each().BeOfType<NotSupportedException>();
+        }
+
+        [Fact]
         public static void ResolvedFromLoadedTypes___Should_roundtrip_a_type_from_its_representation___When_called()
         {
             // Arrange
-            var expected = new[]
-            {
-                // objects, structs, nested class
-                typeof(int),
-                typeof(string),
-                typeof(Guid),
-                typeof(DateTime),
-                typeof(object),
-                typeof(ConstructorInfoRepresentation),
-                typeof(TestClass.NestedTestClass),
+            var expectedTypes = TypeGenerator.GenerateTypesForTesting().ToList();
 
-                // array of objects, structs, nested class
-                typeof(int[]),
-                typeof(string[]),
-                typeof(Guid[]),
-                typeof(DateTime[]),
-                typeof(object[]),
-                typeof(ConstructorInfoRepresentation[]),
-                typeof(TestClass.NestedTestClass[]),
-
-                // nullable
-                typeof(int?),
-                typeof(Guid?),
-                typeof(DateTime?),
-
-                // array of nullable
-                typeof(int?[]),
-                typeof(Guid?[]),
-                typeof(DateTime?[]),
-
-                // non-generic interface
-                typeof(global::System.Collections.IEnumerable),
-
-                // generic interface
-                typeof(IList<int>),
-                typeof(IList<string>),
-                typeof(IList<Guid>),
-                typeof(IList<DateTime>),
-                typeof(IList<object>),
-                typeof(IList<ConstructorInfoRepresentation>),
-                typeof(IList<TestClass.NestedTestClass>),
-
-                // generic interface of array
-                typeof(IList<int[]>),
-                typeof(IList<string[]>),
-                typeof(IList<Guid[]>),
-                typeof(IList<DateTime[]>),
-                typeof(IList<object[]>),
-                typeof(IList<ConstructorInfoRepresentation[]>),
-                typeof(IList<TestClass.NestedTestClass[]>),
-
-                // generic interface of array of nullable
-                typeof(IList<int?[]>),
-                typeof(IList<Guid?[]>),
-                typeof(IList<DateTime?[]>),
-
-                // array of generic interface
-                typeof(IList<int>[]),
-                typeof(IList<string>[]),
-                typeof(IList<Guid>[]),
-                typeof(IList<DateTime>[]),
-                typeof(IList<object>[]),
-                typeof(IList<ConstructorInfoRepresentation>[]),
-                typeof(IList<TestClass.NestedTestClass>[]),
-
-                // jagged arrays
-                typeof(int[][]),
-                typeof(string[][]),
-                typeof(Guid[][]),
-                typeof(DateTime[][]),
-                typeof(object[][]),
-                typeof(ConstructorInfoRepresentation[][]),
-                typeof(TestClass.NestedTestClass[][]),
-
-                // jagged arrays of nullable
-                typeof(int?[][]),
-                typeof(Guid?[][]),
-                typeof(DateTime?[][]),
-
-                // multi-level generics
-                typeof(IReadOnlyDictionary<Guid?, IReadOnlyDictionary<ConstructorInfoRepresentation, DateTime>>),
-                typeof(IReadOnlyDictionary<IReadOnlyDictionary<Guid[], int?>, IList<IList<short>>[]>),
-                typeof(IReadOnlyDictionary<IReadOnlyDictionary<ConstructorInfoRepresentation[], int?>, IList<IList<TestClass.NestedTestClass>>[]>[]),
-
-                // 1-dimension multi-dimensional arrays
-                typeof(int).MakeArrayType(1),
-                typeof(string).MakeArrayType(1),
-                typeof(Guid).MakeArrayType(1),
-                typeof(DateTime).MakeArrayType(1),
-                typeof(object).MakeArrayType(1),
-                typeof(ConstructorInfoRepresentation).MakeArrayType(1),
-                typeof(TestClass.NestedTestClass).MakeArrayType(1),
-                typeof(int?).MakeArrayType(1),
-                typeof(Guid?).MakeArrayType(1),
-                typeof(DateTime?).MakeArrayType(1),
-                typeof(IList<int>).MakeArrayType(1),
-                typeof(IList<string>).MakeArrayType(1),
-                typeof(IList<Guid>).MakeArrayType(1),
-                typeof(IList<DateTime>).MakeArrayType(1),
-                typeof(IList<object>).MakeArrayType(1),
-                typeof(IList<ConstructorInfoRepresentation>).MakeArrayType(1),
-                typeof(IList<TestClass.NestedTestClass>).MakeArrayType(1),
-
-                // 2 or more dimension multi-dimesional arrays
-                typeof(int[,]),
-                typeof(string[,]),
-                typeof(Guid[,]),
-                typeof(DateTime[,]),
-                typeof(object[,]),
-                typeof(ConstructorInfoRepresentation[,]),
-                typeof(TestClass.NestedTestClass[,]),
-                typeof(int?[,]),
-                typeof(Guid?[,]),
-                typeof(DateTime?[,]),
-                typeof(IList<int>[,]),
-                typeof(IList<string>[,]),
-                typeof(IList<Guid>[,]),
-                typeof(IList<DateTime>[,]),
-                typeof(IList<object>[,]),
-                typeof(IList<ConstructorInfoRepresentation>[,]),
-                typeof(IList<TestClass.NestedTestClass>[,]),
-
-                // array crazyness
-                typeof(object[][,]),
-                typeof(string[][,]),
-                typeof(Guid[][,]),
-                typeof(DateTime[][,]),
-                typeof(int[][,]),
-                typeof(Guid?[][,]),
-                typeof(DateTime?[][,]),
-                typeof(int?[][,]),
-                typeof(IReadOnlyCollection<object>[][,]),
-                typeof(IReadOnlyCollection<string>[][,]),
-                typeof(IReadOnlyCollection<Guid>[][,]),
-                typeof(IReadOnlyCollection<DateTime>[][,]),
-                typeof(IReadOnlyCollection<int>[][,]),
-                typeof(List<object>[][,]),
-                typeof(List<string>[][,]),
-                typeof(List<Guid>[][,]),
-                typeof(List<DateTime>[][,]),
-                typeof(List<int>[][,]),
-                typeof(object[,][]),
-                typeof(string[,][]),
-                typeof(Guid[,][]),
-                typeof(DateTime[,][]),
-                typeof(int[,][]),
-                typeof(Guid?[,][]),
-                typeof(DateTime?[,][]),
-                typeof(int?[,][]),
-                typeof(IReadOnlyCollection<object>[,][]),
-                typeof(IReadOnlyCollection<string>[,][]),
-                typeof(IReadOnlyCollection<Guid>[,][]),
-                typeof(IReadOnlyCollection<DateTime>[,][]),
-                typeof(IReadOnlyCollection<int>[,][]),
-                typeof(List<object>[,][]),
-                typeof(List<string>[,][]),
-                typeof(List<Guid>[,][]),
-                typeof(List<DateTime>[,][]),
-                typeof(List<int>[,][]),
-                typeof(object[]).MakeArrayType(1),
-                typeof(string[]).MakeArrayType(1),
-                typeof(Guid[]).MakeArrayType(1),
-                typeof(DateTime[]).MakeArrayType(1),
-                typeof(int[]).MakeArrayType(1),
-                typeof(Guid?[]).MakeArrayType(1),
-                typeof(DateTime?[]).MakeArrayType(1),
-                typeof(int?[]).MakeArrayType(1),
-                typeof(IReadOnlyCollection<object>[]).MakeArrayType(1),
-                typeof(IReadOnlyCollection<string>[]).MakeArrayType(1),
-                typeof(IReadOnlyCollection<Guid>[]).MakeArrayType(1),
-                typeof(IReadOnlyCollection<DateTime>[]).MakeArrayType(1),
-                typeof(IReadOnlyCollection<int>[]).MakeArrayType(1),
-                typeof(List<object>[]).MakeArrayType(1),
-                typeof(List<string>[]).MakeArrayType(1),
-                typeof(List<Guid>[]).MakeArrayType(1),
-                typeof(List<DateTime>[]).MakeArrayType(1),
-                typeof(List<int>[]).MakeArrayType(1),
-            };
-
-            var representations = expected.Select(_ => _.ToRepresentation()).ToArray();
+            var representations = expectedTypes.Select(_ => _.ToRepresentation()).ToList();
 
             // Act
-            var actual = representations.Select(_ => _.ResolveFromLoadedTypes()).ToArray();
+            var actualTypes = representations.Select(_ => _.ResolveFromLoadedTypes(throwIfCannotResolve: true)).ToList();
 
             // Assert
-            actual.Must().BeEqualTo(expected);
+            actualTypes.AsTest().Must().BeEqualTo(expectedTypes);
         }
 
-        [SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses", Justification = ObcSuppressBecause.CA1812_AvoidUninstantiatedInternalClasses_ClassExistsToUseItsTypeInUnitTests)]
-        private class TestClass
+        [Fact]
+        public static void ResolvedFromLoadedTypes___Should_return_null___When_assembly_is_not_loaded_and_throwIfCannotResolve_is_false()
         {
-            public class NestedTestClass
-            {
-            }
+            // Arrange
+            var representation1 = A.Dummy<TypeRepresentation>().DeepCloneWithAssemblyName(A.Dummy<string>());
+
+            var representation2 = A.Dummy<TypeRepresentation>().Whose(_ => _.GenericArguments.Any());
+
+            var modifiedGenericArgument = representation2.GenericArguments.First().DeepCloneWithAssemblyName(A.Dummy<string>());
+
+            var modifiedGenericArguments = new TypeRepresentation[0].Concat(new[] { modifiedGenericArgument }).Concat(representation2.GenericArguments.Skip(1)).ToList();
+
+            representation2 = representation2.DeepCloneWithGenericArguments(modifiedGenericArguments);
+
+            // Act
+            var actual1 = representation1.ResolveFromLoadedTypes(AssemblyMatchStrategy.AnySingleVersion, throwIfCannotResolve: false);
+            var actual2 = representation2.ResolveFromLoadedTypes(AssemblyMatchStrategy.AnySingleVersion, throwIfCannotResolve: false);
+
+            // Assert
+            actual1.AsTest().Must().BeNull();
+            actual2.AsTest().Must().BeNull();
+        }
+
+        [Fact]
+        public static void ResolvedFromLoadedTypes___Should_throw_InvalidOperationException___When_assembly_is_not_loaded_and_throwIfCannotResolve_is_true()
+        {
+            // Arrange
+            var dummyAssembly = A.Dummy<string>();
+
+            var representation1 = A.Dummy<TypeRepresentation>().DeepCloneWithAssemblyName(dummyAssembly);
+
+            var representation2 = A.Dummy<TypeRepresentation>().Whose(_ => _.GenericArguments.Any());
+
+            var modifiedGenericArgument = representation2.GenericArguments.First().DeepCloneWithAssemblyName(dummyAssembly);
+
+            var modifiedGenericArguments = new TypeRepresentation[0].Concat(new[] { modifiedGenericArgument }).Concat(representation2.GenericArguments.Skip(1)).ToList();
+
+            representation2 = representation2.DeepCloneWithGenericArguments(modifiedGenericArguments);
+
+            // Act
+            var actual1 = Record.Exception(() => representation1.ResolveFromLoadedTypes(AssemblyMatchStrategy.AnySingleVersion, throwIfCannotResolve: true));
+            var actual2 = Record.Exception(() => representation2.ResolveFromLoadedTypes(AssemblyMatchStrategy.AnySingleVersion, throwIfCannotResolve: true));
+
+            // Assert
+            actual1.AsTest().Must().BeOfType<InvalidOperationException>();
+            actual1.Message.AsTest().Must().ContainString("Unable to resolve the specified TypeRepresentation");
+            actual1.Message.AsTest().Must().ContainString("These assemblies are not loaded: " + dummyAssembly);
+
+            actual2.AsTest().Must().BeOfType<InvalidOperationException>();
+            actual2.Message.AsTest().Must().ContainString("Unable to resolve the specified TypeRepresentation");
+            actual2.Message.AsTest().Must().ContainString("These assemblies are not loaded: " + dummyAssembly);
+        }
+
+        [Fact]
+        public static void ResolvedFromLoadedTypes___Should_return_null___When_multiple_versions_of_assembly_are_loaded_and_throwIfCannotResolve_is_false()
+        {
+        }
+
+        [Fact]
+        public static void ResolvedFromLoadedTypes___Should_throw_InvalidOperationException___When_multiple_versions_of_assembly_are_loaded_and_throwIfCannotResolve_is_true()
+        {
+        }
+
+        [Fact]
+        public static void ToRepresentation_assemblyQualifiedName___Should_throw_ArgumentNullException___When_parameter_assemblyQualifiedName_is_null()
+        {
+            // Arrange, Act
+            var actual = Record.Exception(() => ((string)null).ToRepresentation());
+
+            // Assert
+            actual.AsTest().Must().BeOfType<ArgumentNullException>();
+            actual.Message.AsTest().Must().ContainString("assemblyQualifiedName");
+        }
+
+        [Fact]
+        public static void ToRepresentation_assemblyQualifiedName___Should_throw_ArgumentException___When_parameter_assemblyQualifiedName_is_white_space()
+        {
+            // Arrange, Act
+            var actual = Record.Exception(() => "  \r\n ".ToRepresentation());
+
+            // Assert
+            actual.AsTest().Must().BeOfType<ArgumentException>();
+            actual.Message.AsTest().Must().ContainString("assemblyQualifiedName");
+            actual.Message.AsTest().Must().ContainString("white space");
+        }
+
+        [Fact]
+        public static void ToRepresentation_assemblyQualifiedName___Should_roundtrip_a_TypeRepresentation___When_using_a_TypeRepresentation_to_output_the_assembly_qualified_name()
+        {
+            // Arrange
+            var types = TypeGenerator.GenerateTypesForTesting().ToList();
+
+            var expected = types.Select(_ => _.ToRepresentation()).ToList();
+
+            var assemblyQualifiedNames = expected.Select(_ => _.BuildAssemblyQualifiedName(includeVersion: true)).ToList();
+
+            // Act
+            var actual = assemblyQualifiedNames.Select(_ => _.ToRepresentation()).ToList();
+
+            // Assert
+            actual.AsTest().Must().BeEqualTo(expected);
         }
     }
 }

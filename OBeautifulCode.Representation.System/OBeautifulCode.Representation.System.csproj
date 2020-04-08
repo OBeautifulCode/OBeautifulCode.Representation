@@ -70,6 +70,7 @@
     <Compile Include=".recipes\OBeautifulCode.Assertion\Verifications.TypeValidation.cs" />
     <Compile Include=".recipes\OBeautifulCode.Assertion\Verifications.Workflow.cs" />
     <Compile Include=".recipes\OBeautifulCode.Assertion\WorkflowExtensions.cs" />
+    <Compile Include=".recipes\OBeautifulCode.Collection\CollectionExtensions.cs" />
     <Compile Include=".recipes\OBeautifulCode.Collection\EnumerableExtensions.cs" />
     <Compile Include=".recipes\OBeautifulCode.Collection\SuppressBecause.cs" />
     <Compile Include=".recipes\OBeautifulCode.Enum\EnumExtensions.cs" />
@@ -198,20 +199,13 @@
     <Compile Include="TypeMember\ConstructorInfoRepresentation.cs" />
     <Compile Include="TypeMember\MemberInfoRepresentation.cs" />
     <Compile Include="TypeMember\MethodInfoRepresentation.cs" />
-    <Compile Include="Type\MultipleMatchStrategy.cs" />
-    <Compile Include="Type\TypeComparer.cs" />
-    <Compile Include="Type\TypeMatchStrategy.cs" />
+    <Compile Include="Type\AssemblyMatchStrategy.cs" />
     <Compile Include="Type\TypeRepresentation.cs" />
     <Compile Include="Type\TypeRepresentation.designer.cs">
       <DependentUpon>TypeRepresentation.cs</DependentUpon>
     </Compile>
-    <Compile Include="Type\TypeRepresentationCacheKey.cs" />
-    <Compile Include="Type\TypeRepresentationCacheKey.designer.cs">
-      <DependentUpon>TypeRepresentationCacheKey.cs</DependentUpon>
-    </Compile>
     <Compile Include="Type\TypeRepresentationExtensions.cs" />
     <Compile Include="Type\UnknownTypePlaceholder.cs" />
-    <Compile Include="Type\ArrayRepresentation.cs" />
   </ItemGroup>
   <ItemGroup>
     <AdditionalFiles Include=".analyzers\stylecop.json" />
