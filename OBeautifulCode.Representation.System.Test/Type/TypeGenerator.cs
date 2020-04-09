@@ -6,8 +6,11 @@
 
 namespace OBeautifulCode.Representation.System.Test
 {
+    using global::OBeautifulCode.Representation.System.Test.Internal;
+
     using global::System;
     using global::System.Collections.Generic;
+    using global::System.Diagnostics.CodeAnalysis;
     using global::System.IO;
     using global::System.Linq;
     using global::System.Reflection;
@@ -120,23 +123,50 @@ namespace OBeautifulCode.Representation.System.Test
             return result;
         }
 
-        public class TestClassInStaticClass
+        [SuppressMessage("Microsoft.Design", "CA1034:NestedTypesShouldNotBeVisible", Justification = ObcSuppressBecause.CA1034_NestedTypesShouldNotBeVisible_VisibleNestedTypeRequiredForTesting)]
+        public sealed class TestClassInStaticClass
         {
-            public class NestedClassInTestClassInStaticClass
+            private TestClassInStaticClass()
             {
+            }
+
+            [SuppressMessage("Microsoft.Design", "CA1034:NestedTypesShouldNotBeVisible", Justification = ObcSuppressBecause.CA1034_NestedTypesShouldNotBeVisible_VisibleNestedTypeRequiredForTesting)]
+            public sealed class NestedClassInTestClassInStaticClass
+            {
+                private NestedClassInTestClassInStaticClass()
+                {
+                }
+
+                [SuppressMessage("Microsoft.Design", "CA1034:NestedTypesShouldNotBeVisible", Justification = ObcSuppressBecause.CA1034_NestedTypesShouldNotBeVisible_VisibleNestedTypeRequiredForTesting)]
                 public class NestedClassInNestedClassInTestClassInStaticClass
                 {
+                    private NestedClassInNestedClassInTestClassInStaticClass()
+                    {
+                    }
                 }
             }
         }
     }
 
-    public class TestClassInNamespace
+    public sealed class TestClassInNamespace
     {
-        public class NestedClassInTestClassInNamespace
+        private TestClassInNamespace()
         {
-            public class NestedClassInNestedClassInTestClassInNamespace
+        }
+
+        [SuppressMessage("Microsoft.Design", "CA1034:NestedTypesShouldNotBeVisible", Justification = ObcSuppressBecause.CA1034_NestedTypesShouldNotBeVisible_VisibleNestedTypeRequiredForTesting)]
+        public sealed class NestedClassInTestClassInNamespace
+        {
+            private NestedClassInTestClassInNamespace()
             {
+            }
+
+            [SuppressMessage("Microsoft.Design", "CA1034:NestedTypesShouldNotBeVisible", Justification = ObcSuppressBecause.CA1034_NestedTypesShouldNotBeVisible_VisibleNestedTypeRequiredForTesting)]
+            public sealed class NestedClassInNestedClassInTestClassInNamespace
+            {
+                private NestedClassInNestedClassInTestClassInNamespace()
+                {
+                }
             }
         }
     }

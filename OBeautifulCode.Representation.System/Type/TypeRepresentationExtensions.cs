@@ -218,7 +218,7 @@ namespace OBeautifulCode.Representation.System
 
             string assemblyVersion = null;
 
-            if (versionSegment.StartsWith(", Version="))
+            if (versionSegment.StartsWith(", Version=", StringComparison.Ordinal))
             {
                 assemblyVersion = versionSegment.Split('=').Last();
 
@@ -231,7 +231,7 @@ namespace OBeautifulCode.Representation.System
 
             var arrayIdentifiers = new List<string>();
 
-            while (LastArrayIdentifierRegex.Match(assemblyQualifiedName).Value != string.Empty)
+            while (!string.IsNullOrEmpty(LastArrayIdentifierRegex.Match(assemblyQualifiedName).Value))
             {
                 arrayIdentifiers.Add(LastArrayIdentifierRegex.Match(assemblyQualifiedName).Value);
 
@@ -246,7 +246,7 @@ namespace OBeautifulCode.Representation.System
 
             var genericArguments = new List<TypeRepresentation>();
 
-            if (assemblyQualifiedName.EndsWith("]]"))
+            if (assemblyQualifiedName.EndsWith("]]", StringComparison.Ordinal))
             {
                 nameWithNamespace = assemblyQualifiedName.Substring(0, assemblyQualifiedName.IndexOf('['));
 

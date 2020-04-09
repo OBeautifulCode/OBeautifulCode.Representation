@@ -20,7 +20,7 @@ namespace OBeautifulCode.Representation.System.Test
     public static partial class VersionlessTypeEqualityComparerTest
     {
         [Fact]
-        public static void Equals___Should_return_true___When_parameter_x_and_parameter_y_are_null()
+        public static void Equals___Should_return_true___When_parameters_are_null()
         {
             // Arrange
             var systemUnderTest = new VersionlessTypeEqualityComparer();
@@ -50,7 +50,7 @@ namespace OBeautifulCode.Representation.System.Test
         }
 
         [Fact]
-        public static void Equals___Should_return_false___When_parameter_x_and_parameter_y_are_not_equal()
+        public static void Equals___Should_return_false___When_parameters_are_not_equal()
         {
             // Arrange
             var systemUnderTest = new VersionlessTypeEqualityComparer();
@@ -66,7 +66,7 @@ namespace OBeautifulCode.Representation.System.Test
         }
 
         [Fact]
-        public static void Equals___Should_return_true___When_parameter_x_and_parameter_y_are_equal_and_have_the_same_versions()
+        public static void Equals___Should_return_true___When_parameters_are_equal_and_have_the_same_versions()
         {
             // Arrange
             var systemUnderTest = new VersionlessTypeEqualityComparer();
@@ -81,7 +81,7 @@ namespace OBeautifulCode.Representation.System.Test
         }
 
         [Fact]
-        public static void Equals___Should_return_true___When_parameter_x_and_parameter_y_are_equal_and_have_different_versions()
+        public static void Equals___Should_return_true___When_parameters_are_equal_and_have_different_versions()
         {
             // Arrange
             var systemUnderTest = new VersionlessTypeEqualityComparer();

@@ -6,6 +6,7 @@
 
 namespace OBeautifulCode.Representation.System
 {
+    using global::System;
     using global::System.Collections.Generic;
     using global::System.Diagnostics.CodeAnalysis;
     using global::System.Linq;
@@ -82,7 +83,7 @@ namespace OBeautifulCode.Representation.System
         /// <summary>
         /// Gets a value indicating whether this type is an array type.
         /// </summary>
-        public bool IsArray => this.Name.EndsWith("[]") || this.Name.EndsWith("[*]") || this.Name.EndsWith(",]");
+        public bool IsArray => this.Name.EndsWith("[]", StringComparison.Ordinal) || this.Name.EndsWith("[*]", StringComparison.Ordinal) || this.Name.EndsWith(",]", StringComparison.Ordinal);
 
         /// <summary>
         /// Gets the assembly qualified name.
