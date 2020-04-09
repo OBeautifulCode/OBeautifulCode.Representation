@@ -258,7 +258,7 @@ namespace OBeautifulCode.Representation.System.Test
         }
 
         [Fact]
-        public static void BuildAssemblyQualifiedName___Should_build_the_expected_assembly_qualified_name___When_includeVersion_is_true()
+        public static void BuildAssemblyQualifiedName___Should_build_the_expected_assembly_qualified_name___When_TypeRepresentation_is_versioned()
         {
             // Arrange
             var types = TypeGenerator.GenerateTypesForTesting();
@@ -266,14 +266,14 @@ namespace OBeautifulCode.Representation.System.Test
             var expected = types.Select(_ => Regex.Replace(_.AssemblyQualifiedName, ", Culture=.*?, PublicKeyToken=[a-z0-9]*", string.Empty)).ToList();
 
             // Act
-            var actual = types.Select(_ => _.ToRepresentation().BuildAssemblyQualifiedName(includeVersion: true)).ToList();
+            var actual = types.Select(_ => _.ToRepresentation().BuildAssemblyQualifiedName()).ToList();
 
             // Assert
             actual.AsTest().Must().BeEqualTo(expected);
         }
 
         [Fact]
-        public static void BuildAssemblyQualifiedName___Should_build_the_expected_assembly_qualified_name___When_includeVersion_is_false()
+        public static void BuildAssemblyQualifiedName___Should_build_the_expected_assembly_qualified_name___When_TypeRepresentation_is_unversioned()
         {
             // Arrange
             var types = TypeGenerator.GenerateTypesForTesting();
@@ -281,14 +281,14 @@ namespace OBeautifulCode.Representation.System.Test
             var expected = types.Select(_ => Regex.Replace(_.AssemblyQualifiedName, ", Version=.*?, Culture=.*?, PublicKeyToken=[a-z0-9]*", string.Empty)).ToList();
 
             // Act
-            var actual = types.Select(_ => _.ToRepresentation().BuildAssemblyQualifiedName(includeVersion: false)).ToList();
+            var actual = types.Select(_ => _.ToRepresentation().RemoveAssemblyVersions().BuildAssemblyQualifiedName()).ToList();
 
             // Assert
             actual.AsTest().Must().BeEqualTo(expected);
         }
 
         [Fact]
-        public static void BuildAssemblyQualifiedName___Should_build_assembly_qualified_name_without_version___When_includeVersion_is_true_but_AssemblyVersion_is_null()
+        public static void BuildAssemblyQualifiedName___Should_build_assembly_qualified___When_TypeRepresentation_contains_a_mix_of_versioned_and_unversioned_types()
         {
             // Arrange
             var intRepresentation = new TypeRepresentation("System", "Int32", "ass1", "1.0.0.0", new TypeRepresentation[0]);
@@ -302,31 +302,10 @@ namespace OBeautifulCode.Representation.System.Test
             var systemUnderTest = new TypeRepresentation("System", "Dictionary`2", "ass5", null, new[] { dictionaryRepresentation, intRepresentation });
 
             // Act
-            var actual = systemUnderTest.BuildAssemblyQualifiedName(includeVersion: true);
+            var actual = systemUnderTest.BuildAssemblyQualifiedName();
 
             // Assert
             actual.AsTest().Must().BeEqualTo("System.Dictionary`2[[System.IReadOnlyDictionary`2[[System.String, ass2, Version=2.0.0.0],[System.Guid, ass3]], ass4, Version=3.0.0.0],[System.Int32, ass1, Version=1.0.0.0]], ass5");
-        }
-
-        [Fact]
-        public static void BuildAssemblyQualifiedName___Should_build_assembly_qualified_name_without_version___When_includeVersion_is_false_and_AssemblyVersion_is_null()
-        {
-            // Arrange
-            var intRepresentation = new TypeRepresentation("System", "Int32", "ass1", "1.0.0.0", new TypeRepresentation[0]);
-
-            var stringRepresentation = new TypeRepresentation("System", "String", "ass2", "2.0.0.0", new TypeRepresentation[0]);
-
-            var guidRepresentation = new TypeRepresentation("System", "Guid", "ass3", null, new TypeRepresentation[0]);
-
-            var dictionaryRepresentation = new TypeRepresentation("System", "IReadOnlyDictionary`2", "ass4", "3.0.0.0", new TypeRepresentation[] { stringRepresentation, guidRepresentation });
-
-            var systemUnderTest = new TypeRepresentation("System", "Dictionary`2", "ass5", null, new[] { dictionaryRepresentation, intRepresentation });
-
-            // Act
-            var actual = systemUnderTest.BuildAssemblyQualifiedName(includeVersion: false);
-
-            // Assert
-            actual.AsTest().Must().BeEqualTo("System.Dictionary`2[[System.IReadOnlyDictionary`2[[System.String, ass2],[System.Guid, ass3]], ass4],[System.Int32, ass1]], ass5");
         }
     }
 }

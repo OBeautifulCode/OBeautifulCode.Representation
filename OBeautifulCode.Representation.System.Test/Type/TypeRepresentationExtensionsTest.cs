@@ -315,14 +315,14 @@ namespace OBeautifulCode.Representation.System.Test
         }
 
         [Fact]
-        public static void ToTypeRepresentationFromAssemblyQualifiedName___Should_roundtrip_a_TypeRepresentation___When_assembly_qualified_name_generated_using_TypeRepresentation_BuildAssemblyQualifiedName_with_includeVersion_true()
+        public static void ToTypeRepresentationFromAssemblyQualifiedName___Should_roundtrip_a_TypeRepresentation___When_assembly_qualified_name_generated_using_versioned_TypeRepresentation_BuildAssemblyQualifiedName()
         {
             // Arrange
             var types = TypeGenerator.GenerateTypesForTesting().ToList();
 
             var expected = types.Select(_ => _.ToRepresentation()).ToList();
 
-            var assemblyQualifiedNames = expected.Select(_ => _.BuildAssemblyQualifiedName(includeVersion: true)).ToList();
+            var assemblyQualifiedNames = expected.Select(_ => _.BuildAssemblyQualifiedName()).ToList();
 
             // Act
             var actual = assemblyQualifiedNames.Select(_ => _.ToTypeRepresentationFromAssemblyQualifiedName()).ToList();
@@ -332,16 +332,14 @@ namespace OBeautifulCode.Representation.System.Test
         }
 
         [Fact]
-        public static void ToTypeRepresentationFromAssemblyQualifiedName___Should_roundtrip_a_TypeRepresentation___When_assembly_qualified_name_generated_using_TypeRepresentation_BuildAssemblyQualifiedName_with_includeVersion_false()
+        public static void ToTypeRepresentationFromAssemblyQualifiedName___Should_roundtrip_a_TypeRepresentation___When_assembly_qualified_name_generated_using_unversioned_TypeRepresentation_BuildAssemblyQualifiedName()
         {
             // Arrange
             var types = TypeGenerator.GenerateTypesForTesting().ToList();
 
-            var versionedRepresentation = types.Select(_ => _.ToRepresentation()).ToList();
+            var expected = types.Select(_ => _.ToRepresentation().RemoveAssemblyVersions()).ToList();
 
-            var assemblyQualifiedNames = versionedRepresentation.Select(_ => _.BuildAssemblyQualifiedName(includeVersion: false)).ToList();
-
-            var expected = versionedRepresentation.Select(RemoveVersion).ToList();
+            var assemblyQualifiedNames = expected.Select(_ => _.BuildAssemblyQualifiedName()).ToList();
 
             // Act
             var actual = assemblyQualifiedNames.Select(_ => _.ToTypeRepresentationFromAssemblyQualifiedName()).ToList();
@@ -350,14 +348,99 @@ namespace OBeautifulCode.Representation.System.Test
             actual.AsTest().Must().BeEqualTo(expected);
         }
 
-        private static TypeRepresentation RemoveVersion(
-            TypeRepresentation representation)
+        [Fact]
+        public static void ToTypeRepresentationFromAssemblyQualifiedName___Should_return_same_result_as_ToRepresentation___When_assembly_qualified_name_generated_using_Type_AssemblyQualifiedName()
         {
-            var result = representation.DeepCloneWithAssemblyVersion(null);
+            // versioned
 
-            result = result.DeepCloneWithGenericArguments(result.GenericArguments.Select(RemoveVersion).ToList());
+            // Arrange
+            var types = TypeGenerator.GenerateTypesForTesting().ToList();
 
-            return result;
+            var expected = types.Select(_ => _.ToRepresentation()).ToList();
+
+            var assemblyQualifiedNames = types.Select(_ => _.AssemblyQualifiedName).ToList();
+
+            // Act
+            var actual = assemblyQualifiedNames.Select(_ => _.ToTypeRepresentationFromAssemblyQualifiedName()).ToList();
+
+            // Assert
+            actual.AsTest().Must().BeEqualTo(expected);
+        }
+
+        [Fact]
+        public static void ToTypeRepresentationFromAssemblyQualifiedName___Should_return_same_result_as_ToRepresentation___When_assembly_qualified_name_generated_using_old_OBC_serialization_inherited_type_concrete_type_logic()
+        {
+            // versioned
+
+            // Arrange
+            var types = TypeGenerator.GenerateTypesForTesting().ToList();
+
+            var expected = types.Select(_ => _.ToRepresentation().DeepCloneWithAssemblyVersion(null)).ToList();
+
+            var assemblyQualifiedNames = types.Select(_ => _.FullName + ", " + _.Assembly.GetName().Name).ToList();
+
+            // Act
+            var actual = assemblyQualifiedNames.Select(_ => _.ToTypeRepresentationFromAssemblyQualifiedName()).ToList();
+
+            // Assert
+            actual.AsTest().Must().BeEqualTo(expected);
+        }
+
+        [Fact]
+        public static void RemoveAssemblyVersions___Should_throw_ArgumentNullException___When_parameter_representation_is_null()
+        {
+            // Arrange, Act
+            var actual = Record.Exception(() => TypeRepresentationExtensions.RemoveAssemblyVersions(null));
+
+            // Assert
+            actual.AsTest().Must().BeOfType<ArgumentNullException>();
+            actual.Message.AsTest().Must().ContainString("representation");
+        }
+
+        [Fact]
+        public static void RemoveAssemblyVersions___Should_remove_assembly_version_for_all_contained_types___When_called()
+        {
+            // Arrange
+            var stringType = typeof(string);
+
+            var intType = typeof(int);
+
+            var collectionType = typeof(IReadOnlyCollection<string>[,]);
+
+            var dictionaryType = typeof(Dictionary<string, int>);
+
+            var collectionOfCollectionType = typeof(IReadOnlyCollection<Dictionary<string, int>>[,]);
+
+            var representation1 = stringType.ToRepresentation();
+
+            var representation2 = collectionType.ToRepresentation();
+
+            var representation3 = collectionOfCollectionType.ToRepresentation();
+
+            var expected1 = new TypeRepresentation(stringType.Namespace, stringType.Name, stringType.Assembly.GetName().Name, null, new TypeRepresentation[0]);
+
+            var expected2 = new TypeRepresentation(collectionType.Namespace, collectionType.Name, collectionType.Assembly.GetName().Name, null, new[] { expected1 });
+
+            var expected3 = new TypeRepresentation(collectionType.Namespace, collectionType.Name, collectionType.Assembly.GetName().Name, null, new[]
+            {
+                new TypeRepresentation(dictionaryType.Namespace, dictionaryType.Name, dictionaryType.Assembly.GetName().Name, null, new[]
+                {
+                    new TypeRepresentation(stringType.Namespace, stringType.Name, stringType.Assembly.GetName().Name, null, new TypeRepresentation[0]),
+                    new TypeRepresentation(intType.Namespace, intType.Name, intType.Assembly.GetName().Name, null, new TypeRepresentation[0]),
+                }),
+            });
+
+            // Act
+            var actual1 = representation1.RemoveAssemblyVersions();
+            var actual2a = representation2.RemoveAssemblyVersions();
+            var actual2b = actual2a.RemoveAssemblyVersions();
+            var actual3 = representation3.RemoveAssemblyVersions();
+
+            // Assert
+            actual1.AsTest().Must().BeEqualTo(expected1);
+            actual2a.AsTest().Must().BeEqualTo(expected2);
+            actual2b.AsTest().Must().BeEqualTo(expected2);
+            actual3.AsTest().Must().BeEqualTo(expected3);
         }
     }
 }

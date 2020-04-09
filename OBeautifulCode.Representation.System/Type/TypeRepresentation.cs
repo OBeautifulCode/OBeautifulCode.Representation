@@ -87,18 +87,16 @@ namespace OBeautifulCode.Representation.System
         /// <summary>
         /// Gets the assembly qualified name.
         /// </summary>
-        /// <param name="includeVersion">A value indicating whether to include the version in the assembly qualified name.</param>
         /// <returns>
         /// The assembly qualified name of the type.
         /// </returns>
-        public string BuildAssemblyQualifiedName(
-            bool includeVersion = true)
+        public string BuildAssemblyQualifiedName()
         {
-            var versionToken = (includeVersion && (this.AssemblyVersion != null))
+            var versionToken = (this.AssemblyVersion != null)
                 ? Invariant($", Version={this.AssemblyVersion}")
                 : string.Empty;
 
-            var genericArgumentsQualifiedNames = this.GenericArguments.Select(_ => "[" + _.BuildAssemblyQualifiedName(includeVersion) + "]").ToArray();
+            var genericArgumentsQualifiedNames = this.GenericArguments.Select(_ => "[" + _.BuildAssemblyQualifiedName() + "]").ToArray();
 
             var genericToken = this.GenericArguments.Any()
                 ? Invariant($"[{string.Join(",", genericArgumentsQualifiedNames)}]")
@@ -125,7 +123,7 @@ namespace OBeautifulCode.Representation.System
         /// <inheritdoc cref="IDeclareToStringMethod" />
         public override string ToString()
         {
-            var result = this.BuildAssemblyQualifiedName(includeVersion: true);
+            var result = this.BuildAssemblyQualifiedName();
 
             return result;
         }
