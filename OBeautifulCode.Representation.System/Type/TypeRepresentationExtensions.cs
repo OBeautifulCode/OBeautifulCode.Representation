@@ -209,9 +209,16 @@ namespace OBeautifulCode.Representation.System
         {
             new { assemblyQualifiedName }.AsArg().Must().NotBeNullNorWhiteSpace();
 
-            var assemblyVersion = BeforeLastCommaRegex.Replace(assemblyQualifiedName, string.Empty).Split('=').Last();
+            var versionSegment = BeforeLastCommaRegex.Replace(assemblyQualifiedName, string.Empty);
 
-            assemblyQualifiedName = BeforeLastCommaRegex.Match(assemblyQualifiedName).Value;
+            string assemblyVersion = null;
+
+            if (versionSegment.StartsWith(", Version="))
+            {
+                assemblyVersion = versionSegment.Split('=').Last();
+
+                assemblyQualifiedName = BeforeLastCommaRegex.Match(assemblyQualifiedName).Value;
+            }
 
             var assemblyName = BeforeLastCommaRegex.Replace(assemblyQualifiedName, string.Empty).Split(' ').Last();
 

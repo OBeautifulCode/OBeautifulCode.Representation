@@ -17,7 +17,6 @@ namespace OBeautifulCode.Representation.System.Test
     using OBeautifulCode.AutoFakeItEasy;
     using OBeautifulCode.Enum.Recipes;
     using OBeautifulCode.Reflection.Recipes;
-    using OBeautifulCode.Type;
 
     using Xunit;
 
@@ -316,7 +315,7 @@ namespace OBeautifulCode.Representation.System.Test
         }
 
         [Fact]
-        public static void ToTypeRepresentationFromAssemblyQualifiedName___Should_roundtrip_a_TypeRepresentation___When_using_a_TypeRepresentation_to_output_the_assembly_qualified_name()
+        public static void ToTypeRepresentationFromAssemblyQualifiedName___Should_roundtrip_a_TypeRepresentation___When_assembly_qualified_name_generated_using_TypeRepresentation_BuildAssemblyQualifiedName_with_includeVersion_true()
         {
             // Arrange
             var types = TypeGenerator.GenerateTypesForTesting().ToList();
@@ -330,6 +329,35 @@ namespace OBeautifulCode.Representation.System.Test
 
             // Assert
             actual.AsTest().Must().BeEqualTo(expected);
+        }
+
+        [Fact]
+        public static void ToTypeRepresentationFromAssemblyQualifiedName___Should_roundtrip_a_TypeRepresentation___When_assembly_qualified_name_generated_using_TypeRepresentation_BuildAssemblyQualifiedName_with_includeVersion_false()
+        {
+            // Arrange
+            var types = TypeGenerator.GenerateTypesForTesting().ToList();
+
+            var versionedRepresentation = types.Select(_ => _.ToRepresentation()).ToList();
+
+            var assemblyQualifiedNames = versionedRepresentation.Select(_ => _.BuildAssemblyQualifiedName(includeVersion: false)).ToList();
+
+            var expected = versionedRepresentation.Select(RemoveVersion).ToList();
+
+            // Act
+            var actual = assemblyQualifiedNames.Select(_ => _.ToTypeRepresentationFromAssemblyQualifiedName()).ToList();
+
+            // Assert
+            actual.AsTest().Must().BeEqualTo(expected);
+        }
+
+        private static TypeRepresentation RemoveVersion(
+            TypeRepresentation representation)
+        {
+            var result = representation.DeepCloneWithAssemblyVersion(null);
+
+            result = result.DeepCloneWithGenericArguments(result.GenericArguments.Select(RemoveVersion).ToList());
+
+            return result;
         }
     }
 }
