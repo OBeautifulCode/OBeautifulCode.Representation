@@ -44,7 +44,7 @@ namespace OBeautifulCode.Representation.System
             new { @namespace }.AsArg().Must().NotBeNullNorWhiteSpace();
             new { name }.AsArg().Must().NotBeNullNorWhiteSpace();
             new { assemblyName }.AsArg().Must().NotBeNullNorWhiteSpace();
-            new { assemblyVersion }.AsArg().Must().NotBeNullNorWhiteSpace();
+            new { assemblyVersion }.AsArg().Must().BeNullOrNotWhiteSpace();
             new { genericArguments }.AsArg().Must().NotBeNull().And().NotContainAnyNullElements();
 
             this.Namespace = @namespace;
@@ -94,7 +94,7 @@ namespace OBeautifulCode.Representation.System
         public string BuildAssemblyQualifiedName(
             bool includeVersion = true)
         {
-            var versionToken = includeVersion
+            var versionToken = (includeVersion && (this.AssemblyVersion != null))
                 ? Invariant($", Version={this.AssemblyVersion}")
                 : string.Empty;
 

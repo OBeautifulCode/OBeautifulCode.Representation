@@ -131,7 +131,7 @@ namespace OBeautifulCode.Representation.System
             // AssemblyLoader.GetLoadedAssemblies() but then this would similarly not honor the specified
             // AssemblyMatchStrategy because the loaded assemblies would be cached upon the first call and
             // never refreshed.
-            var cacheKey = typeRepresentation.BuildAssemblyQualifiedName(false) + "_" + assemblyMatchStrategy + "_" + throwIfCannotResolve;
+            var cacheKey = typeRepresentation.BuildAssemblyQualifiedName(includeVersion: false) + "_" + assemblyMatchStrategy + "_" + throwIfCannotResolve;
 
             var foundInCache = CacheKeyToTypeMap.TryGetValue(cacheKey, out Type cacheResult);
 
@@ -140,7 +140,7 @@ namespace OBeautifulCode.Representation.System
                 return cacheResult;
             }
 
-            var assemblyQualifiedName = typeRepresentation.BuildAssemblyQualifiedName();
+            var assemblyQualifiedName = typeRepresentation.BuildAssemblyQualifiedName(includeVersion: true);
 
             var assemblyNamesInUse = typeRepresentation.GetAssemblyNamesInUse();
 
@@ -158,7 +158,7 @@ namespace OBeautifulCode.Representation.System
             {
                 if (throwIfCannotResolve)
                 {
-                    throw new InvalidOperationException(Invariant($"Unable to resolve the specified {nameof(TypeRepresentation)} {assemblyQualifiedName}.  These assemblies are not loaded: {missingAssemblyNames.ToDelimitedString(", ")}."));
+                    throw new InvalidOperationException(Invariant($"Unable to resolve the specified {nameof(TypeRepresentation)} ({assemblyQualifiedName}).  These assemblies are not loaded: {missingAssemblyNames.ToDelimitedString(", ")}."));
                 }
             }
             else
@@ -172,7 +172,7 @@ namespace OBeautifulCode.Representation.System
                         {
                             if (throwIfCannotResolve)
                             {
-                                throw new InvalidOperationException(Invariant($"Unable to resolve the specified {nameof(TypeRepresentation)} {assemblyQualifiedName} with {nameof(AssemblyMatchStrategy)}.{nameof(AssemblyMatchStrategy.AnySingleVersion)}.  There were multiple versions of the following assemblies loaded: {assembliesWithMultipleVersions.Select(_ => _.FullName).ToDelimitedString(", ")}."));
+                                throw new InvalidOperationException(Invariant($"Unable to resolve the specified {nameof(TypeRepresentation)} ({assemblyQualifiedName}) with {nameof(AssemblyMatchStrategy)}.{nameof(AssemblyMatchStrategy.AnySingleVersion)}.  There were multiple versions of the following assemblies loaded: {assembliesWithMultipleVersions.Select(_ => "[" + _.FullName + "]").ToDelimitedString(", ")}."));
                             }
                         }
                         else

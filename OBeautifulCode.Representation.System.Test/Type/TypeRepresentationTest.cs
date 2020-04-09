@@ -152,26 +152,6 @@ namespace OBeautifulCode.Representation.System.Test
                 .AddScenario(() =>
                     new ConstructorArgumentValidationTestScenario<TypeRepresentation>
                     {
-                        Name = "constructor should throw ArgumentNullException when parameter 'assemblyVersion' is null scenario",
-                        ConstructionFunc = () =>
-                        {
-                            var referenceObject = A.Dummy<TypeRepresentation>();
-
-                            var result = new TypeRepresentation(
-                                                 referenceObject.Namespace,
-                                                 referenceObject.Name,
-                                                 referenceObject.AssemblyName,
-                                                 null,
-                                                 referenceObject.GenericArguments);
-
-                            return result;
-                        },
-                        ExpectedExceptionType = typeof(ArgumentNullException),
-                        ExpectedExceptionMessageContains = new[] { "assemblyVersion" },
-                    })
-                .AddScenario(() =>
-                    new ConstructorArgumentValidationTestScenario<TypeRepresentation>
-                    {
                         Name = "constructor should throw ArgumentException when parameter 'assemblyVersion' is white space scenario",
                         ConstructionFunc = () =>
                         {
@@ -259,12 +239,22 @@ namespace OBeautifulCode.Representation.System.Test
                             var result = new SystemUnderTestExpectedStringRepresentation<TypeRepresentation>
                             {
                                 SystemUnderTest = systemUnderTest,
-                                ExpectedStringRepresentation = "System.Collections.Generic.IReadOnlyCollection`1[[System.String, mscorlib]][,], mscorlib",
+                                ExpectedStringRepresentation = "System.Collections.Generic.IReadOnlyCollection`1[[System.String, mscorlib, Version=4.0.0.0]][,], mscorlib, Version=4.0.0.0",
                             };
 
                             return result;
                         },
                     });
+        }
+
+        [Fact]
+        public static void Constructor___Should_not_throw___When_parameter_assemblyVersion_is_null()
+        {
+            // Arrange, Act
+            var actual = Record.Exception(() => new TypeRepresentation(A.Dummy<string>(), A.Dummy<string>(), A.Dummy<string>(), null, new TypeRepresentation[0]));
+
+            // Assert
+            actual.AsTest().Must().BeNull();
         }
 
         [Fact]
@@ -295,6 +285,48 @@ namespace OBeautifulCode.Representation.System.Test
 
             // Assert
             actual.AsTest().Must().BeEqualTo(expected);
+        }
+
+        [Fact]
+        public static void BuildAssemblyQualifiedName___Should_build_assembly_qualified_name_without_version___When_includeVersion_is_true_but_AssemblyVersion_is_null()
+        {
+            // Arrange
+            var intRepresentation = new TypeRepresentation("System", "Int32", "ass1", "1.0.0.0", new TypeRepresentation[0]);
+
+            var stringRepresentation = new TypeRepresentation("System", "String", "ass2", "2.0.0.0", new TypeRepresentation[0]);
+
+            var guidRepresentation = new TypeRepresentation("System", "Guid", "ass3", null, new TypeRepresentation[0]);
+
+            var dictionaryRepresentation = new TypeRepresentation("System", "IReadOnlyDictionary`2", "ass4", "3.0.0.0", new TypeRepresentation[] { stringRepresentation, guidRepresentation });
+
+            var systemUnderTest = new TypeRepresentation("System", "Dictionary`2", "ass5", null, new[] { dictionaryRepresentation, intRepresentation });
+
+            // Act
+            var actual = systemUnderTest.BuildAssemblyQualifiedName(includeVersion: true);
+
+            // Assert
+            actual.AsTest().Must().BeEqualTo("System.Dictionary`2[[System.IReadOnlyDictionary`2[[System.String, ass2, Version=2.0.0.0],[System.Guid, ass3]], ass4, Version=3.0.0.0],[System.Int32, ass1, Version=1.0.0.0]], ass5");
+        }
+
+        [Fact]
+        public static void BuildAssemblyQualifiedName___Should_build_assembly_qualified_name_without_version___When_includeVersion_is_false_and_AssemblyVersion_is_null()
+        {
+            // Arrange
+            var intRepresentation = new TypeRepresentation("System", "Int32", "ass1", "1.0.0.0", new TypeRepresentation[0]);
+
+            var stringRepresentation = new TypeRepresentation("System", "String", "ass2", "2.0.0.0", new TypeRepresentation[0]);
+
+            var guidRepresentation = new TypeRepresentation("System", "Guid", "ass3", null, new TypeRepresentation[0]);
+
+            var dictionaryRepresentation = new TypeRepresentation("System", "IReadOnlyDictionary`2", "ass4", "3.0.0.0", new TypeRepresentation[] { stringRepresentation, guidRepresentation });
+
+            var systemUnderTest = new TypeRepresentation("System", "Dictionary`2", "ass5", null, new[] { dictionaryRepresentation, intRepresentation });
+
+            // Act
+            var actual = systemUnderTest.BuildAssemblyQualifiedName(includeVersion: false);
+
+            // Assert
+            actual.AsTest().Must().BeEqualTo("System.Dictionary`2[[System.IReadOnlyDictionary`2[[System.String, ass2],[System.Guid, ass3]], ass4],[System.Int32, ass1]], ass5");
         }
     }
 }

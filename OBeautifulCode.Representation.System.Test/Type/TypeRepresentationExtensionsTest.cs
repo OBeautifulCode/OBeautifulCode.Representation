@@ -10,16 +10,40 @@ namespace OBeautifulCode.Representation.System.Test
 
     using global::System;
     using global::System.Collections.Generic;
+    using global::System.IO;
     using global::System.Linq;
 
     using OBeautifulCode.Assertion.Recipes;
     using OBeautifulCode.AutoFakeItEasy;
     using OBeautifulCode.Enum.Recipes;
+    using OBeautifulCode.Reflection.Recipes;
+    using OBeautifulCode.Type;
 
     using Xunit;
 
     public static class TypeRepresentationExtensionsTest
     {
+        static TypeRepresentationExtensionsTest()
+        {
+            byte[] assemblyBytes;
+
+            using (var stream = AssemblyHelper.OpenEmbeddedResourceStream("OBeautifulCode.Representation.System.Test.Type.Conditions.dll", addCallerNamespace: false))
+            {
+                using (var ms = new MemoryStream())
+                {
+                    stream.CopyTo(ms);
+
+                    assemblyBytes = ms.ToArray();
+                }
+            }
+
+            // Conditions is already loaded because it is included in the project
+            // and we use a type in that assembly in unit tests below.
+            // Here we load an older version of Conditions so that two versions of
+            // the same assembly are loaded
+            AppDomain.CurrentDomain.Load(assemblyBytes);
+        }
+
         [Fact]
         public static void ToRepresentation___Should_throw_ArgumentNullException___When_parameter_type_is_null()
         {
@@ -240,11 +264,32 @@ namespace OBeautifulCode.Representation.System.Test
         [Fact]
         public static void ResolvedFromLoadedTypes___Should_return_null___When_multiple_versions_of_assembly_are_loaded_and_throwIfCannotResolve_is_false()
         {
+            // Arrange
+            var type = typeof(Conditions.Condition);
+
+            var representation = type.ToRepresentation();
+
+            // Act
+            var actual = representation.ResolveFromLoadedTypes(AssemblyMatchStrategy.AnySingleVersion, throwIfCannotResolve: false);
+
+            // Assert
+            actual.AsTest().Must().BeNull();
         }
 
         [Fact]
         public static void ResolvedFromLoadedTypes___Should_throw_InvalidOperationException___When_multiple_versions_of_assembly_are_loaded_and_throwIfCannotResolve_is_true()
         {
+            // Arrange
+            var type = typeof(Conditions.Condition);
+
+            var representation = type.ToRepresentation();
+
+            // Act
+            var actual = Record.Exception(() => representation.ResolveFromLoadedTypes(AssemblyMatchStrategy.AnySingleVersion, throwIfCannotResolve: true));
+
+            // Assert
+            actual.AsTest().Must().BeOfType<InvalidOperationException>();
+            actual.Message.AsTest().Must().BeEqualTo("Unable to resolve the specified TypeRepresentation (Conditions.Condition, Conditions, Version=2.1.0.24) with AssemblyMatchStrategy.AnySingleVersion.  There were multiple versions of the following assemblies loaded: [Conditions, Version=2.0.1.19, Culture=neutral, PublicKeyToken=null], [Conditions, Version=2.1.0.24, Culture=neutral, PublicKeyToken=null].");
         }
 
         [Fact]
