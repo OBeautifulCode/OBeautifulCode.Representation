@@ -8,7 +8,11 @@ namespace OBeautifulCode.Representation.System.Test
 {
     using global::System;
     using global::System.Collections.Generic;
+    using global::System.IO;
     using global::System.Linq;
+    using global::System.Reflection;
+
+    using OBeautifulCode.Reflection.Recipes;
 
     public static class TypeGenerator
     {
@@ -93,6 +97,29 @@ namespace OBeautifulCode.Representation.System.Test
             return result;
         }
 
+        public static Assembly LoadOlderVersionOfConditions()
+        {
+            byte[] assemblyBytes;
+
+            using (var stream = AssemblyHelper.OpenEmbeddedResourceStream("OBeautifulCode.Representation.System.Test.Type.Conditions.dll", addCallerNamespace: false))
+            {
+                using (var ms = new MemoryStream())
+                {
+                    stream.CopyTo(ms);
+
+                    assemblyBytes = ms.ToArray();
+                }
+            }
+
+            // Conditions is already loaded because it is included in the project
+            // and we use a type in that assembly in unit tests below.
+            // Here we load an older version of Conditions so that two versions of
+            // the same assembly are loaded
+            var result = AppDomain.CurrentDomain.Load(assemblyBytes);
+
+            return result;
+        }
+
         public class TestClassInStaticClass
         {
             public class NestedClassInTestClassInStaticClass
@@ -114,6 +141,7 @@ namespace OBeautifulCode.Representation.System.Test
         }
     }
 
+    // ReSharper disable once UnusedTypeParameter
     public class GenericClass<T>
     {
     }

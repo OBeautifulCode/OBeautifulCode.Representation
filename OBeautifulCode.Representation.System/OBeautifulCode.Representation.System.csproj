@@ -206,6 +206,8 @@
     </Compile>
     <Compile Include="Type\TypeRepresentationExtensions.cs" />
     <Compile Include="Type\UnknownTypePlaceholder.cs" />
+    <Compile Include="Type\VersionlessTypeEqualityComparer.cs" />
+    <Compile Include="Type\VersionlessTypeRepresentationEqualityComparer.cs" />
   </ItemGroup>
   <ItemGroup>
     <AdditionalFiles Include=".analyzers\stylecop.json" />
