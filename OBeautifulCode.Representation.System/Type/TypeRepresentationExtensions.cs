@@ -33,6 +33,8 @@ namespace OBeautifulCode.Representation.System
 
         private static readonly Regex ConvertDotNetAssemblyQualifiedNameToObcAssemblyQualifiedNameRegex = new Regex(", Culture=.*?, PublicKeyToken=[a-z0-9]*", RegexOptions.Compiled);
 
+        private static readonly Regex IsGenericTypeRegex = new Regex(@"`\d+$", RegexOptions.Compiled);
+
         /// <summary>
         /// Creates a new type representation from a given type.
         /// </summary>
@@ -42,23 +44,31 @@ namespace OBeautifulCode.Representation.System
             this Type type)
         {
             new { type }.AsArg().Must().NotBeNull();
-            new { type.ContainsGenericParameters }.AsArg().Must().BeFalse(); // can't be an open type
+            if (type.ContainsGenericParameters)
+            {
+                new { type.IsGenericTypeDefinition }.AsArg().Must().BeTrue(); // only generic type definition is supported for open types
+            }
 
             TypeRepresentation result;
 
             if (type.IsGenericType)
             {
-                var genericType = type.GetGenericTypeDefinition();
+                var genericTypeDefinition = type.GetGenericTypeDefinition();
 
-                var genericArguments = type.GetGenericArguments();
+                var genericArgumentTypeRepresentations = new List<TypeRepresentation>();
 
-                var genericArgumentTypeRepresentations = genericArguments.Select(_ => _.ToRepresentation()).ToList();
+                if (!type.IsGenericTypeDefinition)
+                {
+                    var genericArguments = type.GetGenericArguments();
 
-                var assemblyName = genericType.Assembly.GetName();
+                    genericArgumentTypeRepresentations = genericArguments.Select(_ => _.ToRepresentation()).ToList();
+                }
+
+                var assemblyName = genericTypeDefinition.Assembly.GetName();
 
                 result = new TypeRepresentation(
-                    genericType.Namespace,
-                    genericType.GetFullyNestedName(),
+                    genericTypeDefinition.Namespace,
+                    genericTypeDefinition.GetFullyNestedName(),
                     assemblyName.Name,
                     assemblyName.Version.ToString(),
                     genericArgumentTypeRepresentations);
@@ -72,8 +82,10 @@ namespace OBeautifulCode.Representation.System
                     elementType = elementType.GetElementType();
                 }
 
-                var genericArgumentTypeRepresentations = new TypeRepresentation[0];
+                IReadOnlyList<TypeRepresentation> genericArgumentTypeRepresentations = null;
 
+                // note that an array of generic type definition is an open type, but not a generic type definition
+                // so this method would throw at the very top and we would never get here for such a type
                 if (elementType.IsGenericType)
                 {
                     var genericArguments = elementType.GetGenericArguments();
@@ -99,7 +111,7 @@ namespace OBeautifulCode.Representation.System
                     type.GetFullyNestedName(),
                     assemblyName.Name,
                     assemblyName.Version.ToString(),
-                    new TypeRepresentation[0]);
+                    null);
             }
 
             return result;
@@ -244,8 +256,9 @@ namespace OBeautifulCode.Representation.System
 
             string nameWithNamespace;
 
-            var genericArguments = new List<TypeRepresentation>();
+            IReadOnlyList<TypeRepresentation> genericArguments;
 
+            // is closed generic type?
             if (assemblyQualifiedName.EndsWith("]]", StringComparison.Ordinal))
             {
                 nameWithNamespace = assemblyQualifiedName.Substring(0, assemblyQualifiedName.IndexOf('['));
@@ -261,6 +274,11 @@ namespace OBeautifulCode.Representation.System
             else
             {
                 nameWithNamespace = assemblyQualifiedName;
+
+                // is generic type definition?
+                genericArguments = (IsGenericTypeRegex.Match(assemblyQualifiedName).Value == string.Empty)
+                    ? null
+                    : new TypeRepresentation[0];
             }
 
             var name = nameWithNamespace.Split('.').Last() + arrayIdentifierForName;
@@ -287,7 +305,7 @@ namespace OBeautifulCode.Representation.System
 
             var result = representation.DeepCloneWithAssemblyVersion(null);
 
-            result = result.DeepCloneWithGenericArguments(result.GenericArguments.Select(RemoveAssemblyVersions).ToList());
+            result = result.DeepCloneWithGenericArguments(result.GenericArguments?.Select(RemoveAssemblyVersions).ToList());
 
             return result;
         }
@@ -323,7 +341,10 @@ namespace OBeautifulCode.Representation.System
         {
             var result = new HashSet<string> { typeRepresentation.AssemblyName };
 
-            result.AddRange(typeRepresentation.GenericArguments.SelectMany(_ => _.GetAssemblyNamesInUse()));
+            if (typeRepresentation.GenericArguments != null)
+            {
+                result.AddRange(typeRepresentation.GenericArguments.SelectMany(_ => _.GetAssemblyNamesInUse()));
+            }
 
             return result;
         }

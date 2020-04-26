@@ -15,6 +15,7 @@ namespace OBeautifulCode.Representation.System.Test
     using global::System.Text.RegularExpressions;
 
     using OBeautifulCode.Assertion.Recipes;
+    using OBeautifulCode.AutoFakeItEasy;
     using OBeautifulCode.CodeGen.ModelObject.Recipes;
     using OBeautifulCode.Representation.System.Test.Internal;
 
@@ -172,30 +173,10 @@ namespace OBeautifulCode.Representation.System.Test
                 .AddScenario(() =>
                     new ConstructorArgumentValidationTestScenario<TypeRepresentation>
                     {
-                        Name = "constructor should throw ArgumentNullException when parameter 'genericArguments' is null scenario",
-                        ConstructionFunc = () =>
-                        {
-                            var referenceObject = A.Dummy<TypeRepresentation>();
-
-                            var result = new TypeRepresentation(
-                                                 referenceObject.Namespace,
-                                                 referenceObject.Name,
-                                                 referenceObject.AssemblyName,
-                                                 referenceObject.AssemblyVersion,
-                                                 null);
-
-                            return result;
-                        },
-                        ExpectedExceptionType = typeof(ArgumentNullException),
-                        ExpectedExceptionMessageContains = new[] { "genericArguments" },
-                    })
-                .AddScenario(() =>
-                    new ConstructorArgumentValidationTestScenario<TypeRepresentation>
-                    {
                         Name = "constructor should throw ArgumentException when parameter 'genericArguments' contains a null element scenario",
                         ConstructionFunc = () =>
                         {
-                            var referenceObject = A.Dummy<TypeRepresentation>();
+                            var referenceObject = A.Dummy<TypeRepresentation>().ThatIs(_ => _.IsClosedGenericType);
 
                             var result = new TypeRepresentation(
                                                  referenceObject.Namespace,
@@ -208,6 +189,31 @@ namespace OBeautifulCode.Representation.System.Test
                         },
                         ExpectedExceptionType = typeof(ArgumentException),
                         ExpectedExceptionMessageContains = new[] { "genericArguments", "contains at least one null element" },
+                    });
+
+            ConstructorPropertyAssignmentTestScenarios
+                .AddScenario(() =>
+                    new ConstructorPropertyAssignmentTestScenario<TypeRepresentation>
+                    {
+                        Name = "GenericArguments should return null, when 'genericArguments' parameter passed to constructor is null, when getting",
+                        SystemUnderTestExpectedPropertyValueFunc = () =>
+                        {
+                            var referenceObject = A.Dummy<TypeRepresentation>();
+
+                            var result = new SystemUnderTestExpectedPropertyValue<TypeRepresentation>
+                            {
+                                SystemUnderTest = new TypeRepresentation(
+                                    referenceObject.Namespace,
+                                    referenceObject.Name,
+                                    referenceObject.AssemblyName,
+                                    referenceObject.AssemblyVersion,
+                                    null),
+                                ExpectedPropertyValue = null,
+                            };
+
+                            return result;
+                        },
+                        PropertyName = "GenericArguments",
                     });
 
             StringRepresentationTestScenarios
@@ -251,6 +257,26 @@ namespace OBeautifulCode.Representation.System.Test
         public static void Constructor___Should_not_throw___When_parameter_assemblyVersion_is_null()
         {
             // Arrange, Act
+            var actual = Record.Exception(() => new TypeRepresentation(A.Dummy<string>(), A.Dummy<string>(), A.Dummy<string>(), null, Some.ReadOnlyDummies<TypeRepresentation>()));
+
+            // Assert
+            actual.AsTest().Must().BeNull();
+        }
+
+        [Fact]
+        public static void Constructor___Should_not_throw___When_parameter_genericArguments_is_null()
+        {
+            // Arrange, Act
+            var actual = Record.Exception(() => new TypeRepresentation(A.Dummy<string>(), A.Dummy<string>(), A.Dummy<string>(), null, null));
+
+            // Assert
+            actual.AsTest().Must().BeNull();
+        }
+
+        [Fact]
+        public static void Constructor___Should_not_throw___When_parameter_genericArguments_is_empty()
+        {
+            // Arrange, Act
             var actual = Record.Exception(() => new TypeRepresentation(A.Dummy<string>(), A.Dummy<string>(), A.Dummy<string>(), null, new TypeRepresentation[0]));
 
             // Assert
@@ -291,13 +317,13 @@ namespace OBeautifulCode.Representation.System.Test
         public static void BuildAssemblyQualifiedName___Should_build_assembly_qualified___When_TypeRepresentation_contains_a_mix_of_versioned_and_unversioned_types()
         {
             // Arrange
-            var intRepresentation = new TypeRepresentation("System", "Int32", "ass1", "1.0.0.0", new TypeRepresentation[0]);
+            var intRepresentation = new TypeRepresentation("System", "Int32", "ass1", "1.0.0.0", null);
 
-            var stringRepresentation = new TypeRepresentation("System", "String", "ass2", "2.0.0.0", new TypeRepresentation[0]);
+            var stringRepresentation = new TypeRepresentation("System", "String", "ass2", "2.0.0.0", null);
 
-            var guidRepresentation = new TypeRepresentation("System", "Guid", "ass3", null, new TypeRepresentation[0]);
+            var guidRepresentation = new TypeRepresentation("System", "Guid", "ass3", null, null);
 
-            var dictionaryRepresentation = new TypeRepresentation("System", "IReadOnlyDictionary`2", "ass4", "3.0.0.0", new TypeRepresentation[] { stringRepresentation, guidRepresentation });
+            var dictionaryRepresentation = new TypeRepresentation("System", "IReadOnlyDictionary`2", "ass4", "3.0.0.0", new[] { stringRepresentation, guidRepresentation });
 
             var systemUnderTest = new TypeRepresentation("System", "Dictionary`2", "ass5", null, new[] { dictionaryRepresentation, intRepresentation });
 

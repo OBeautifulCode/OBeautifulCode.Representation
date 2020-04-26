@@ -156,7 +156,7 @@ namespace OBeautifulCode.Representation.System.Test
         {
             var result = representation.DeepCloneWithAssemblyVersion(newVersion);
 
-            result = result.DeepCloneWithGenericArguments(result.GenericArguments.Select(_ => ChangeVersion(_, newVersion)).ToList());
+            result = result.DeepCloneWithGenericArguments(result.GenericArguments?.Select(_ => ChangeVersion(_, newVersion)).ToList());
 
             return result;
         }

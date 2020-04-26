@@ -34,12 +34,11 @@ namespace OBeautifulCode.Representation.System.Test
         }
 
         [Fact]
-        public static void ToRepresentation___Should_throw_ArgumentException___When_parameter_type_is_an_open_generic_type()
+        public static void ToRepresentation___Should_throw_ArgumentException___When_parameter_type_is_an_open_generic_type_that_is_not_a_generic_type_definition()
         {
             // Arrange
             var types = new[]
             {
-                typeof(List<>),
                 typeof(List<>).MakeArrayType(),
                 typeof(List<>).MakeGenericType(typeof(List<>)),
                 typeof(IReadOnlyCollection<>).MakeGenericType(typeof(IReadOnlyCollection<>)),
@@ -51,7 +50,7 @@ namespace OBeautifulCode.Representation.System.Test
 
             // Assert
             actuals.AsTest().Must().Each().BeOfType<ArgumentException>();
-            actuals.Select(_ => _.Message).AsTest().Must().Each().ContainString("ContainsGenericParameters");
+            actuals.Select(_ => _.Message).AsTest().Must().Each().ContainString("IsGenericTypeDefinition");
         }
 
         [Fact]
@@ -68,11 +67,11 @@ namespace OBeautifulCode.Representation.System.Test
             description.Name.AsTest().Must().BeEqualTo("String");
             description.AssemblyName.AsTest().Must().BeEqualTo("mscorlib");
             description.AssemblyVersion.AsTest().Must().BeEqualTo("4.0.0.0");
-            description.GenericArguments.AsTest().Must().BeEmptyEnumerable();
+            description.GenericArguments.AsTest().Must().BeNull();
         }
 
         [Fact]
-        public static void ToRepresentation___Should_return_expected_representation_of_type___When_type_is_generic()
+        public static void ToRepresentation___Should_return_expected_representation_of_type___When_type_is_closed_generic()
         {
             // Arrange
             var type = typeof(IReadOnlyDictionary<string, int>);
@@ -88,6 +87,23 @@ namespace OBeautifulCode.Representation.System.Test
             description.GenericArguments.AsTest().Must().HaveCount(2);
             description.GenericArguments.First().Must().BeEqualTo(typeof(string).ToRepresentation());
             description.GenericArguments.Last().Must().BeEqualTo(typeof(int).ToRepresentation());
+        }
+
+        [Fact]
+        public static void ToRepresentation___Should_return_expected_representation_of_type___When_type_is_generic_type_definition()
+        {
+            // Arrange
+            var type = typeof(IReadOnlyDictionary<,>);
+
+            // Act
+            var description = type.ToRepresentation();
+
+            // Assert
+            description.Namespace.AsTest().Must().BeEqualTo("System.Collections.Generic");
+            description.Name.AsTest().Must().BeEqualTo("IReadOnlyDictionary`2");
+            description.AssemblyName.AsTest().Must().BeEqualTo("mscorlib");
+            description.AssemblyVersion.AsTest().Must().BeEqualTo("4.0.0.0");
+            description.GenericArguments.AsTest().Must().BeEmptyEnumerable();
         }
 
         [Fact]
@@ -140,7 +156,7 @@ namespace OBeautifulCode.Representation.System.Test
             description.Name.AsTest().Must().BeEqualTo("TypeGenerator+TestClassInStaticClass+NestedClassInTestClassInStaticClass+NestedClassInNestedClassInTestClassInStaticClass[]");
             description.AssemblyName.AsTest().Must().BeEqualTo("OBeautifulCode.Representation.System.Test");
             description.AssemblyVersion.AsTest().Must().BeEqualTo(typeof(TypeGenerator).Assembly.GetName().Version.ToString());
-            description.GenericArguments.AsTest().Must().BeEmptyEnumerable();
+            description.GenericArguments.AsTest().Must().BeNull();
         }
 
         [Fact]
@@ -192,7 +208,7 @@ namespace OBeautifulCode.Representation.System.Test
             // Arrange
             var representation1 = A.Dummy<TypeRepresentation>().DeepCloneWithAssemblyName(A.Dummy<string>());
 
-            var representation2 = A.Dummy<TypeRepresentation>().Whose(_ => _.GenericArguments.Any());
+            var representation2 = A.Dummy<TypeRepresentation>().Whose(_ => _.IsClosedGenericType);
 
             var modifiedGenericArgument = representation2.GenericArguments.First().DeepCloneWithAssemblyName(A.Dummy<string>());
 
@@ -217,7 +233,7 @@ namespace OBeautifulCode.Representation.System.Test
 
             var representation1 = A.Dummy<TypeRepresentation>().DeepCloneWithAssemblyName(dummyAssembly);
 
-            var representation2 = A.Dummy<TypeRepresentation>().Whose(_ => _.GenericArguments.Any());
+            var representation2 = A.Dummy<TypeRepresentation>().Whose(_ => _.IsClosedGenericType);
 
             var modifiedGenericArgument = representation2.GenericArguments.First().DeepCloneWithAssemblyName(dummyAssembly);
 
@@ -394,13 +410,17 @@ namespace OBeautifulCode.Representation.System.Test
 
             var collectionOfCollectionType = typeof(IReadOnlyCollection<Dictionary<string, int>>[,]);
 
+            var dictionaryGenericTypeDefinition = dictionaryType.GetGenericTypeDefinition();
+
             var representation1 = stringType.ToRepresentation();
 
             var representation2 = collectionType.ToRepresentation();
 
             var representation3 = collectionOfCollectionType.ToRepresentation();
 
-            var expected1 = new TypeRepresentation(stringType.Namespace, stringType.Name, stringType.Assembly.GetName().Name, null, new TypeRepresentation[0]);
+            var representation4 = dictionaryGenericTypeDefinition.ToRepresentation();
+
+            var expected1 = new TypeRepresentation(stringType.Namespace, stringType.Name, stringType.Assembly.GetName().Name, null, null);
 
             var expected2 = new TypeRepresentation(collectionType.Namespace, collectionType.Name, collectionType.Assembly.GetName().Name, null, new[] { expected1 });
 
@@ -408,22 +428,26 @@ namespace OBeautifulCode.Representation.System.Test
             {
                 new TypeRepresentation(dictionaryType.Namespace, dictionaryType.Name, dictionaryType.Assembly.GetName().Name, null, new[]
                 {
-                    new TypeRepresentation(stringType.Namespace, stringType.Name, stringType.Assembly.GetName().Name, null, new TypeRepresentation[0]),
-                    new TypeRepresentation(intType.Namespace, intType.Name, intType.Assembly.GetName().Name, null, new TypeRepresentation[0]),
+                    new TypeRepresentation(stringType.Namespace, stringType.Name, stringType.Assembly.GetName().Name, null, null),
+                    new TypeRepresentation(intType.Namespace, intType.Name, intType.Assembly.GetName().Name, null, null),
                 }),
             });
+
+            var expected4 = new TypeRepresentation(dictionaryGenericTypeDefinition.Namespace, dictionaryGenericTypeDefinition.Name, dictionaryGenericTypeDefinition.Assembly.GetName().Name, null, new TypeRepresentation[] { });
 
             // Act
             var actual1 = representation1.RemoveAssemblyVersions();
             var actual2a = representation2.RemoveAssemblyVersions();
             var actual2b = actual2a.RemoveAssemblyVersions();
             var actual3 = representation3.RemoveAssemblyVersions();
+            var actual4 = representation4.RemoveAssemblyVersions();
 
             // Assert
             actual1.AsTest().Must().BeEqualTo(expected1);
             actual2a.AsTest().Must().BeEqualTo(expected2);
             actual2b.AsTest().Must().BeEqualTo(expected2);
             actual3.AsTest().Must().BeEqualTo(expected3);
+            actual4.AsTest().Must().BeEqualTo(expected4);
         }
     }
 }

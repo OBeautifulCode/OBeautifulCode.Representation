@@ -34,7 +34,7 @@ namespace OBeautifulCode.Representation.System
         /// <param name="name">Name of type.</param>
         /// <param name="assemblyName">The simple name of the assembly. This is usually, but not necessarily, the file name of the manifest file of the assembly, minus its extension.</param>
         /// <param name="assemblyVersion">The major, minor, build, and revision numbers of the assembly.</param>
-        /// <param name="genericArguments">Generic arguments if any.</param>
+        /// <param name="genericArguments">Generic arguments if any.  Use null if the type is not generic.  Specify an empty set for a generic type definition.  Other open types are not supported.</param>
         public TypeRepresentation(
             string @namespace,
             string name,
@@ -46,7 +46,10 @@ namespace OBeautifulCode.Representation.System
             new { name }.AsArg().Must().NotBeNullNorWhiteSpace();
             new { assemblyName }.AsArg().Must().NotBeNullNorWhiteSpace();
             new { assemblyVersion }.AsArg().Must().BeNullOrNotWhiteSpace();
-            new { genericArguments }.AsArg().Must().NotBeNull().And().NotContainAnyNullElements();
+            if (genericArguments != null)
+            {
+                new { genericArguments }.AsArg().Must().NotContainAnyNullElements();
+            }
 
             this.Namespace = @namespace;
             this.Name = name;
@@ -86,6 +89,21 @@ namespace OBeautifulCode.Representation.System
         public bool IsArray => this.Name.EndsWith("[]", StringComparison.Ordinal) || this.Name.EndsWith("[*]", StringComparison.Ordinal) || this.Name.EndsWith(",]", StringComparison.Ordinal);
 
         /// <summary>
+        /// Gets a value indicating whether this type is a generic type.
+        /// </summary>
+        public bool IsGenericType => this.GenericArguments != null;
+
+        /// <summary>
+        /// Gets a value indicating whether this type is a generic type definition.
+        /// </summary>
+        public bool IsGenericTypeDefinition => this.IsGenericType && (!this.GenericArguments.Any());
+
+        /// <summary>
+        /// Gets a value indicating whether this type is a closed generic type.
+        /// </summary>
+        public bool IsClosedGenericType => this.IsGenericType && this.GenericArguments.Any();
+
+        /// <summary>
         /// Gets the assembly qualified name.
         /// </summary>
         /// <returns>
@@ -97,15 +115,15 @@ namespace OBeautifulCode.Representation.System
                 ? Invariant($", Version={this.AssemblyVersion}")
                 : string.Empty;
 
-            var genericArgumentsQualifiedNames = this.GenericArguments.Select(_ => "[" + _.BuildAssemblyQualifiedName() + "]").ToArray();
+            var genericArgumentsQualifiedNames = this.GenericArguments?.Select(_ => "[" + _.BuildAssemblyQualifiedName() + "]").ToArray() ?? new string[0];
 
-            var genericToken = this.GenericArguments.Any()
+            var genericToken = genericArgumentsQualifiedNames.Any()
                 ? Invariant($"[{string.Join(",", genericArgumentsQualifiedNames)}]")
                 : string.Empty;
 
             string result;
 
-            if (this.IsArray && this.GenericArguments.Any())
+            if (this.IsArray && this.IsClosedGenericType)
             {
                 var arraySpecifierStartIndex = this.Name.IndexOf('[');
 

@@ -85,7 +85,7 @@ namespace OBeautifulCode.Representation.System.Test
                 typeof(IReadOnlyDictionary<IReadOnlyDictionary<ConstructorInfoRepresentation[], int?>, IList<IList<TestClassInStaticClass.NestedClassInTestClassInStaticClass>>[]>[]),
             };
 
-            var result = new Type[0]
+            var closedTypes = new Type[0]
                 .Concat(testTypes)
                 .Concat(genericInterfaceOfTestTypes)
                 .Concat(genericClassOfTestTypes)
@@ -94,6 +94,14 @@ namespace OBeautifulCode.Representation.System.Test
                 .Concat(rank2ArrayOfTestTypes)
                 .Concat(rank3ArrayOfTestTypes)
                 .Concat(additionalTypes)
+                .Distinct()
+                .ToList();
+
+            var genericTypeDefinitions = closedTypes.Where(_ => _.IsGenericType).Select(_ => _.GetGenericTypeDefinition()).Distinct().ToList();
+
+            var result = new Type[0]
+                .Concat(closedTypes)
+                .Concat(genericTypeDefinitions)
                 .Distinct()
                 .ToList();
 
