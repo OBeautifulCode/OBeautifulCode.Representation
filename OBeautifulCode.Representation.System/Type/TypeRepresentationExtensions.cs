@@ -276,7 +276,7 @@ namespace OBeautifulCode.Representation.System
                 nameWithNamespace = assemblyQualifiedName;
 
                 // is generic type definition?
-                genericArguments = (IsGenericTypeRegex.Match(assemblyQualifiedName).Value == string.Empty)
+                genericArguments = string.IsNullOrEmpty(IsGenericTypeRegex.Match(assemblyQualifiedName).Value)
                     ? null
                     : new TypeRepresentation[0];
             }
