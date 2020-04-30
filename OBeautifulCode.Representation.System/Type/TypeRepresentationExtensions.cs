@@ -51,6 +51,8 @@ namespace OBeautifulCode.Representation.System
 
             TypeRepresentation result;
 
+            var name = type.GetFullyNestedName();
+
             if (type.IsGenericType)
             {
                 var genericTypeDefinition = type.GetGenericTypeDefinition();
@@ -68,7 +70,7 @@ namespace OBeautifulCode.Representation.System
 
                 result = new TypeRepresentation(
                     genericTypeDefinition.Namespace,
-                    genericTypeDefinition.GetFullyNestedName(),
+                    name,
                     assemblyName.Name,
                     assemblyName.Version.ToString(),
                     genericArgumentTypeRepresentations);
@@ -77,6 +79,7 @@ namespace OBeautifulCode.Representation.System
             {
                 var elementType = type.GetElementType();
 
+                // ReSharper disable once PossibleNullReferenceException
                 while (elementType.IsArray)
                 {
                     elementType = elementType.GetElementType();
@@ -97,7 +100,7 @@ namespace OBeautifulCode.Representation.System
 
                 result = new TypeRepresentation(
                     type.Namespace,
-                    type.GetFullyNestedName(),
+                    name,
                     assemblyName.Name,
                     assemblyName.Version.ToString(),
                     genericArgumentTypeRepresentations);
@@ -108,7 +111,7 @@ namespace OBeautifulCode.Representation.System
 
                 result = new TypeRepresentation(
                     type.Namespace,
-                    type.GetFullyNestedName(),
+                    name,
                     assemblyName.Name,
                     assemblyName.Version.ToString(),
                     null);
@@ -310,17 +313,26 @@ namespace OBeautifulCode.Representation.System
             return result;
         }
 
-        private static string GetFullyNestedName(
+        /// <summary>
+        /// Gets the name of the type, including it's chain of declaring types separated
+        /// by the plus (+) symbol, similar to how the type's name appears in <see cref="Type.FullName"/>.
+        /// </summary>
+        /// <remarks>
+        /// <see cref="Type.FullName"/> includes other details that aren't needed and there's no property on Type
+        /// that returns the fully nested name.
+        /// </remarks>
+        /// <param name="type">The type.</param>
+        /// <returns>
+        /// The fully nested name of the type.
+        /// </returns>
+        public static string GetFullyNestedName(
             this Type type)
         {
-            // Gets the name of the type, including it's chain of declaring types separated
-            // by the plus (+) symbol, similar to how the type's name appears in type.FullName.
-            // FullName includes other details that aren't needed and there's no property on Type
-            // that returns the fully nested name.
             new { type }.AsArg().Must().NotBeNull();
 
             var result = type.Name;
 
+            // ReSharper disable once PossibleNullReferenceException
             while (type.IsArray)
             {
                 type = type.GetElementType();
@@ -330,6 +342,7 @@ namespace OBeautifulCode.Representation.System
             {
                 type = type.DeclaringType;
 
+                // ReSharper disable once PossibleNullReferenceException
                 result = type.Name + "+" + result;
             }
 

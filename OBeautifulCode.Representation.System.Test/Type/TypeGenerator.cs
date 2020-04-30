@@ -45,7 +45,13 @@ namespace OBeautifulCode.Representation.System.Test
 
             var systemGenericClassTypes = coreTypes.Select(_ => typeof(Dictionary<,>).MakeGenericType(_, _)).ToList();
 
-            var customGenericClassTypes = coreTypes.Select(_ => typeof(GenericClass<>).MakeGenericType(_)).ToList();
+            var customGenericClassTypes1 = coreTypes.Select(_ => typeof(GenericClass<>).MakeGenericType(_)).ToList();
+
+            var customGenericClassTypes2 = coreTypes.Select(_ => typeof(TestClassInNamespace<>).MakeGenericType(_)).ToList();
+
+            var customGenericClassTypes3 = coreTypes.Select(_ => typeof(TestClassInNamespace<>.NestedClassInTestClassInNamespace<>).MakeGenericType(_, _)).ToList();
+
+            var customGenericClassTypes4 = coreTypes.Select(_ => typeof(TestClassInNamespace<>.NestedClassInTestClassInNamespace<>.NestedClassInNestedClassInTestClassInNamespace<>).MakeGenericType(_, _, _)).ToList();
 
             var vectorArrayTypes = coreTypes.Select(_ => _.MakeArrayType()).ToList();
 
@@ -59,7 +65,10 @@ namespace OBeautifulCode.Representation.System.Test
                 .Concat(coreTypes)
                 .Concat(genericInterfaceTypes)
                 .Concat(systemGenericClassTypes)
-                .Concat(customGenericClassTypes)
+                .Concat(customGenericClassTypes1)
+                .Concat(customGenericClassTypes2)
+                .Concat(customGenericClassTypes3)
+                .Concat(customGenericClassTypes4)
                 .Concat(vectorArrayTypes)
                 .Concat(rank1ArrayTypes)
                 .Concat(rank2ArrayTypes)
@@ -171,6 +180,29 @@ namespace OBeautifulCode.Representation.System.Test
 
             [SuppressMessage("Microsoft.Design", "CA1034:NestedTypesShouldNotBeVisible", Justification = ObcSuppressBecause.CA1034_NestedTypesShouldNotBeVisible_VisibleNestedTypeRequiredForTesting)]
             public sealed class NestedClassInNestedClassInTestClassInNamespace
+            {
+                private NestedClassInNestedClassInTestClassInNamespace()
+                {
+                }
+            }
+        }
+    }
+
+    public sealed class TestClassInNamespace<T>
+    {
+        private TestClassInNamespace()
+        {
+        }
+
+        [SuppressMessage("Microsoft.Design", "CA1034:NestedTypesShouldNotBeVisible", Justification = ObcSuppressBecause.CA1034_NestedTypesShouldNotBeVisible_VisibleNestedTypeRequiredForTesting)]
+        public sealed class NestedClassInTestClassInNamespace<T2>
+        {
+            private NestedClassInTestClassInNamespace()
+            {
+            }
+
+            [SuppressMessage("Microsoft.Design", "CA1034:NestedTypesShouldNotBeVisible", Justification = ObcSuppressBecause.CA1034_NestedTypesShouldNotBeVisible_VisibleNestedTypeRequiredForTesting)]
+            public sealed class NestedClassInNestedClassInTestClassInNamespace<T3>
             {
                 private NestedClassInNestedClassInTestClassInNamespace()
                 {
