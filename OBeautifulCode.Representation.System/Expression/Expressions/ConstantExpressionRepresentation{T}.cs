@@ -21,6 +21,7 @@ namespace OBeautifulCode.Representation.System
     /// Representation of <see cref="ConstantExpression" />.
     /// </summary>
     /// <typeparam name="T">Type of the value.</typeparam>
+    [Serializable]
     public class ConstantExpressionRepresentation<T> : ExpressionRepresentationBase, IModel<ConstantExpressionRepresentation<T>>
     {
         /// <summary>Initializes a new instance of the <see cref="ConstantExpressionRepresentation{T}"/> class.</summary>
