@@ -140,7 +140,7 @@ namespace OBeautifulCode.Representation.System
         {
             new { typeRepresentation }.AsArg().Must().NotBeNull();
 
-            // If another version the type is loaded after the type has been cached, then we potentially
+            // If another version of the type is loaded after the type has been cached, then we potentially
             // may not be honoring the specified AssemblyMatchStrategy.  While we could move the whole
             // chunk of cache code right before Type.GetType, which would save us the cost of that call,
             // we have found that the most expensive call in the below code is assigning matchingAssemblies
