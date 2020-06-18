@@ -10,6 +10,7 @@ namespace OBeautifulCode.Representation.System
     using global::System.Collections.Generic;
     using global::System.Diagnostics.CodeAnalysis;
     using global::System.Linq;
+    using global::System.Reflection;
 
     using OBeautifulCode.Assertion.Recipes;
     using OBeautifulCode.Type;
@@ -111,9 +112,7 @@ namespace OBeautifulCode.Representation.System
         /// </returns>
         public string BuildAssemblyQualifiedName()
         {
-            var versionToken = (this.AssemblyVersion != null)
-                ? Invariant($", Version={this.AssemblyVersion}")
-                : string.Empty;
+            var assemblyName = this.BuildAssemblyName();
 
             var genericArgumentsQualifiedNames = this.GenericArguments?.Select(_ => "[" + _.BuildAssemblyQualifiedName() + "]").ToArray() ?? new string[0];
 
@@ -129,12 +128,31 @@ namespace OBeautifulCode.Representation.System
 
                 var nameWithGenericArguments = this.Name.Insert(arraySpecifierStartIndex, genericToken);
 
-                result = Invariant($"{this.Namespace}.{nameWithGenericArguments}, {this.AssemblyName}{versionToken}");
+                result = Invariant($"{this.Namespace}.{nameWithGenericArguments}, {assemblyName.FullName}");
             }
             else
             {
-                result = Invariant($"{this.Namespace}.{this.Name}{genericToken}, {this.AssemblyName}{versionToken}");
+                result = Invariant($"{this.Namespace}.{this.Name}{genericToken}, {assemblyName.FullName}");
             }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Builds the <see cref="AssemblyName"/> of the assembly that contains the type being represented by this object.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="AssemblyName"/> of the assembly that contains the type being represented by this object.
+        /// </returns>
+        public AssemblyName BuildAssemblyName()
+        {
+            var versionToken = (this.AssemblyVersion != null)
+                ? Invariant($", Version={this.AssemblyVersion}")
+                : string.Empty;
+
+            var assemblyName = Invariant($"{this.AssemblyName}{versionToken}");
+
+            var result = new AssemblyName(assemblyName);
 
             return result;
         }

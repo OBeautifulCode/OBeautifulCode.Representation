@@ -333,5 +333,35 @@ namespace OBeautifulCode.Representation.System.Test
             // Assert
             actual.AsTest().Must().BeEqualTo("System.Dictionary`2[[System.IReadOnlyDictionary`2[[System.String, ass2, Version=2.0.0.0],[System.Guid, ass3]], ass4, Version=3.0.0.0],[System.Int32, ass1, Version=1.0.0.0]], ass5");
         }
+
+        [Fact]
+        public static void BuildAssemblyName___Should_build_the_expected_assembly_name___When_TypeRepresentation_is_versioned()
+        {
+            // Arrange
+            var types = TypeGenerator.GenerateTypesForTesting();
+
+            var expected = types.Select(_ => _.Assembly.GetName().Name + ", Version=" + _.Assembly.GetName().Version).ToList();
+
+            // Act
+            var actual = types.Select(_ => _.ToRepresentation().BuildAssemblyName().FullName).ToList();
+
+            // Assert
+            actual.AsTest().Must().BeEqualTo(expected);
+        }
+
+        [Fact]
+        public static void BuildAssemblyName___Should_build_the_expected_assembly_name___When_TypeRepresentation_is_unversioned()
+        {
+            // Arrange
+            var types = TypeGenerator.GenerateTypesForTesting();
+
+            var expected = types.Select(_ => _.Assembly.GetName().Name).ToList();
+
+            // Act
+            var actual = types.Select(_ => _.ToRepresentation().RemoveAssemblyVersions().BuildAssemblyName().FullName).ToList();
+
+            // Assert
+            actual.AsTest().Must().BeEqualTo(expected);
+        }
     }
 }
