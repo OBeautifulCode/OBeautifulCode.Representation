@@ -10,7 +10,6 @@ namespace OBeautifulCode.Representation.System.Test
 
     using global::System;
     using global::System.Collections.Generic;
-    using global::System.IO;
     using global::System.Linq;
 
     using OBeautifulCode.Assertion.Recipes;
@@ -203,7 +202,7 @@ namespace OBeautifulCode.Representation.System.Test
         }
 
         [Fact]
-        public static void ResolvedFromLoadedTypes___Should_return_null___When_assembly_is_not_loaded_and_throwIfCannotResolve_is_false()
+        public static void ResolvedFromLoadedTypes___Should_return_null___When_assembly_is_not_loaded_prior_to_call_and_cannot_be_loaded_by_call_and_throwIfCannotResolve_is_false()
         {
             // Arrange
             var representation1 = A.Dummy<TypeRepresentation>().DeepCloneWithAssemblyName(A.Dummy<string>());
@@ -226,7 +225,7 @@ namespace OBeautifulCode.Representation.System.Test
         }
 
         [Fact]
-        public static void ResolvedFromLoadedTypes___Should_throw_InvalidOperationException___When_assembly_is_not_loaded_and_throwIfCannotResolve_is_true()
+        public static void ResolvedFromLoadedTypes___Should_throw_InvalidOperationException___When_assembly_is_not_loaded_prior_to_call_and_cannot_be_loaded_by_call_and_throwIfCannotResolve_is_true()
         {
             // Arrange
             var dummyAssembly = A.Dummy<string>();
@@ -253,6 +252,32 @@ namespace OBeautifulCode.Representation.System.Test
             actual2.AsTest().Must().BeOfType<InvalidOperationException>();
             actual2.Message.AsTest().Must().ContainString("Unable to resolve the specified TypeRepresentation");
             actual2.Message.AsTest().Must().ContainString("These assemblies are not loaded: " + dummyAssembly);
+        }
+
+        [Fact]
+        public static void ResolvedFromLoadedTypes___Should_return_resolved_type___When_assembly_is_not_loaded_prior_to_call_but_can_be_loaded_by_call()
+        {
+            // Arrange, Act, Assert
+            var resolvedType = AppDomainHelper.ExecuteInNewAppDomain(() =>
+            {
+                var typeRepresentation = "OBeautifulCode.AutoFakeItEasy.NegativeInteger, OBeautifulCode.AutoFakeItEasy".ToTypeRepresentationFromAssemblyQualifiedName();
+
+                var loadedAssemblyNamesBeforeResolvingType = AssemblyLoader.GetLoadedAssemblies().Select(_ => _.GetName().Name).ToList();
+
+                loadedAssemblyNamesBeforeResolvingType.AsTest().Must().NotContainElement("OBeautifulCode.AutoFakeItEasy");
+
+                var result = typeRepresentation.ResolveFromLoadedTypes();
+
+                result.AsTest().Must().NotBeNull();
+
+                var loadedAssemblyNamesAfterResolvingType = AssemblyLoader.GetLoadedAssemblies().Select(_ => _.GetName().Name).ToList();
+
+                loadedAssemblyNamesAfterResolvingType.AsTest().Must().ContainElement("OBeautifulCode.AutoFakeItEasy");
+
+                return result;
+            });
+
+            resolvedType.AsTest().Must().BeEqualTo(typeof(NegativeInteger));
         }
 
         [Fact]

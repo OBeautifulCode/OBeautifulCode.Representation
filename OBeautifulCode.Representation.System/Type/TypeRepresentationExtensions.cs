@@ -10,6 +10,7 @@ namespace OBeautifulCode.Representation.System
     using global::System.Collections.Concurrent;
     using global::System.Collections.Generic;
     using global::System.Linq;
+    using global::System.Reflection;
     using global::System.Text.RegularExpressions;
 
     using OBeautifulCode.Assertion.Recipes;
@@ -170,6 +171,26 @@ namespace OBeautifulCode.Representation.System
             var missingAssemblyNames = assemblyNamesInUse.Where(_ => !matchingAssemblyNames.Contains(_)).ToList();
 
             Type result = null;
+
+            var foundAssemblyNames = new List<string>();
+
+            foreach (var missingAssemblyName in missingAssemblyNames)
+            {
+                try
+                {
+                    var loadedAssembly = Assembly.Load(missingAssemblyName);
+
+                    if (loadedAssembly != null)
+                    {
+                        foundAssemblyNames.Add(missingAssemblyName);
+                    }
+                }
+                catch (Exception)
+                {
+                }
+            }
+
+            missingAssemblyNames = missingAssemblyNames.Except(foundAssemblyNames).ToList();
 
             if (missingAssemblyNames.Any())
             {
