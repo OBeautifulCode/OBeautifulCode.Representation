@@ -37,6 +37,74 @@ namespace OBeautifulCode.Representation.System
         private static readonly Regex IsGenericTypeRegex = new Regex(@"`\d+$", RegexOptions.Compiled);
 
         /// <summary>
+        /// Determines whether the type is an array type.
+        /// </summary>
+        /// <param name="typeRepresentation">The type representation.</param>
+        /// <returns>
+        /// true if the type is an array type, otherwise false.
+        /// </returns>
+        public static bool IsArray(
+            this TypeRepresentation typeRepresentation)
+        {
+            new { typeRepresentation }.AsArg().Must().NotBeNull();
+
+            var result = typeRepresentation.Name.EndsWith("[]", StringComparison.Ordinal) ||
+                         typeRepresentation.Name.EndsWith("[*]", StringComparison.Ordinal) ||
+                         typeRepresentation.Name.EndsWith(",]", StringComparison.Ordinal);
+
+            return result;
+        }
+
+        /// <summary>
+        /// Determines whether this type is a generic type.
+        /// </summary>
+        /// <param name="typeRepresentation">The type representation.</param>
+        /// <returns>
+        /// true if the type is a generic type, otherwise false.
+        /// </returns>
+        public static bool IsGenericType(
+            this TypeRepresentation typeRepresentation)
+        {
+            new { typeRepresentation }.AsArg().Must().NotBeNull();
+
+            var result = typeRepresentation.GenericArguments != null;
+
+            return result;
+        }
+
+        /// <summary>
+        /// Determines whether this type is a generic type definition.
+        /// </summary>
+        /// <param name="typeRepresentation">The type representation.</param>
+        /// <returns>
+        /// true if the type is a generic type definition, otherwise false.
+        /// </returns>
+        public static bool IsGenericTypeDefinition(
+            this TypeRepresentation typeRepresentation)
+        {
+            new { typeRepresentation }.AsArg().Must().NotBeNull();
+
+            var result = typeRepresentation.IsGenericType() && (!typeRepresentation.GenericArguments.Any());
+
+            return result;
+        }
+
+        /// <summary>
+        /// Determines whether this type is a closed generic type.
+        /// </summary>
+        /// <param name="typeRepresentation">The type representation.</param>
+        /// <returns>
+        /// true if the type is a closed generic type, otherwise false.
+        /// </returns>
+        public static bool IsClosedGenericType(
+            this TypeRepresentation typeRepresentation)
+        {
+            var result = typeRepresentation.IsGenericType() && typeRepresentation.GenericArguments.Any();
+
+            return result;
+        }
+
+        /// <summary>
         /// Creates a new type representation from a given type.
         /// </summary>
         /// <param name="type">Input type to use.</param>

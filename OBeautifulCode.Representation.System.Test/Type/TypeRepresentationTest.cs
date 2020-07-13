@@ -176,7 +176,7 @@ namespace OBeautifulCode.Representation.System.Test
                         Name = "constructor should throw ArgumentException when parameter 'genericArguments' contains a null element scenario",
                         ConstructionFunc = () =>
                         {
-                            var referenceObject = A.Dummy<TypeRepresentation>().ThatIs(_ => _.IsClosedGenericType);
+                            var referenceObject = A.Dummy<TypeRepresentation>().ThatIs(_ => _.IsClosedGenericType());
 
                             var result = new TypeRepresentation(
                                                  referenceObject.Namespace,

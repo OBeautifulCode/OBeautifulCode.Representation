@@ -6,7 +6,6 @@
 
 namespace OBeautifulCode.Representation.System
 {
-    using global::System;
     using global::System.Collections.Generic;
     using global::System.Diagnostics.CodeAnalysis;
     using global::System.Linq;
@@ -85,26 +84,6 @@ namespace OBeautifulCode.Representation.System
         public IReadOnlyList<TypeRepresentation> GenericArguments { get; private set; }
 
         /// <summary>
-        /// Gets a value indicating whether this type is an array type.
-        /// </summary>
-        public bool IsArray => this.Name.EndsWith("[]", StringComparison.Ordinal) || this.Name.EndsWith("[*]", StringComparison.Ordinal) || this.Name.EndsWith(",]", StringComparison.Ordinal);
-
-        /// <summary>
-        /// Gets a value indicating whether this type is a generic type.
-        /// </summary>
-        public bool IsGenericType => this.GenericArguments != null;
-
-        /// <summary>
-        /// Gets a value indicating whether this type is a generic type definition.
-        /// </summary>
-        public bool IsGenericTypeDefinition => this.IsGenericType && (!this.GenericArguments.Any());
-
-        /// <summary>
-        /// Gets a value indicating whether this type is a closed generic type.
-        /// </summary>
-        public bool IsClosedGenericType => this.IsGenericType && this.GenericArguments.Any();
-
-        /// <summary>
         /// Gets the assembly qualified name.
         /// </summary>
         /// <returns>
@@ -122,7 +101,7 @@ namespace OBeautifulCode.Representation.System
 
             string result;
 
-            if (this.IsArray && this.IsClosedGenericType)
+            if (this.IsArray() && this.IsClosedGenericType())
             {
                 var arraySpecifierStartIndex = this.Name.IndexOf('[');
 

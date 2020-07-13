@@ -207,7 +207,7 @@ namespace OBeautifulCode.Representation.System.Test
             // Arrange
             var representation1 = A.Dummy<TypeRepresentation>().DeepCloneWithAssemblyName(A.Dummy<string>());
 
-            var representation2 = A.Dummy<TypeRepresentation>().Whose(_ => _.IsClosedGenericType);
+            var representation2 = A.Dummy<TypeRepresentation>().Whose(_ => _.IsClosedGenericType());
 
             var modifiedGenericArgument = representation2.GenericArguments.First().DeepCloneWithAssemblyName(A.Dummy<string>());
 
@@ -232,7 +232,7 @@ namespace OBeautifulCode.Representation.System.Test
 
             var representation1 = A.Dummy<TypeRepresentation>().DeepCloneWithAssemblyName(dummyAssembly);
 
-            var representation2 = A.Dummy<TypeRepresentation>().Whose(_ => _.IsClosedGenericType);
+            var representation2 = A.Dummy<TypeRepresentation>().Whose(_ => _.IsClosedGenericType());
 
             var modifiedGenericArgument = representation2.GenericArguments.First().DeepCloneWithAssemblyName(dummyAssembly);
 
