@@ -99,6 +99,8 @@ namespace OBeautifulCode.Representation.System
         public static bool IsClosedGenericType(
             this TypeRepresentation typeRepresentation)
         {
+            new { typeRepresentation }.AsArg().Must().NotBeNull();
+
             var result = typeRepresentation.IsGenericType() && typeRepresentation.GenericArguments.Any();
 
             return result;
