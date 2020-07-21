@@ -159,10 +159,182 @@ namespace OBeautifulCode.Representation.System.Test
         }
 
         [Fact]
-        public static void ResolvedFromLoadedTypes___Should_throw_ArgumentNullException___When_parameter_typeRepresentation_is_null()
+        public static void ResolvedFromLoadedTypes_assemblyQualifiedName___Should_throw_ArgumentNullException___When_parameter_assemblyQualifiedName_is_null()
         {
             // Arrange, Act
-            var actual = Record.Exception(() => TypeRepresentationExtensions.ResolveFromLoadedTypes(null));
+            var actual = Record.Exception(() => ((string)null).ResolveFromLoadedTypes());
+
+            // Assert
+            actual.AsTest().Must().BeOfType<ArgumentNullException>();
+            actual.Message.AsTest().Must().ContainString("assemblyQualifiedName");
+        }
+
+        [Fact]
+        public static void ResolvedFromLoadedTypes_assemblyQualifiedName___Should_throw_ArgumentException___When_parameter_assemblyQualifiedName_is_white_space()
+        {
+            // Arrange, Act
+            var actual = Record.Exception(() => "   \r\n  ".ResolveFromLoadedTypes());
+
+            // Assert
+            actual.AsTest().Must().BeOfType<ArgumentException>();
+            actual.Message.AsTest().Must().ContainString("assemblyQualifiedName");
+        }
+
+        [Fact]
+        public static void ResolvedFromLoadedTypes_assemblyQualifiedName___Should_throw_NotSupportedException___When_parameter_assemblyMatchStrategy_is_not_AnySingleVersion()
+        {
+            // Arrange
+            var assemblyMatchStrategy = EnumExtensions.GetDefinedEnumValues<AssemblyMatchStrategy>().Where(_ => _ != AssemblyMatchStrategy.AnySingleVersion).ToList();
+
+            var assemblyQualifiedName = A.Dummy<TypeRepresentation>().BuildAssemblyQualifiedName();
+
+            // Act
+            var actuals1 = assemblyMatchStrategy.Select(_ => Record.Exception(() => assemblyQualifiedName.ResolveFromLoadedTypes(_, throwIfCannotResolve: false)));
+            var actuals2 = assemblyMatchStrategy.Select(_ => Record.Exception(() => assemblyQualifiedName.ResolveFromLoadedTypes(_, throwIfCannotResolve: true)));
+
+            // Assert
+            actuals1.AsTest().Must().Each().BeOfType<NotSupportedException>();
+            actuals2.AsTest().Must().Each().BeOfType<NotSupportedException>();
+        }
+
+        [Fact]
+        public static void ResolvedFromLoadedTypes_assemblyQualifiedName___Should_roundtrip_a_type_from_its_assembly_qualified_name___When_called()
+        {
+            // Arrange
+            var expectedTypes = TypeGenerator.GenerateTypesForTesting().ToList();
+
+            var assemblyQualifiedNames = expectedTypes.Select(_ => _.ToRepresentation().BuildAssemblyQualifiedName()).ToList();
+
+            // Act
+            var actualTypes = assemblyQualifiedNames.Select(_ => _.ResolveFromLoadedTypes(throwIfCannotResolve: true)).ToList();
+
+            // Assert
+            actualTypes.AsTest().Must().BeEqualTo(expectedTypes);
+        }
+
+        [Fact]
+        public static void ResolvedFromLoadedTypes_assemblyQualifiedName___Should_return_null___When_assembly_is_not_loaded_prior_to_call_and_cannot_be_loaded_by_call_and_throwIfCannotResolve_is_false()
+        {
+            // Arrange
+            var assemblyQualifiedName1 = A.Dummy<TypeRepresentation>().DeepCloneWithAssemblyName(A.Dummy<string>()).BuildAssemblyQualifiedName();
+
+            var representation2 = A.Dummy<TypeRepresentation>().Whose(_ => _.IsClosedGenericType());
+
+            var modifiedGenericArgument = representation2.GenericArguments.First().DeepCloneWithAssemblyName(A.Dummy<string>());
+
+            var modifiedGenericArguments = new TypeRepresentation[0].Concat(new[] { modifiedGenericArgument }).Concat(representation2.GenericArguments.Skip(1)).ToList();
+
+            representation2 = representation2.DeepCloneWithGenericArguments(modifiedGenericArguments);
+
+            var assemblyQualifiedName2 = representation2.BuildAssemblyQualifiedName();
+
+            // Act
+            var actual1 = assemblyQualifiedName1.ResolveFromLoadedTypes(AssemblyMatchStrategy.AnySingleVersion, throwIfCannotResolve: false);
+            var actual2 = assemblyQualifiedName2.ResolveFromLoadedTypes(AssemblyMatchStrategy.AnySingleVersion, throwIfCannotResolve: false);
+
+            // Assert
+            actual1.AsTest().Must().BeNull();
+            actual2.AsTest().Must().BeNull();
+        }
+
+        [Fact]
+        public static void ResolvedFromLoadedTypes_assemblyQualifiedName___Should_throw_InvalidOperationException___When_assembly_is_not_loaded_prior_to_call_and_cannot_be_loaded_by_call_and_throwIfCannotResolve_is_true()
+        {
+            // Arrange
+            var dummyAssembly = A.Dummy<string>();
+
+            var assemblyQualifiedName1 = A.Dummy<TypeRepresentation>().DeepCloneWithAssemblyName(dummyAssembly).BuildAssemblyQualifiedName();
+
+            var representation2 = A.Dummy<TypeRepresentation>().Whose(_ => _.IsClosedGenericType());
+
+            var modifiedGenericArgument = representation2.GenericArguments.First().DeepCloneWithAssemblyName(dummyAssembly);
+
+            var modifiedGenericArguments = new TypeRepresentation[0].Concat(new[] { modifiedGenericArgument }).Concat(representation2.GenericArguments.Skip(1)).ToList();
+
+            representation2 = representation2.DeepCloneWithGenericArguments(modifiedGenericArguments);
+
+            var assemblyQualifiedName2 = representation2.BuildAssemblyQualifiedName();
+
+            // Act
+            var actual1 = Record.Exception(() => assemblyQualifiedName1.ResolveFromLoadedTypes(AssemblyMatchStrategy.AnySingleVersion, throwIfCannotResolve: true));
+            var actual2 = Record.Exception(() => assemblyQualifiedName2.ResolveFromLoadedTypes(AssemblyMatchStrategy.AnySingleVersion, throwIfCannotResolve: true));
+
+            // Assert
+            actual1.AsTest().Must().BeOfType<InvalidOperationException>();
+            actual1.Message.AsTest().Must().ContainString("Unable to resolve the specified TypeRepresentation");
+            actual1.Message.AsTest().Must().ContainString("These assemblies are not loaded: " + dummyAssembly);
+
+            actual2.AsTest().Must().BeOfType<InvalidOperationException>();
+            actual2.Message.AsTest().Must().ContainString("Unable to resolve the specified TypeRepresentation");
+            actual2.Message.AsTest().Must().ContainString("These assemblies are not loaded: " + dummyAssembly);
+        }
+
+        [Fact]
+        public static void ResolvedFromLoadedTypes_assemblyQualifiedName___Should_return_resolved_type___When_assembly_is_not_loaded_prior_to_call_but_can_be_loaded_by_call()
+        {
+            // Arrange, Act, Assert
+            var resolvedType = AppDomainHelper.ExecuteInNewAppDomain(() =>
+            {
+                var assemblyQualifiedName = "OBeautifulCode.AutoFakeItEasy.NegativeInteger, OBeautifulCode.AutoFakeItEasy";
+
+                var loadedAssemblyNamesBeforeResolvingType = AssemblyLoader.GetLoadedAssemblies().Select(_ => _.GetName().Name).ToList();
+
+                loadedAssemblyNamesBeforeResolvingType.AsTest().Must().NotContainElement("OBeautifulCode.AutoFakeItEasy");
+
+                var result = assemblyQualifiedName.ResolveFromLoadedTypes();
+
+                result.AsTest().Must().NotBeNull();
+
+                var loadedAssemblyNamesAfterResolvingType = AssemblyLoader.GetLoadedAssemblies().Select(_ => _.GetName().Name).ToList();
+
+                loadedAssemblyNamesAfterResolvingType.AsTest().Must().ContainElement("OBeautifulCode.AutoFakeItEasy");
+
+                return result;
+            });
+
+            resolvedType.AsTest().Must().BeEqualTo(typeof(NegativeInteger));
+        }
+
+        [Fact]
+        public static void ResolvedFromLoadedTypes_assemblyQualifiedName___Should_return_null___When_multiple_versions_of_assembly_are_loaded_and_throwIfCannotResolve_is_false()
+        {
+            // Arrange
+            TypeGenerator.LoadOlderVersionOfConditions();
+
+            var type = typeof(Conditions.Condition);
+
+            var assemblyQualifiedName = type.ToRepresentation().BuildAssemblyQualifiedName();
+
+            // Act
+            var actual = assemblyQualifiedName.ResolveFromLoadedTypes(AssemblyMatchStrategy.AnySingleVersion, throwIfCannotResolve: false);
+
+            // Assert
+            actual.AsTest().Must().BeNull();
+        }
+
+        [Fact]
+        public static void ResolvedFromLoadedTypes_assemblyQualifiedName___Should_throw_InvalidOperationException___When_multiple_versions_of_assembly_are_loaded_and_throwIfCannotResolve_is_true()
+        {
+            // Arrange
+            TypeGenerator.LoadOlderVersionOfConditions();
+
+            var type = typeof(Conditions.Condition);
+
+            var assemblyQualifiedName = type.ToRepresentation().BuildAssemblyQualifiedName();
+
+            // Act
+            var actual = Record.Exception(() => assemblyQualifiedName.ResolveFromLoadedTypes(AssemblyMatchStrategy.AnySingleVersion, throwIfCannotResolve: true));
+
+            // Assert
+            actual.AsTest().Must().BeOfType<InvalidOperationException>();
+            actual.Message.AsTest().Must().ContainString("Unable to resolve the specified TypeRepresentation (Conditions.Condition, Conditions, Version=2.1.0.24) with AssemblyMatchStrategy.AnySingleVersion.  There were multiple versions of the following assemblies loaded: [Conditions,");
+        }
+
+        [Fact]
+        public static void ResolvedFromLoadedTypes_typeRepresentation___Should_throw_ArgumentNullException___When_parameter_typeRepresentation_is_null()
+        {
+            // Arrange, Act
+            var actual = Record.Exception(() => ((TypeRepresentation)null).ResolveFromLoadedTypes());
 
             // Assert
             actual.AsTest().Must().BeOfType<ArgumentNullException>();
@@ -170,7 +342,7 @@ namespace OBeautifulCode.Representation.System.Test
         }
 
         [Fact]
-        public static void ResolvedFromLoadedTypes___Should_throw_NotSupportedException___When_parameter_assemblyMatchStrategy_is_not_AnySingleVersion()
+        public static void ResolvedFromLoadedTypes_typeRepresentation___Should_throw_NotSupportedException___When_parameter_assemblyMatchStrategy_is_not_AnySingleVersion()
         {
             // Arrange
             var assemblyMatchStrategy = EnumExtensions.GetDefinedEnumValues<AssemblyMatchStrategy>().Where(_ => _ != AssemblyMatchStrategy.AnySingleVersion).ToList();
@@ -187,7 +359,7 @@ namespace OBeautifulCode.Representation.System.Test
         }
 
         [Fact]
-        public static void ResolvedFromLoadedTypes___Should_roundtrip_a_type_from_its_representation___When_called()
+        public static void ResolvedFromLoadedTypes_typeRepresentation___Should_roundtrip_a_type_from_its_representation___When_called()
         {
             // Arrange
             var expectedTypes = TypeGenerator.GenerateTypesForTesting().ToList();
@@ -202,7 +374,7 @@ namespace OBeautifulCode.Representation.System.Test
         }
 
         [Fact]
-        public static void ResolvedFromLoadedTypes___Should_return_null___When_assembly_is_not_loaded_prior_to_call_and_cannot_be_loaded_by_call_and_throwIfCannotResolve_is_false()
+        public static void ResolvedFromLoadedTypes_typeRepresentation___Should_return_null___When_assembly_is_not_loaded_prior_to_call_and_cannot_be_loaded_by_call_and_throwIfCannotResolve_is_false()
         {
             // Arrange
             var representation1 = A.Dummy<TypeRepresentation>().DeepCloneWithAssemblyName(A.Dummy<string>());
@@ -225,7 +397,7 @@ namespace OBeautifulCode.Representation.System.Test
         }
 
         [Fact]
-        public static void ResolvedFromLoadedTypes___Should_throw_InvalidOperationException___When_assembly_is_not_loaded_prior_to_call_and_cannot_be_loaded_by_call_and_throwIfCannotResolve_is_true()
+        public static void ResolvedFromLoadedTypes_typeRepresentation___Should_throw_InvalidOperationException___When_assembly_is_not_loaded_prior_to_call_and_cannot_be_loaded_by_call_and_throwIfCannotResolve_is_true()
         {
             // Arrange
             var dummyAssembly = A.Dummy<string>();
@@ -255,7 +427,7 @@ namespace OBeautifulCode.Representation.System.Test
         }
 
         [Fact]
-        public static void ResolvedFromLoadedTypes___Should_return_resolved_type___When_assembly_is_not_loaded_prior_to_call_but_can_be_loaded_by_call()
+        public static void ResolvedFromLoadedTypes_typeRepresentation___Should_return_resolved_type___When_assembly_is_not_loaded_prior_to_call_but_can_be_loaded_by_call()
         {
             // Arrange, Act, Assert
             var resolvedType = AppDomainHelper.ExecuteInNewAppDomain(() =>
@@ -281,7 +453,7 @@ namespace OBeautifulCode.Representation.System.Test
         }
 
         [Fact]
-        public static void ResolvedFromLoadedTypes___Should_return_null___When_multiple_versions_of_assembly_are_loaded_and_throwIfCannotResolve_is_false()
+        public static void ResolvedFromLoadedTypes_typeRepresentation___Should_return_null___When_multiple_versions_of_assembly_are_loaded_and_throwIfCannotResolve_is_false()
         {
             // Arrange
             TypeGenerator.LoadOlderVersionOfConditions();
@@ -298,7 +470,7 @@ namespace OBeautifulCode.Representation.System.Test
         }
 
         [Fact]
-        public static void ResolvedFromLoadedTypes___Should_throw_InvalidOperationException___When_multiple_versions_of_assembly_are_loaded_and_throwIfCannotResolve_is_true()
+        public static void ResolvedFromLoadedTypes_typeRepresentation___Should_throw_InvalidOperationException___When_multiple_versions_of_assembly_are_loaded_and_throwIfCannotResolve_is_true()
         {
             // Arrange
             TypeGenerator.LoadOlderVersionOfConditions();

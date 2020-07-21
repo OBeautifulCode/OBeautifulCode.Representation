@@ -19,12 +19,19 @@ namespace OBeautifulCode.Representation.System
 
     using static global::System.FormattableString;
 
+    using ResolveFromLoadedTypesUsingAssemblyQualifiedNameCacheKey = global::System.Tuple<string, AssemblyMatchStrategy, bool>;
+    using ResolveFromLoadedTypesUsingTypeRepresentationCacheKey = global::System.Tuple<TypeRepresentation, AssemblyMatchStrategy, bool>;
+
     /// <summary>
     /// Extensions to <see cref="TypeRepresentation"/>.
     /// </summary>
     public static class TypeRepresentationExtensions
     {
-        private static readonly ConcurrentDictionary<string, Type> CacheKeyToTypeMap = new ConcurrentDictionary<string, Type>();
+        private static readonly ConcurrentDictionary<ResolveFromLoadedTypesUsingAssemblyQualifiedNameCacheKey, Type> ResolveFromLoadedTypesUsingAssemblyQualifiedNameCacheKeyToTypeMap = new ConcurrentDictionary<ResolveFromLoadedTypesUsingAssemblyQualifiedNameCacheKey, Type>();
+
+        private static readonly ConcurrentDictionary<ResolveFromLoadedTypesUsingTypeRepresentationCacheKey, Type> ResolveFromLoadedTypesUsingTypeRepresentationCacheKeyToTypeMap = new ConcurrentDictionary<ResolveFromLoadedTypesUsingTypeRepresentationCacheKey, Type>();
+
+        private static readonly ConcurrentDictionary<string, TypeRepresentation> AssemblyQualifiedNameToTypeRepresentationMap = new ConcurrentDictionary<string, TypeRepresentation>();
 
         private static readonly Regex BeforeLastCommaRegex = new Regex(@"(.*?)(?=\,[^,]+$)", RegexOptions.Compiled);
 
@@ -192,6 +199,40 @@ namespace OBeautifulCode.Representation.System
         }
 
         /// <summary>
+        /// Resolve the assembly qualified name into a Type from the loaded Types.
+        /// </summary>
+        /// <param name="assemblyQualifiedName">The assembly qualified name.</param>
+        /// <param name="assemblyMatchStrategy">Strategy to use for matching assemblies.</param>
+        /// <param name="throwIfCannotResolve">
+        /// Optional value indicating whether to throw an exception if the required assembly(ies) or the type(s) cannot be found
+        /// (generics, having generic type arguments, may cause the specified type representation to encapsulate multiple assemblies and/or multiple types).
+        /// Default is true.
+        /// </param>
+        /// <returns>
+        /// Resolved/matching Type.
+        /// </returns>
+        public static Type ResolveFromLoadedTypes(
+            this string assemblyQualifiedName,
+            AssemblyMatchStrategy assemblyMatchStrategy = AssemblyMatchStrategy.AnySingleVersion,
+            bool throwIfCannotResolve = true)
+        {
+            new { assemblyQualifiedName }.AsArg().Must().NotBeNullNorWhiteSpace();
+
+            var cacheKey = new ResolveFromLoadedTypesUsingAssemblyQualifiedNameCacheKey(assemblyQualifiedName, assemblyMatchStrategy, throwIfCannotResolve);
+
+            if (ResolveFromLoadedTypesUsingAssemblyQualifiedNameCacheKeyToTypeMap.TryGetValue(cacheKey, out Type result))
+            {
+                return result;
+            }
+
+            result = assemblyQualifiedName.ToTypeRepresentationFromAssemblyQualifiedName().ResolveFromLoadedTypes(assemblyMatchStrategy, throwIfCannotResolve);
+
+            ResolveFromLoadedTypesUsingAssemblyQualifiedNameCacheKeyToTypeMap.TryAdd(cacheKey, result);
+
+            return result;
+        }
+
+        /// <summary>
         /// Resolve the <see cref="TypeRepresentation" /> into a Type from the loaded Types.
         /// </summary>
         /// <param name="typeRepresentation">The representation of the type.</param>
@@ -219,13 +260,11 @@ namespace OBeautifulCode.Representation.System
             // AssemblyLoader.GetLoadedAssemblies() but then this would similarly not honor the specified
             // AssemblyMatchStrategy because the loaded assemblies would be cached upon the first call and
             // never refreshed.
-            var cacheKey = typeRepresentation.RemoveAssemblyVersions().BuildAssemblyQualifiedName() + "_" + assemblyMatchStrategy + "_" + throwIfCannotResolve;
+            var cacheKey = new ResolveFromLoadedTypesUsingTypeRepresentationCacheKey(typeRepresentation, assemblyMatchStrategy, throwIfCannotResolve);
 
-            var foundInCache = CacheKeyToTypeMap.TryGetValue(cacheKey, out Type cacheResult);
-
-            if (foundInCache)
+            if (ResolveFromLoadedTypesUsingTypeRepresentationCacheKeyToTypeMap.TryGetValue(cacheKey, out Type result))
             {
-                return cacheResult;
+                return result;
             }
 
             var assemblyQualifiedName = typeRepresentation.BuildAssemblyQualifiedName();
@@ -239,8 +278,6 @@ namespace OBeautifulCode.Representation.System
             var matchingAssemblyNames = new HashSet<string>(matchingAssembliesGroupedByName.Select(_ => _.Key));
 
             var missingAssemblyNames = assemblyNamesInUse.Where(_ => !matchingAssemblyNames.Contains(_)).ToList();
-
-            Type result = null;
 
             var foundAssemblyNames = new List<string>();
 
@@ -299,7 +336,7 @@ namespace OBeautifulCode.Representation.System
                 throw new InvalidOperationException(Invariant($"Unable to resolve the specified {nameof(TypeRepresentation)} {assemblyQualifiedName} with {nameof(AssemblyMatchStrategy)}.{nameof(AssemblyMatchStrategy.AnySingleVersion)} for unknown reasons.  We never expected to hit this line of code."));
             }
 
-            CacheKeyToTypeMap.TryAdd(cacheKey, result);
+            ResolveFromLoadedTypesUsingTypeRepresentationCacheKeyToTypeMap.TryAdd(cacheKey, result);
 
             return result;
         }
@@ -317,10 +354,17 @@ namespace OBeautifulCode.Representation.System
         {
             new { assemblyQualifiedName }.AsArg().Must().NotBeNullNorWhiteSpace();
 
-            // if assemblyQualifiedName generated by Type.AssemblyQualifiedName then convert to OBC format (removes Culture and PublicKeyToken)
-            assemblyQualifiedName = ConvertDotNetAssemblyQualifiedNameToObcAssemblyQualifiedNameRegex.Replace(assemblyQualifiedName, string.Empty);
+            if (AssemblyQualifiedNameToTypeRepresentationMap.TryGetValue(assemblyQualifiedName, out var result))
+            {
+                return result;
+            }
 
-            var versionSegment = BeforeLastCommaRegex.Replace(assemblyQualifiedName, string.Empty);
+            var localAssemblyQualifiedName = assemblyQualifiedName;
+
+            // if assemblyQualifiedName generated by Type.AssemblyQualifiedName then convert to OBC format (removes Culture and PublicKeyToken)
+            localAssemblyQualifiedName = ConvertDotNetAssemblyQualifiedNameToObcAssemblyQualifiedNameRegex.Replace(localAssemblyQualifiedName, string.Empty);
+
+            var versionSegment = BeforeLastCommaRegex.Replace(localAssemblyQualifiedName, string.Empty);
 
             string assemblyVersion = null;
 
@@ -328,20 +372,20 @@ namespace OBeautifulCode.Representation.System
             {
                 assemblyVersion = versionSegment.Split('=').Last();
 
-                assemblyQualifiedName = BeforeLastCommaRegex.Match(assemblyQualifiedName).Value;
+                localAssemblyQualifiedName = BeforeLastCommaRegex.Match(localAssemblyQualifiedName).Value;
             }
 
-            var assemblyName = BeforeLastCommaRegex.Replace(assemblyQualifiedName, string.Empty).Split(' ').Last();
+            var assemblyName = BeforeLastCommaRegex.Replace(localAssemblyQualifiedName, string.Empty).Split(' ').Last();
 
-            assemblyQualifiedName = BeforeLastCommaRegex.Match(assemblyQualifiedName).Value;
+            localAssemblyQualifiedName = BeforeLastCommaRegex.Match(localAssemblyQualifiedName).Value;
 
             var arrayIdentifiers = new List<string>();
 
-            while (!string.IsNullOrEmpty(LastArrayIdentifierRegex.Match(assemblyQualifiedName).Value))
+            while (!string.IsNullOrEmpty(LastArrayIdentifierRegex.Match(localAssemblyQualifiedName).Value))
             {
-                arrayIdentifiers.Add(LastArrayIdentifierRegex.Match(assemblyQualifiedName).Value);
+                arrayIdentifiers.Add(LastArrayIdentifierRegex.Match(localAssemblyQualifiedName).Value);
 
-                assemblyQualifiedName = LastArrayIdentifierRegex.Replace(assemblyQualifiedName, string.Empty);
+                localAssemblyQualifiedName = LastArrayIdentifierRegex.Replace(localAssemblyQualifiedName, string.Empty);
             }
 
             arrayIdentifiers.Reverse();
@@ -353,13 +397,13 @@ namespace OBeautifulCode.Representation.System
             IReadOnlyList<TypeRepresentation> genericArguments;
 
             // is closed generic type?
-            if (assemblyQualifiedName.EndsWith("]]", StringComparison.Ordinal))
+            if (localAssemblyQualifiedName.EndsWith("]]", StringComparison.Ordinal))
             {
-                nameWithNamespace = assemblyQualifiedName.Substring(0, assemblyQualifiedName.IndexOf('['));
+                nameWithNamespace = localAssemblyQualifiedName.Substring(0, localAssemblyQualifiedName.IndexOf('['));
 
-                assemblyQualifiedName = AllGenericArgumentsRegex.Match(assemblyQualifiedName).Groups[1].Value;
+                localAssemblyQualifiedName = AllGenericArgumentsRegex.Match(localAssemblyQualifiedName).Groups[1].Value;
 
-                genericArguments = assemblyQualifiedName
+                genericArguments = localAssemblyQualifiedName
                     .ToGenericArgumentAssemblyQualifiedNames()
                     .Select(_ => _.Substring(1, _.Length - 2))
                     .Select(_ => _.ToTypeRepresentationFromAssemblyQualifiedName())
@@ -367,10 +411,10 @@ namespace OBeautifulCode.Representation.System
             }
             else
             {
-                nameWithNamespace = assemblyQualifiedName;
+                nameWithNamespace = localAssemblyQualifiedName;
 
                 // is generic type definition?
-                genericArguments = string.IsNullOrEmpty(IsGenericTypeRegex.Match(assemblyQualifiedName).Value)
+                genericArguments = string.IsNullOrEmpty(IsGenericTypeRegex.Match(localAssemblyQualifiedName).Value)
                     ? null
                     : new TypeRepresentation[0];
             }
@@ -379,7 +423,9 @@ namespace OBeautifulCode.Representation.System
 
             var @namespace = string.Join(".", nameWithNamespace.Split('.').Reverse().Skip(1).Reverse());
 
-            var result = new TypeRepresentation(@namespace, name, assemblyName, assemblyVersion, genericArguments);
+            result = new TypeRepresentation(@namespace, name, assemblyName, assemblyVersion, genericArguments);
+
+            AssemblyQualifiedNameToTypeRepresentationMap.TryAdd(assemblyQualifiedName, result);
 
             return result;
         }
