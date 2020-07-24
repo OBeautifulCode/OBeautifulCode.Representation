@@ -10,7 +10,6 @@ namespace OBeautifulCode.Representation.System
     using global::System.Linq;
     using global::System.Reflection;
 
-    using OBeautifulCode.Assertion.Recipes;
     using OBeautifulCode.Type;
 
     using static global::System.FormattableString;
@@ -29,8 +28,20 @@ namespace OBeautifulCode.Representation.System
             TypeRepresentation type,
             string memberHash)
         {
-            new { type }.AsArg().Must().NotBeNull();
-            new { memberHash }.AsArg().Must().NotBeNullNorWhiteSpace();
+            if (type == null)
+            {
+                throw new ArgumentNullException(nameof(type));
+            }
+
+            if (memberHash == null)
+            {
+                throw new ArgumentNullException(nameof(memberHash));
+            }
+
+            if (string.IsNullOrWhiteSpace(memberHash))
+            {
+                throw new ArgumentException(Invariant($"'{nameof(memberHash)}' is white space"));
+            }
 
             this.Type = type;
             this.MemberHash = memberHash;
@@ -65,7 +76,10 @@ namespace OBeautifulCode.Representation.System
         public static string GetSignatureHash(
             this MemberInfo memberInfo)
         {
-            new { memberInfo }.AsArg().Must().NotBeNull();
+            if (memberInfo == null)
+            {
+                throw new ArgumentNullException(nameof(memberInfo));
+            }
 
             var memberName = memberInfo.Name;
 
@@ -84,7 +98,10 @@ namespace OBeautifulCode.Representation.System
         public static MemberInfoRepresentation ToRepresentation(
             this MemberInfo memberInfo)
         {
-            new { memberInfo }.AsArg().Must().NotBeNull();
+            if (memberInfo == null)
+            {
+                throw new ArgumentNullException(nameof(memberInfo));
+            }
 
             var type = memberInfo.DeclaringType.ToRepresentation();
 
@@ -105,7 +122,10 @@ namespace OBeautifulCode.Representation.System
         public static MemberInfo FromRepresentation(
             this MemberInfoRepresentation memberInfoRepresentation)
         {
-            new { memberInfoRepresentation }.AsArg().Must().NotBeNull();
+            if (memberInfoRepresentation == null)
+            {
+                throw new ArgumentNullException(nameof(memberInfoRepresentation));
+            }
 
             var type = memberInfoRepresentation.Type.ResolveFromLoadedTypes();
             var results = type.GetMembers()

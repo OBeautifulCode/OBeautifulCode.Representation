@@ -6,9 +6,9 @@
 
 namespace OBeautifulCode.Representation.System
 {
+    using global::System;
     using global::System.Linq.Expressions;
 
-    using OBeautifulCode.Assertion.Recipes;
     using OBeautifulCode.Type;
 
     /// <summary>
@@ -30,8 +30,15 @@ namespace OBeautifulCode.Representation.System
             ExpressionRepresentationBase right)
             : base(type, nodeType)
         {
-            new { left }.AsArg().Must().NotBeNull();
-            new { right }.AsArg().Must().NotBeNull();
+            if (left == null)
+            {
+                throw new ArgumentNullException(nameof(left));
+            }
+
+            if (right == null)
+            {
+                throw new ArgumentNullException(nameof(right));
+            }
 
             this.Left = left;
             this.Right = right;
@@ -65,7 +72,10 @@ namespace OBeautifulCode.Representation.System
         public static BinaryExpressionRepresentation ToRepresentation(
             this BinaryExpression binaryExpression)
         {
-            new { binaryExpression }.AsArg().Must().NotBeNull();
+            if (binaryExpression == null)
+            {
+                throw new ArgumentNullException(nameof(binaryExpression));
+            }
 
             var type = binaryExpression.Type.ToRepresentation();
 
@@ -90,7 +100,10 @@ namespace OBeautifulCode.Representation.System
         public static BinaryExpression FromRepresentation(
             this BinaryExpressionRepresentation binaryExpressionRepresentation)
         {
-            new { binaryExpressionRepresentation }.AsArg().Must().NotBeNull();
+            if (binaryExpressionRepresentation == null)
+            {
+                throw new ArgumentNullException(nameof(binaryExpressionRepresentation));
+            }
 
             var result = Expression.MakeBinary(binaryExpressionRepresentation.NodeType, binaryExpressionRepresentation.Left.FromRepresentation(), binaryExpressionRepresentation.Right.FromRepresentation());
 

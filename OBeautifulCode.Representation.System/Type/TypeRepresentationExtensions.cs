@@ -13,7 +13,6 @@ namespace OBeautifulCode.Representation.System
     using global::System.Reflection;
     using global::System.Text.RegularExpressions;
 
-    using OBeautifulCode.Assertion.Recipes;
     using OBeautifulCode.Collection.Recipes;
     using OBeautifulCode.Reflection.Recipes;
 
@@ -53,7 +52,10 @@ namespace OBeautifulCode.Representation.System
         public static bool IsArray(
             this TypeRepresentation typeRepresentation)
         {
-            new { typeRepresentation }.AsArg().Must().NotBeNull();
+            if (typeRepresentation == null)
+            {
+                throw new ArgumentNullException(nameof(typeRepresentation));
+            }
 
             var result = typeRepresentation.Name.EndsWith("[]", StringComparison.Ordinal) ||
                          typeRepresentation.Name.EndsWith("[*]", StringComparison.Ordinal) ||
@@ -72,7 +74,10 @@ namespace OBeautifulCode.Representation.System
         public static bool IsGenericType(
             this TypeRepresentation typeRepresentation)
         {
-            new { typeRepresentation }.AsArg().Must().NotBeNull();
+            if (typeRepresentation == null)
+            {
+                throw new ArgumentNullException(nameof(typeRepresentation));
+            }
 
             var result = typeRepresentation.GenericArguments != null;
 
@@ -89,7 +94,10 @@ namespace OBeautifulCode.Representation.System
         public static bool IsGenericTypeDefinition(
             this TypeRepresentation typeRepresentation)
         {
-            new { typeRepresentation }.AsArg().Must().NotBeNull();
+            if (typeRepresentation == null)
+            {
+                throw new ArgumentNullException(nameof(typeRepresentation));
+            }
 
             var result = typeRepresentation.IsGenericType() && (!typeRepresentation.GenericArguments.Any());
 
@@ -106,7 +114,10 @@ namespace OBeautifulCode.Representation.System
         public static bool IsClosedGenericType(
             this TypeRepresentation typeRepresentation)
         {
-            new { typeRepresentation }.AsArg().Must().NotBeNull();
+            if (typeRepresentation == null)
+            {
+                throw new ArgumentNullException(nameof(typeRepresentation));
+            }
 
             var result = typeRepresentation.IsGenericType() && typeRepresentation.GenericArguments.Any();
 
@@ -121,10 +132,18 @@ namespace OBeautifulCode.Representation.System
         public static TypeRepresentation ToRepresentation(
             this Type type)
         {
-            new { type }.AsArg().Must().NotBeNull();
+            if (type == null)
+            {
+                throw new ArgumentNullException(nameof(type));
+            }
+
             if (type.ContainsGenericParameters)
             {
-                new { type.IsGenericTypeDefinition }.AsArg().Must().BeTrue(); // only generic type definition is supported for open types
+                // only generic type definition is supported for open types
+                if (!type.IsGenericTypeDefinition)
+                {
+                    throw new ArgumentException(Invariant($"'{nameof(type.IsGenericTypeDefinition)}' is false"));
+                }
             }
 
             TypeRepresentation result;
@@ -216,7 +235,15 @@ namespace OBeautifulCode.Representation.System
             AssemblyMatchStrategy assemblyMatchStrategy = AssemblyMatchStrategy.AnySingleVersion,
             bool throwIfCannotResolve = true)
         {
-            new { assemblyQualifiedName }.AsArg().Must().NotBeNullNorWhiteSpace();
+            if (assemblyQualifiedName == null)
+            {
+                throw new ArgumentNullException(nameof(assemblyQualifiedName));
+            }
+
+            if (string.IsNullOrWhiteSpace(assemblyQualifiedName))
+            {
+                throw new ArgumentException(Invariant($"'{nameof(assemblyQualifiedName)}' is white space"));
+            }
 
             var cacheKey = new ResolveFromLoadedTypesUsingAssemblyQualifiedNameCacheKey(assemblyQualifiedName, assemblyMatchStrategy, throwIfCannotResolve);
 
@@ -250,7 +277,10 @@ namespace OBeautifulCode.Representation.System
             AssemblyMatchStrategy assemblyMatchStrategy = AssemblyMatchStrategy.AnySingleVersion,
             bool throwIfCannotResolve = true)
         {
-            new { typeRepresentation }.AsArg().Must().NotBeNull();
+            if (typeRepresentation == null)
+            {
+                throw new ArgumentNullException(nameof(typeRepresentation));
+            }
 
             // If another version of the type is loaded after the type has been cached, then we potentially
             // may not be honoring the specified AssemblyMatchStrategy.  While we could move the whole
@@ -352,7 +382,15 @@ namespace OBeautifulCode.Representation.System
         public static TypeRepresentation ToTypeRepresentationFromAssemblyQualifiedName(
             this string assemblyQualifiedName)
         {
-            new { assemblyQualifiedName }.AsArg().Must().NotBeNullNorWhiteSpace();
+            if (assemblyQualifiedName == null)
+            {
+                throw new ArgumentNullException(nameof(assemblyQualifiedName));
+            }
+
+            if (string.IsNullOrWhiteSpace(assemblyQualifiedName))
+            {
+                throw new ArgumentException(Invariant($"'{nameof(assemblyQualifiedName)}' is white space"));
+            }
 
             if (AssemblyQualifiedNameToTypeRepresentationMap.TryGetValue(assemblyQualifiedName, out var result))
             {
@@ -441,7 +479,10 @@ namespace OBeautifulCode.Representation.System
         public static TypeRepresentation RemoveAssemblyVersions(
             this TypeRepresentation representation)
         {
-            new { representation }.AsArg().Must().NotBeNull();
+            if (representation == null)
+            {
+                throw new ArgumentNullException(nameof(representation));
+            }
 
             var result = representation.DeepCloneWithAssemblyVersion(null);
 
@@ -465,7 +506,10 @@ namespace OBeautifulCode.Representation.System
         public static string GetFullyNestedName(
             this Type type)
         {
-            new { type }.AsArg().Must().NotBeNull();
+            if (type == null)
+            {
+                throw new ArgumentNullException(nameof(type));
+            }
 
             var result = type.Name;
 

@@ -6,12 +6,14 @@
 
 namespace OBeautifulCode.Representation.System
 {
+    using global::System;
     using global::System.Collections.Generic;
     using global::System.Linq;
     using global::System.Linq.Expressions;
 
-    using OBeautifulCode.Assertion.Recipes;
     using OBeautifulCode.Type;
+
+    using static global::System.FormattableString;
 
     /// <summary>
     /// Representation of <see cref="LambdaExpression" />.
@@ -30,8 +32,25 @@ namespace OBeautifulCode.Representation.System
             IReadOnlyList<ParameterExpressionRepresentation> parameters)
         : base(type, ExpressionType.Lambda)
         {
-            new { body }.AsArg().Must().NotBeNull();
-            new { parameters }.AsArg().Must().NotBeNullNorEmptyEnumerableNorContainAnyNulls();
+            if (body == null)
+            {
+                throw new ArgumentNullException(nameof(body));
+            }
+
+            if (parameters == null)
+            {
+                throw new ArgumentNullException(nameof(parameters));
+            }
+
+            if (!parameters.Any())
+            {
+                throw new ArgumentException(Invariant($"'{nameof(parameters)}' is an empty enumerable"));
+            }
+
+            if (parameters.Any(_ => _ == null))
+            {
+                throw new ArgumentException(Invariant($"'{nameof(parameters)}' contains an element that is null"));
+            }
 
             this.Body = body;
             this.Parameters = parameters;
@@ -65,7 +84,10 @@ namespace OBeautifulCode.Representation.System
         public static LambdaExpressionRepresentation ToRepresentation(
             this LambdaExpression lambdaExpression)
         {
-            new { lambdaExpression }.AsArg().Must().NotBeNull();
+            if (lambdaExpression == null)
+            {
+                throw new ArgumentNullException(nameof(lambdaExpression));
+            }
 
             var type = lambdaExpression.Type.ToRepresentation();
 
@@ -88,7 +110,10 @@ namespace OBeautifulCode.Representation.System
         public static LambdaExpression FromRepresentation(
             this LambdaExpressionRepresentation lambdaExpressionRepresentation)
         {
-            new { lambdaExpressionRepresentation }.AsArg().Must().NotBeNull();
+            if (lambdaExpressionRepresentation == null)
+            {
+                throw new ArgumentNullException(nameof(lambdaExpressionRepresentation));
+            }
 
             var type = lambdaExpressionRepresentation.Type.ResolveFromLoadedTypes();
 

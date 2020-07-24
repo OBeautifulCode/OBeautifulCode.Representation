@@ -6,12 +6,14 @@
 
 namespace OBeautifulCode.Representation.System
 {
+    using global::System;
     using global::System.Collections.Generic;
     using global::System.Linq;
     using global::System.Linq.Expressions;
 
-    using OBeautifulCode.Assertion.Recipes;
     using OBeautifulCode.Type;
+
+    using static global::System.FormattableString;
 
     /// <summary>
     /// Representation of <see cref="ListInitExpression" />.
@@ -31,8 +33,25 @@ namespace OBeautifulCode.Representation.System
             IReadOnlyList<ElementInitRepresentation> initializers)
             : base(type, ExpressionType.ListInit)
         {
-            new { newExpressionRepresentation }.AsArg().Must().NotBeNull();
-            new { initializers }.AsArg().Must().NotBeNullNorEmptyEnumerableNorContainAnyNulls();
+            if (newExpressionRepresentation == null)
+            {
+                throw new ArgumentNullException(nameof(newExpressionRepresentation));
+            }
+
+            if (initializers == null)
+            {
+                throw new ArgumentNullException(nameof(initializers));
+            }
+
+            if (!initializers.Any())
+            {
+                throw new ArgumentException(Invariant($"'{nameof(initializers)}' is an empty enumerable"));
+            }
+
+            if (initializers.Any(_ => _ == null))
+            {
+                throw new ArgumentException(Invariant($"'{nameof(initializers)}' contains an element that is null"));
+            }
 
             this.NewExpressionRepresentation = newExpressionRepresentation;
             this.Initializers = initializers;
@@ -66,7 +85,10 @@ namespace OBeautifulCode.Representation.System
         public static ListInitExpressionRepresentation ToRepresentation(
             this ListInitExpression listInitExpression)
         {
-            new { listInitExpression }.AsArg().Must().NotBeNull();
+            if (listInitExpression == null)
+            {
+                throw new ArgumentNullException(nameof(listInitExpression));
+            }
 
             var type = listInitExpression.Type.ToRepresentation();
 
@@ -88,7 +110,10 @@ namespace OBeautifulCode.Representation.System
         /// </returns>
         public static ListInitExpression FromRepresentation(this ListInitExpressionRepresentation listInitExpressionRepresentation)
         {
-            new { listInitExpressionRepresentation }.AsArg().Must().NotBeNull();
+            if (listInitExpressionRepresentation == null)
+            {
+                throw new ArgumentNullException(nameof(listInitExpressionRepresentation));
+            }
 
             var result = Expression.ListInit(
                 listInitExpressionRepresentation.NewExpressionRepresentation.FromRepresentation(),

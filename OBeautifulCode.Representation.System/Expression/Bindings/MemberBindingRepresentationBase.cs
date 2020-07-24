@@ -12,7 +12,6 @@ namespace OBeautifulCode.Representation.System
     using global::System.Linq;
     using global::System.Linq.Expressions;
 
-    using OBeautifulCode.Assertion.Recipes;
     using OBeautifulCode.Type;
 
     using static global::System.FormattableString;
@@ -33,8 +32,15 @@ namespace OBeautifulCode.Representation.System
             MemberInfoRepresentation memberInfo,
             MemberBindingType bindingType)
         {
-            new { type }.AsArg().Must().NotBeNull();
-            new { memberInfo }.AsArg().Must().NotBeNull();
+            if (type == null)
+            {
+                throw new ArgumentNullException(nameof(type));
+            }
+
+            if (memberInfo == null)
+            {
+                throw new ArgumentNullException(nameof(memberInfo));
+            }
 
             this.Type = type;
             this.MemberInfo = memberInfo;
@@ -71,7 +77,10 @@ namespace OBeautifulCode.Representation.System
         public static MemberBindingRepresentationBase ToRepresentation(
             this MemberBinding memberBinding)
         {
-            new { memberBinding }.AsArg().Must().NotBeNull();
+            if (memberBinding == null)
+            {
+                throw new ArgumentNullException(nameof(memberBinding));
+            }
 
             if (memberBinding is MemberAssignment memberAssignment)
             {
@@ -101,7 +110,10 @@ namespace OBeautifulCode.Representation.System
         public static MemberBinding FromRepresentation(
             this MemberBindingRepresentationBase memberBindingRepresentation)
         {
-            new { memberBindingRepresentation }.AsArg().Must().NotBeNull();
+            if (memberBindingRepresentation == null)
+            {
+                throw new ArgumentNullException(nameof(memberBindingRepresentation));
+            }
 
             if (memberBindingRepresentation is MemberAssignmentRepresentation memberAssignment)
             {
@@ -131,7 +143,15 @@ namespace OBeautifulCode.Representation.System
         public static IReadOnlyCollection<MemberBindingRepresentationBase> ToRepresentation(
             this IReadOnlyCollection<MemberBinding> memberBindings)
         {
-            new { memberBindings }.AsArg().Must().NotBeNull().And().NotContainAnyNullElements();
+            if (memberBindings == null)
+            {
+                throw new ArgumentNullException(nameof(memberBindings));
+            }
+
+            if (memberBindings.Any(_ => _ == null))
+            {
+                throw new ArgumentException(Invariant($"'{nameof(memberBindings)}' contains an element that is null"));
+            }
 
             var result = memberBindings.Select(_ => _.ToRepresentation()).ToList();
 
@@ -148,7 +168,15 @@ namespace OBeautifulCode.Representation.System
         public static IReadOnlyCollection<MemberBinding> FromRepresentation(
             this IReadOnlyCollection<MemberBindingRepresentationBase> memberBindings)
         {
-            new { memberBindings }.AsArg().Must().NotBeNull().And().NotContainAnyNullElements();
+            if (memberBindings == null)
+            {
+                throw new ArgumentNullException(nameof(memberBindings));
+            }
+
+            if (memberBindings.Any(_ => _ == null))
+            {
+                throw new ArgumentException(Invariant($"'{nameof(memberBindings)}' contains an element that is null"));
+            }
 
             var result = memberBindings.Select(_ => _.FromRepresentation()).ToList();
 

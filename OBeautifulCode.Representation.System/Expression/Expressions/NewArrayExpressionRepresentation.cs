@@ -8,9 +8,9 @@ namespace OBeautifulCode.Representation.System
 {
     using global::System;
     using global::System.Collections.Generic;
+    using global::System.Linq;
     using global::System.Linq.Expressions;
 
-    using OBeautifulCode.Assertion.Recipes;
     using OBeautifulCode.Type;
 
     using static global::System.FormattableString;
@@ -32,7 +32,20 @@ namespace OBeautifulCode.Representation.System
             IReadOnlyList<ExpressionRepresentationBase> expressions)
             : base(type, nodeType)
         {
-            new { expressions }.AsArg().Must().NotBeNullNorEmptyEnumerableNorContainAnyNulls();
+            if (expressions == null)
+            {
+                throw new ArgumentNullException(nameof(expressions));
+            }
+
+            if (!expressions.Any())
+            {
+                throw new ArgumentException(Invariant($"'{nameof(expressions)}' is an empty enumerable"));
+            }
+
+            if (expressions.Any(_ => _ == null))
+            {
+                throw new ArgumentException(Invariant($"'{nameof(expressions)}' contains an element that is null"));
+            }
 
             this.Expressions = expressions;
         }
@@ -60,7 +73,10 @@ namespace OBeautifulCode.Representation.System
         public static NewArrayExpressionRepresentation ToRepresentation(
             this NewArrayExpression newArrayExpression)
         {
-            new { newArrayExpression }.AsArg().Must().NotBeNull();
+            if (newArrayExpression == null)
+            {
+                throw new ArgumentNullException(nameof(newArrayExpression));
+            }
 
             var type = newArrayExpression.Type.ToRepresentation();
 
@@ -82,7 +98,10 @@ namespace OBeautifulCode.Representation.System
         /// </returns>
         public static NewArrayExpression FromRepresentation(this NewArrayExpressionRepresentation newArrayExpressionRepresentation)
         {
-            new { newArrayExpressionRepresentation }.AsArg().Must().NotBeNull();
+            if (newArrayExpressionRepresentation == null)
+            {
+                throw new ArgumentNullException(nameof(newArrayExpressionRepresentation));
+            }
 
             NewArrayExpression result;
 

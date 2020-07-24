@@ -6,10 +6,10 @@
 
 namespace OBeautifulCode.Representation.System
 {
+    using global::System;
     using global::System.Linq;
     using global::System.Linq.Expressions;
 
-    using OBeautifulCode.Assertion.Recipes;
     using OBeautifulCode.Type;
 
     /// <summary>
@@ -29,8 +29,15 @@ namespace OBeautifulCode.Representation.System
             MemberInfoRepresentation memberInfo)
             : base(type, ExpressionType.MemberAccess)
         {
-            new { expression }.AsArg().Must().NotBeNull();
-            new { memberInfo }.AsArg().Must().NotBeNull();
+            if (expression == null)
+            {
+                throw new ArgumentNullException(nameof(expression));
+            }
+
+            if (memberInfo == null)
+            {
+                throw new ArgumentNullException(nameof(memberInfo));
+            }
 
             this.Expression = expression;
             this.MemberInfo = memberInfo;
@@ -65,7 +72,10 @@ namespace OBeautifulCode.Representation.System
         public static MemberExpressionRepresentation ToRepresentation(
             this MemberExpression memberExpression)
         {
-            new { memberExpression }.AsArg().Must().NotBeNull();
+            if (memberExpression == null)
+            {
+                throw new ArgumentNullException(nameof(memberExpression));
+            }
 
             var type = memberExpression.Type.ToRepresentation();
 
@@ -88,7 +98,10 @@ namespace OBeautifulCode.Representation.System
         public static MemberExpression FromRepresentation(
             this MemberExpressionRepresentation memberExpressionRepresentation)
         {
-            new { memberExpressionRepresentation }.AsArg().Must().NotBeNull();
+            if (memberExpressionRepresentation == null)
+            {
+                throw new ArgumentNullException(nameof(memberExpressionRepresentation));
+            }
 
             var expression = memberExpressionRepresentation.Expression.FromRepresentation();
 

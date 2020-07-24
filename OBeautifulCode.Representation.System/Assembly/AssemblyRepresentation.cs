@@ -11,7 +11,6 @@ namespace OBeautifulCode.Representation.System
     using global::System.Linq;
     using global::System.Reflection;
 
-    using OBeautifulCode.Assertion.Recipes;
     using OBeautifulCode.Reflection.Recipes;
     using OBeautifulCode.Type;
 
@@ -35,10 +34,45 @@ namespace OBeautifulCode.Representation.System
             string filePath,
             string frameworkVersion)
         {
-            new { name }.AsArg().Must().NotBeNullNorWhiteSpace();
-            new { version }.AsArg().Must().NotBeNullNorWhiteSpace();
-            new { filePath }.AsArg().Must().NotBeNullNorWhiteSpace();
-            new { frameworkVersion }.AsArg().Must().NotBeNullNorWhiteSpace();
+            if (name == null)
+            {
+                throw new ArgumentNullException(nameof(name));
+            }
+
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                throw new ArgumentException(Invariant($"'{nameof(name)}' is white space"));
+            }
+
+            if (version == null)
+            {
+                throw new ArgumentNullException(nameof(version));
+            }
+
+            if (string.IsNullOrWhiteSpace(version))
+            {
+                throw new ArgumentException(Invariant($"'{nameof(version)}' is white space"));
+            }
+
+            if (filePath == null)
+            {
+                throw new ArgumentNullException(nameof(filePath));
+            }
+
+            if (string.IsNullOrWhiteSpace(filePath))
+            {
+                throw new ArgumentException(Invariant($"'{nameof(filePath)}' is white space"));
+            }
+
+            if (frameworkVersion == null)
+            {
+                throw new ArgumentNullException(nameof(frameworkVersion));
+            }
+
+            if (string.IsNullOrWhiteSpace(frameworkVersion))
+            {
+                throw new ArgumentException(Invariant($"'{nameof(frameworkVersion)}' is white space"));
+            }
 
             this.Name             = name;
             this.Version          = version;
@@ -84,7 +118,10 @@ namespace OBeautifulCode.Representation.System
         public static AssemblyRepresentation ToRepresentation(
             this Assembly assembly)
         {
-            new { assembly }.AsArg().Must().NotBeNull();
+            if (assembly == null)
+            {
+                throw new ArgumentNullException(nameof(assembly));
+            }
 
             var codeBasesToIgnore = new List<string>(new[] { "Microsoft.GeneratedCode", "Anonymously Hosted DynamicMethods Assembly" });
 
@@ -113,7 +150,10 @@ namespace OBeautifulCode.Representation.System
         public static Assembly FromRepresentation(
             this AssemblyRepresentation assemblyRepresentation)
         {
-            new { assemblyRepresentation }.AsArg().Must().NotBeNull();
+            if (assemblyRepresentation == null)
+            {
+                throw new ArgumentNullException(nameof(assemblyRepresentation));
+            }
 
             var allAssemblies = AppDomain.CurrentDomain.GetAssemblies();
 

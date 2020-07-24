@@ -8,10 +8,12 @@ namespace OBeautifulCode.Representation.System
 {
     using global::System;
     using global::System.Collections.Generic;
+    using global::System.Linq;
     using global::System.Linq.Expressions;
 
-    using OBeautifulCode.Assertion.Recipes;
     using OBeautifulCode.Type;
+
+    using static global::System.FormattableString;
 
     /// <summary>
     /// Representation of <see cref="InvocationExpression" />.
@@ -30,8 +32,25 @@ namespace OBeautifulCode.Representation.System
             IReadOnlyList<ExpressionRepresentationBase> arguments)
             : base(type, ExpressionType.Invoke)
         {
-            new { expressionRepresentation }.AsArg().Must().NotBeNull();
-            new { arguments }.AsArg().Must().NotBeNullNorEmptyEnumerableNorContainAnyNulls();
+            if (expressionRepresentation == null)
+            {
+                throw new ArgumentNullException(nameof(expressionRepresentation));
+            }
+
+            if (arguments == null)
+            {
+                throw new ArgumentNullException(nameof(arguments));
+            }
+
+            if (!arguments.Any())
+            {
+                throw new ArgumentException(Invariant($"'{nameof(arguments)}' is an empty enumerable"));
+            }
+
+            if (arguments.Any(_ => _ == null))
+            {
+                throw new ArgumentException(Invariant($"'{nameof(arguments)}' contains an element that is null"));
+            }
 
             this.ExpressionRepresentation = expressionRepresentation;
             this.Arguments = arguments;
@@ -65,7 +84,10 @@ namespace OBeautifulCode.Representation.System
         public static InvocationExpressionRepresentation ToRepresentation(
             this InvocationExpression invocationExpression)
         {
-            new { invocationExpression }.AsArg().Must().NotBeNull();
+            if (invocationExpression == null)
+            {
+                throw new ArgumentNullException(nameof(invocationExpression));
+            }
 
             var type = invocationExpression.Type.ToRepresentation();
 
@@ -88,7 +110,10 @@ namespace OBeautifulCode.Representation.System
         public static InvocationExpression FromRepresentation(
             this InvocationExpressionRepresentation invocationExpressionRepresentation)
         {
-            new { invocationExpressionRepresentation }.AsArg().Must().NotBeNull();
+            if (invocationExpressionRepresentation == null)
+            {
+                throw new ArgumentNullException(nameof(invocationExpressionRepresentation));
+            }
 
             var expression = invocationExpressionRepresentation.ExpressionRepresentation.FromRepresentation();
 

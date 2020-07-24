@@ -6,13 +6,15 @@
 
 namespace OBeautifulCode.Representation.System
 {
+    using global::System;
     using global::System.Collections.Generic;
     using global::System.Diagnostics.CodeAnalysis;
     using global::System.Linq;
     using global::System.Linq.Expressions;
 
-    using OBeautifulCode.Assertion.Recipes;
     using OBeautifulCode.Type;
+
+    using static global::System.FormattableString;
 
     /// <summary>
     /// Representation of <see cref="ElementInit" />.
@@ -30,9 +32,30 @@ namespace OBeautifulCode.Representation.System
             MethodInfoRepresentation addMethod,
             IReadOnlyList<ExpressionRepresentationBase> arguments)
         {
-            new { type }.AsArg().Must().NotBeNull();
-            new { addMethod }.AsArg().Must().NotBeNull();
-            new { arguments }.AsArg().Must().NotBeNullNorEmptyEnumerableNorContainAnyNulls();
+            if (type == null)
+            {
+                throw new ArgumentNullException(nameof(type));
+            }
+
+            if (addMethod == null)
+            {
+                throw new ArgumentNullException(nameof(addMethod));
+            }
+
+            if (arguments == null)
+            {
+                throw new ArgumentNullException(nameof(arguments));
+            }
+
+            if (!arguments.Any())
+            {
+                throw new ArgumentException(Invariant($"'{nameof(arguments)}' is an empty enumerable"));
+            }
+
+            if (arguments.Any(_ => _ == null))
+            {
+                throw new ArgumentException(Invariant($"'{nameof(arguments)}' contains an element that is null"));
+            }
 
             this.Type = type;
             this.AddMethod = addMethod;
@@ -73,7 +96,10 @@ namespace OBeautifulCode.Representation.System
         public static ElementInitRepresentation ToRepresentation(
             this ElementInit elementInit)
         {
-            new { elementInit }.AsArg().Must().NotBeNull();
+            if (elementInit == null)
+            {
+                throw new ArgumentNullException(nameof(elementInit));
+            }
 
             var type = elementInit.AddMethod.DeclaringType.ToRepresentation();
 
@@ -96,7 +122,10 @@ namespace OBeautifulCode.Representation.System
         public static ElementInit FromRepresentation(
             this ElementInitRepresentation elementInitRepresentation)
         {
-            new { elementInitRepresentation }.AsArg().Must().NotBeNull();
+            if (elementInitRepresentation == null)
+            {
+                throw new ArgumentNullException(nameof(elementInitRepresentation));
+            }
 
             var type = elementInitRepresentation.Type.ResolveFromLoadedTypes();
 
@@ -119,7 +148,15 @@ namespace OBeautifulCode.Representation.System
         public static IReadOnlyList<ElementInitRepresentation> ToRepresentation(
             this IReadOnlyList<ElementInit> elementInitList)
         {
-            new { elementInitList }.AsArg().Must().NotBeNull().And().NotContainAnyNullElements();
+            if (elementInitList == null)
+            {
+                throw new ArgumentNullException(nameof(elementInitList));
+            }
+
+            if (elementInitList.Any(_ => _ == null))
+            {
+                throw new ArgumentException(Invariant($"'{nameof(elementInitList)}' contains an element that is null"));
+            }
 
             var result = elementInitList.Select(_ => _.ToRepresentation()).ToList();
 
@@ -136,7 +173,15 @@ namespace OBeautifulCode.Representation.System
         public static IReadOnlyList<ElementInit> FromRepresentation(
             this IReadOnlyList<ElementInitRepresentation> elementInitRepresentationList)
         {
-            new { elementInitRepresentationList }.AsArg().Must().NotBeNull().And().NotContainAnyNullElements();
+            if (elementInitRepresentationList == null)
+            {
+                throw new ArgumentNullException(nameof(elementInitRepresentationList));
+            }
+
+            if (elementInitRepresentationList.Any(_ => _ == null))
+            {
+                throw new ArgumentException(Invariant($"'{nameof(elementInitRepresentationList)}' contains an element that is null"));
+            }
 
             var result = elementInitRepresentationList.Select(_ => _.FromRepresentation()).ToList();
 

@@ -11,8 +11,9 @@ namespace OBeautifulCode.Representation.System
     using global::System.Linq;
     using global::System.Linq.Expressions;
 
-    using OBeautifulCode.Assertion.Recipes;
     using OBeautifulCode.Type;
+
+    using static global::System.FormattableString;
 
     /// <summary>
     /// Representation of <see cref="ParameterExpression" />.
@@ -29,7 +30,15 @@ namespace OBeautifulCode.Representation.System
             string name)
             : base(type, ExpressionType.Parameter)
         {
-            new { name }.AsArg().Must().NotBeNullNorWhiteSpace();
+            if (name == null)
+            {
+                throw new ArgumentNullException(nameof(name));
+            }
+
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                throw new ArgumentException(Invariant($"'{nameof(name)}' is white space"));
+            }
 
             this.Name = name;
         }
@@ -80,7 +89,10 @@ namespace OBeautifulCode.Representation.System
         public static ParameterExpression FromRepresentation(
             this ParameterExpressionRepresentation parameterExpressionRepresentation)
         {
-            new { parameterExpressionRepresentation }.AsArg().Must().NotBeNull();
+            if (parameterExpressionRepresentation == null)
+            {
+                throw new ArgumentNullException(nameof(parameterExpressionRepresentation));
+            }
 
             var type = parameterExpressionRepresentation.Type.ResolveFromLoadedTypes();
 
@@ -100,7 +112,15 @@ namespace OBeautifulCode.Representation.System
         public static IReadOnlyList<ParameterExpressionRepresentation> ToRepresentation(
             this IReadOnlyList<ParameterExpression> expressions)
         {
-            new { expressions }.AsArg().Must().NotBeNull().And().NotContainAnyNullElements();
+            if (expressions == null)
+            {
+                throw new ArgumentNullException(nameof(expressions));
+            }
+
+            if (expressions.Any(_ => _ == null))
+            {
+                throw new ArgumentException(Invariant($"'{nameof(expressions)}' contains an element that is null"));
+            }
 
             var result = expressions.Select(_ => _.ToRepresentation()).ToList();
 
@@ -117,7 +137,15 @@ namespace OBeautifulCode.Representation.System
         public static IReadOnlyList<ParameterExpression> FromRepresentation(
             this IReadOnlyList<ParameterExpressionRepresentation> expressions)
         {
-            new { expressions }.AsArg().Must().NotBeNull().And().NotContainAnyNullElements();
+            if (expressions == null)
+            {
+                throw new ArgumentNullException(nameof(expressions));
+            }
+
+            if (expressions.Any(_ => _ == null))
+            {
+                throw new ArgumentException(Invariant($"'{nameof(expressions)}' contains an element that is null"));
+            }
 
             var result = expressions.Select(_ => _.FromRepresentation()).ToList();
 

@@ -6,12 +6,12 @@
 
 namespace OBeautifulCode.Representation.System
 {
+    using global::System;
     using global::System.Collections.Generic;
     using global::System.Diagnostics.CodeAnalysis;
     using global::System.Linq;
     using global::System.Reflection;
 
-    using OBeautifulCode.Assertion.Recipes;
     using OBeautifulCode.Type;
 
     using static global::System.FormattableString;
@@ -42,13 +42,50 @@ namespace OBeautifulCode.Representation.System
             string assemblyVersion,
             IReadOnlyList<TypeRepresentation> genericArguments)
         {
-            new { @namespace }.AsArg().Must().NotBeNullNorWhiteSpace();
-            new { name }.AsArg().Must().NotBeNullNorWhiteSpace();
-            new { assemblyName }.AsArg().Must().NotBeNullNorWhiteSpace();
-            new { assemblyVersion }.AsArg().Must().BeNullOrNotWhiteSpace();
+            if (@namespace == null)
+            {
+                throw new ArgumentNullException(nameof(@namespace));
+            }
+
+            if (string.IsNullOrWhiteSpace(@namespace))
+            {
+                throw new ArgumentException(Invariant($"'{nameof(@namespace)}' is white space"));
+            }
+
+            if (name == null)
+            {
+                throw new ArgumentNullException(nameof(name));
+            }
+
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                throw new ArgumentException(Invariant($"'{nameof(name)}' is white space"));
+            }
+
+            if (assemblyName == null)
+            {
+                throw new ArgumentNullException(nameof(assemblyName));
+            }
+
+            if (string.IsNullOrWhiteSpace(assemblyName))
+            {
+                throw new ArgumentException(Invariant($"'{nameof(assemblyName)}' is white space"));
+            }
+
+            if (assemblyVersion != null)
+            {
+                if (string.IsNullOrWhiteSpace(assemblyName))
+                {
+                    throw new ArgumentException(Invariant($"'{nameof(assemblyVersion)}' is not null, but white space"));
+                }
+            }
+
             if (genericArguments != null)
             {
-                new { genericArguments }.AsArg().Must().NotContainAnyNullElements();
+                if (genericArguments.Any(_ => _ == null))
+                {
+                    throw new ArgumentException(Invariant($"'{nameof(genericArguments)}' contains an element that is null"));
+                }
             }
 
             this.Namespace = @namespace;

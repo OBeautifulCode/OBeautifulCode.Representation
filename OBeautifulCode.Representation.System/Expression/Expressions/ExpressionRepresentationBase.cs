@@ -12,7 +12,6 @@ namespace OBeautifulCode.Representation.System
     using global::System.Linq;
     using global::System.Linq.Expressions;
 
-    using OBeautifulCode.Assertion.Recipes;
     using OBeautifulCode.Type;
 
     using static global::System.FormattableString;
@@ -31,7 +30,10 @@ namespace OBeautifulCode.Representation.System
             TypeRepresentation type,
             ExpressionType nodeType)
         {
-            new { type }.AsArg().Must().NotBeNull();
+            if (type == null)
+            {
+                throw new ArgumentNullException(nameof(type));
+            }
 
             this.Type = type;
             this.NodeType = nodeType;
@@ -67,7 +69,10 @@ namespace OBeautifulCode.Representation.System
         public static ExpressionRepresentationBase ToRepresentation(
             this Expression expression)
         {
-            new { expression }.AsArg().Must().NotBeNull();
+            if (expression == null)
+            {
+                throw new ArgumentNullException(nameof(expression));
+            }
 
             if (expression is BinaryExpression binaryExpression)
             {
@@ -142,7 +147,10 @@ namespace OBeautifulCode.Representation.System
         public static Expression FromRepresentation(
             this ExpressionRepresentationBase expressionRepresentation)
         {
-            new { expressionRepresentation }.AsArg().Must().NotBeNull();
+            if (expressionRepresentation == null)
+            {
+                throw new ArgumentNullException(nameof(expressionRepresentation));
+            }
 
             if (expressionRepresentation is BinaryExpressionRepresentation binaryExpression)
             {
@@ -221,7 +229,15 @@ namespace OBeautifulCode.Representation.System
         public static IReadOnlyList<ExpressionRepresentationBase> ToRepresentation(
             this IReadOnlyList<Expression> expressions)
         {
-            new { expressions }.AsArg().Must().NotBeNull().And().NotContainAnyNullElements();
+            if (expressions == null)
+            {
+                throw new ArgumentNullException(nameof(expressions));
+            }
+
+            if (expressions.Any(_ => _ == null))
+            {
+                throw new ArgumentException(Invariant($"'{nameof(expressions)}' contains an element that is null"));
+            }
 
             var result = expressions.Select(_ => _.ToRepresentation()).ToList();
 
@@ -234,7 +250,15 @@ namespace OBeautifulCode.Representation.System
         public static IReadOnlyList<Expression> FromRepresentation(
             this IReadOnlyList<ExpressionRepresentationBase> expressions)
         {
-            new { expressions }.AsArg().Must().NotBeNull().And().NotContainAnyNullElements();
+            if (expressions == null)
+            {
+                throw new ArgumentNullException(nameof(expressions));
+            }
+
+            if (expressions.Any(_ => _ == null))
+            {
+                throw new ArgumentException(Invariant($"'{nameof(expressions)}' contains an element that is null"));
+            }
 
             var result = expressions.Select(_ => _.FromRepresentation()).ToList();
 

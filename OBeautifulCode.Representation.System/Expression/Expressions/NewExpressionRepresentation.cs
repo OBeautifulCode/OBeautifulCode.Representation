@@ -6,12 +6,14 @@
 
 namespace OBeautifulCode.Representation.System
 {
+    using global::System;
     using global::System.Collections.Generic;
     using global::System.Linq;
     using global::System.Linq.Expressions;
 
-    using OBeautifulCode.Assertion.Recipes;
     using OBeautifulCode.Type;
+
+    using static global::System.FormattableString;
 
     /// <summary>
     /// Representation of <see cref="NewExpression" />.
@@ -30,8 +32,25 @@ namespace OBeautifulCode.Representation.System
             IReadOnlyList<ExpressionRepresentationBase> arguments)
             : base(type, ExpressionType.New)
         {
-            new { constructorInfo }.AsArg().Must().NotBeNull();
-            new { arguments }.AsArg().Must().NotBeNullNorEmptyEnumerableNorContainAnyNulls();
+            if (constructorInfo == null)
+            {
+                throw new ArgumentNullException(nameof(constructorInfo));
+            }
+
+            if (arguments == null)
+            {
+                throw new ArgumentNullException(nameof(arguments));
+            }
+
+            if (!arguments.Any())
+            {
+                throw new ArgumentException(Invariant($"'{nameof(arguments)}' is an empty enumerable"));
+            }
+
+            if (arguments.Any(_ => _ == null))
+            {
+                throw new ArgumentException(Invariant($"'{nameof(arguments)}' contains an element that is null"));
+            }
 
             this.ConstructorInfo = constructorInfo;
             this.Arguments = arguments;
@@ -65,7 +84,10 @@ namespace OBeautifulCode.Representation.System
         public static NewExpressionRepresentation ToRepresentation(
             this NewExpression newExpression)
         {
-            new { newExpression }.AsArg().Must().NotBeNull();
+            if (newExpression == null)
+            {
+                throw new ArgumentNullException(nameof(newExpression));
+            }
 
             var type = newExpression.Type.ToRepresentation();
 
@@ -87,7 +109,10 @@ namespace OBeautifulCode.Representation.System
         /// </returns>
         public static NewExpression FromRepresentation(this NewExpressionRepresentation newExpressionRepresentation)
         {
-            new { newExpressionRepresentation }.AsArg().Must().NotBeNull();
+            if (newExpressionRepresentation == null)
+            {
+                throw new ArgumentNullException(nameof(newExpressionRepresentation));
+            }
 
             var type = newExpressionRepresentation.Type.ResolveFromLoadedTypes();
 

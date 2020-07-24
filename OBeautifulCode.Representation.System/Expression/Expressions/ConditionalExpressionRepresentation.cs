@@ -6,9 +6,9 @@
 
 namespace OBeautifulCode.Representation.System
 {
+    using global::System;
     using global::System.Linq.Expressions;
 
-    using OBeautifulCode.Assertion.Recipes;
     using OBeautifulCode.Type;
 
     /// <summary>
@@ -33,9 +33,20 @@ namespace OBeautifulCode.Representation.System
             ExpressionRepresentationBase ifFalse)
         : base(type, nodeType)
         {
-            new { test }.AsArg().Must().NotBeNull();
-            new { ifTrue }.AsArg().Must().NotBeNull();
-            new { ifFalse }.AsArg().Must().NotBeNull();
+            if (test == null)
+            {
+                throw new ArgumentNullException(nameof(test));
+            }
+
+            if (ifTrue == null)
+            {
+                throw new ArgumentNullException(nameof(ifTrue));
+            }
+
+            if (ifFalse == null)
+            {
+                throw new ArgumentNullException(nameof(ifFalse));
+            }
 
             this.Test = test;
             this.IfTrue = ifTrue;
@@ -73,7 +84,10 @@ namespace OBeautifulCode.Representation.System
         public static ConditionalExpressionRepresentation ToRepresentation(
             this ConditionalExpression conditionalExpression)
         {
-            new { conditionalExpression }.AsArg().Must().NotBeNull();
+            if (conditionalExpression == null)
+            {
+                throw new ArgumentNullException(nameof(conditionalExpression));
+            }
 
             var type = conditionalExpression.Type.ToRepresentation();
 
@@ -100,7 +114,10 @@ namespace OBeautifulCode.Representation.System
         public static ConditionalExpression FromRepresentation(
             this ConditionalExpressionRepresentation conditionalExpressionRepresentation)
         {
-            new { conditionalExpressionRepresentation }.AsArg().Must().NotBeNull();
+            if (conditionalExpressionRepresentation == null)
+            {
+                throw new ArgumentNullException(nameof(conditionalExpressionRepresentation));
+            }
 
             var result = Expression.Condition(
                 conditionalExpressionRepresentation.Test.FromRepresentation(),

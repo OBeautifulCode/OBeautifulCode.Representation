@@ -6,9 +6,9 @@
 
 namespace OBeautifulCode.Representation.System
 {
+    using global::System;
     using global::System.Linq.Expressions;
 
-    using OBeautifulCode.Assertion.Recipes;
     using OBeautifulCode.Type;
 
     /// <summary>
@@ -28,7 +28,10 @@ namespace OBeautifulCode.Representation.System
             ExpressionRepresentationBase operand)
             : base(type, nodeType)
         {
-            new { operand }.AsArg().Must().NotBeNull();
+            if (operand == null)
+            {
+                throw new ArgumentNullException(nameof(operand));
+            }
 
             this.Operand = operand;
         }
@@ -55,7 +58,10 @@ namespace OBeautifulCode.Representation.System
         public static UnaryExpressionRepresentation ToRepresentation(
             this UnaryExpression unaryExpression)
         {
-            new { unaryExpression }.AsArg().Must().NotBeNull();
+            if (unaryExpression == null)
+            {
+                throw new ArgumentNullException(nameof(unaryExpression));
+            }
 
             var type = unaryExpression.Type.ToRepresentation();
 
@@ -78,7 +84,10 @@ namespace OBeautifulCode.Representation.System
         public static Expression FromRepresentation(
             this UnaryExpressionRepresentation unaryExpressionRepresentation)
         {
-            new { unaryExpressionRepresentation }.AsArg().Must().NotBeNull();
+            if (unaryExpressionRepresentation == null)
+            {
+                throw new ArgumentNullException(nameof(unaryExpressionRepresentation));
+            }
 
             var nodeType = unaryExpressionRepresentation.NodeType;
 

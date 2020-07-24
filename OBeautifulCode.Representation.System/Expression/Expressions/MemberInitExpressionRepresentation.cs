@@ -6,11 +6,14 @@
 
 namespace OBeautifulCode.Representation.System
 {
+    using global::System;
     using global::System.Collections.Generic;
+    using global::System.Linq;
     using global::System.Linq.Expressions;
 
-    using OBeautifulCode.Assertion.Recipes;
     using OBeautifulCode.Type;
+
+    using static global::System.FormattableString;
 
     /// <summary>
     /// Representation of <see cref="MemberInitExpression" />.
@@ -29,8 +32,25 @@ namespace OBeautifulCode.Representation.System
             IReadOnlyCollection<MemberBindingRepresentationBase> bindings)
             : base(type, ExpressionType.MemberInit)
         {
-            new { newExpressionRepresentation }.AsArg().Must().NotBeNull();
-            new { bindings }.AsArg().Must().NotBeNullNorEmptyEnumerableNorContainAnyNulls();
+            if (newExpressionRepresentation == null)
+            {
+                throw new ArgumentNullException(nameof(newExpressionRepresentation));
+            }
+
+            if (bindings == null)
+            {
+                throw new ArgumentNullException(nameof(bindings));
+            }
+
+            if (!bindings.Any())
+            {
+                throw new ArgumentException(Invariant($"'{nameof(bindings)}' is an empty enumerable"));
+            }
+
+            if (bindings.Any(_ => _ == null))
+            {
+                throw new ArgumentException(Invariant($"'{nameof(bindings)}' contains an element that is null"));
+            }
 
             this.NewExpressionRepresentation = newExpressionRepresentation;
             this.Bindings = bindings;
@@ -64,7 +84,10 @@ namespace OBeautifulCode.Representation.System
         public static MemberInitExpressionRepresentation ToRepresentation(
             this MemberInitExpression memberInitExpression)
         {
-            new { memberInitExpression }.AsArg().Must().NotBeNull();
+            if (memberInitExpression == null)
+            {
+                throw new ArgumentNullException(nameof(memberInitExpression));
+            }
 
             var type = memberInitExpression.Type.ToRepresentation();
 
@@ -87,7 +110,10 @@ namespace OBeautifulCode.Representation.System
         public static MemberInitExpression FromRepresentation(
             this MemberInitExpressionRepresentation memberInitExpressionRepresentation)
         {
-            new { memberInitExpressionRepresentation }.AsArg().Must().NotBeNull();
+            if (memberInitExpressionRepresentation == null)
+            {
+                throw new ArgumentNullException(nameof(memberInitExpressionRepresentation));
+            }
 
             var newExpression = memberInitExpressionRepresentation.NewExpressionRepresentation.FromRepresentation();
 

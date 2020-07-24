@@ -6,12 +6,14 @@
 
 namespace OBeautifulCode.Representation.System
 {
+    using global::System;
     using global::System.Collections.Generic;
     using global::System.Linq;
     using global::System.Linq.Expressions;
 
-    using OBeautifulCode.Assertion.Recipes;
     using OBeautifulCode.Type;
+
+    using static global::System.FormattableString;
 
     /// <summary>
     /// Representation of <see cref="MemberListBinding" />.
@@ -30,7 +32,20 @@ namespace OBeautifulCode.Representation.System
             IReadOnlyList<ElementInitRepresentation> initializers)
             : base(type, memberInfo, MemberBindingType.ListBinding)
         {
-            new { initializers }.AsArg().Must().NotBeNullNorEmptyEnumerableNorContainAnyNulls();
+            if (initializers == null)
+            {
+                throw new ArgumentNullException(nameof(initializers));
+            }
+
+            if (!initializers.Any())
+            {
+                throw new ArgumentException(Invariant($"'{nameof(initializers)}' is an empty enumerable"));
+            }
+
+            if (initializers.Any(_ => _ == null))
+            {
+                throw new ArgumentException(Invariant($"'{nameof(initializers)}' contains an element that is null"));
+            }
 
             this.Initializers = initializers;
         }
@@ -58,7 +73,10 @@ namespace OBeautifulCode.Representation.System
         public static MemberListBindingRepresentation ToRepresentation(
             this MemberListBinding memberListBinding)
         {
-            new { memberListBinding }.AsArg().Must().NotBeNull();
+            if (memberListBinding == null)
+            {
+                throw new ArgumentNullException(nameof(memberListBinding));
+            }
 
             var type = memberListBinding.Member.DeclaringType.ToRepresentation();
 
@@ -81,7 +99,10 @@ namespace OBeautifulCode.Representation.System
         public static MemberListBinding FromRepresentation(
             this MemberListBindingRepresentation memberListBindingRepresentation)
         {
-            new { memberListBindingRepresentation }.AsArg().Must().NotBeNull();
+            if (memberListBindingRepresentation == null)
+            {
+                throw new ArgumentNullException(nameof(memberListBindingRepresentation));
+            }
 
             var type = memberListBindingRepresentation.Type.ResolveFromLoadedTypes();
 

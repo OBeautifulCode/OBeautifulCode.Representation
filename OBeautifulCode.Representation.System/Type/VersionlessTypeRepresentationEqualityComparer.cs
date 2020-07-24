@@ -8,7 +8,6 @@ namespace OBeautifulCode.Representation.System
 {
     using global::System.Collections.Generic;
 
-    using OBeautifulCode.Assertion.Recipes;
     using OBeautifulCode.Equality.Recipes;
 
     /// <summary>

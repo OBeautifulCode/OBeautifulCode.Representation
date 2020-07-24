@@ -9,7 +9,6 @@ namespace OBeautifulCode.Representation.System
     using global::System;
     using global::System.Linq.Expressions;
 
-    using OBeautifulCode.Assertion.Recipes;
     using OBeautifulCode.Equality.Recipes;
     using OBeautifulCode.Reflection.Recipes;
     using OBeautifulCode.Type;
@@ -215,7 +214,10 @@ namespace OBeautifulCode.Representation.System
         public static ExpressionRepresentationBase ToRepresentation(
             this ConstantExpression constantExpression)
         {
-            new { constantExpression }.AsArg().Must().NotBeNull();
+            if (constantExpression == null)
+            {
+                throw new ArgumentNullException(nameof(constantExpression));
+            }
 
             var type = constantExpression.Type.ToRepresentation();
 
@@ -240,7 +242,10 @@ namespace OBeautifulCode.Representation.System
             this ConstantExpressionRepresentation<T> constantExpressionRepresentation)
             where T : ICloneable, IEquatable<T>
         {
-            new { constantExpressionRepresentation }.AsArg().Must().NotBeNull();
+            if (constantExpressionRepresentation == null)
+            {
+                throw new ArgumentNullException(nameof(constantExpressionRepresentation));
+            }
 
             var result = Expression.Constant(constantExpressionRepresentation.Value);
 

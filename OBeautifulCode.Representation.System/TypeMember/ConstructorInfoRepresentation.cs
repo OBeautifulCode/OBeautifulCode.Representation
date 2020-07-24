@@ -11,7 +11,6 @@ namespace OBeautifulCode.Representation.System
     using global::System.Linq;
     using global::System.Reflection;
 
-    using OBeautifulCode.Assertion.Recipes;
     using OBeautifulCode.Type;
 
     using static global::System.FormattableString;
@@ -30,8 +29,20 @@ namespace OBeautifulCode.Representation.System
             TypeRepresentation type,
             string constructorHash)
         {
-            new { type }.AsArg().Must().NotBeNull();
-            new { constructorHash }.AsArg().Must().NotBeNullNorWhiteSpace();
+            if (type == null)
+            {
+                throw new ArgumentNullException(nameof(type));
+            }
+
+            if (constructorHash == null)
+            {
+                throw new ArgumentNullException(nameof(constructorHash));
+            }
+
+            if (string.IsNullOrWhiteSpace(constructorHash))
+            {
+                throw new ArgumentException(Invariant($"'{nameof(constructorHash)}' is white space"));
+            }
 
             this.Type = type;
             this.ConstructorHash = constructorHash;
@@ -66,7 +77,10 @@ namespace OBeautifulCode.Representation.System
         public static string GetSignatureHash(
             this ConstructorInfo constructorInfo)
         {
-            new { constructorInfo }.AsArg().Must().NotBeNull();
+            if (constructorInfo == null)
+            {
+                throw new ArgumentNullException(nameof(constructorInfo));
+            }
 
             var methodName = constructorInfo.Name;
 
@@ -91,7 +105,10 @@ namespace OBeautifulCode.Representation.System
         public static ConstructorInfoRepresentation ToRepresentation(
             this ConstructorInfo constructorInfo)
         {
-            new { constructorInfo }.AsArg().Must().NotBeNull();
+            if (constructorInfo == null)
+            {
+                throw new ArgumentNullException(nameof(constructorInfo));
+            }
 
             var type = constructorInfo.DeclaringType.ToRepresentation();
 
@@ -112,7 +129,10 @@ namespace OBeautifulCode.Representation.System
         public static ConstructorInfo FromRepresentation(
             this ConstructorInfoRepresentation constructorInfoRepresentation)
         {
-            new { constructorInfoRepresentation }.AsArg().Must().NotBeNull();
+            if (constructorInfoRepresentation == null)
+            {
+                throw new ArgumentNullException(nameof(constructorInfoRepresentation));
+            }
 
             var type = constructorInfoRepresentation.Type.ResolveFromLoadedTypes();
 

@@ -6,11 +6,14 @@
 
 namespace OBeautifulCode.Representation.System
 {
+    using global::System;
     using global::System.Collections.Generic;
+    using global::System.Linq;
     using global::System.Linq.Expressions;
 
-    using OBeautifulCode.Assertion.Recipes;
     using OBeautifulCode.Type;
+
+    using static global::System.FormattableString;
 
     /// <summary>
     /// Representation of <see cref="MethodCallExpression" />.
@@ -33,9 +36,30 @@ namespace OBeautifulCode.Representation.System
             IReadOnlyList<ExpressionRepresentationBase> arguments)
         : base(type, nodeType)
         {
-            new { parentObject }.AsArg().Must().NotBeNull();
-            new { method }.AsArg().Must().NotBeNull();
-            new { arguments }.AsArg().Must().NotBeNullNorEmptyEnumerableNorContainAnyNulls();
+            if (parentObject == null)
+            {
+                throw new ArgumentNullException(nameof(parentObject));
+            }
+
+            if (method == null)
+            {
+                throw new ArgumentNullException(nameof(method));
+            }
+
+            if (arguments == null)
+            {
+                throw new ArgumentNullException(nameof(arguments));
+            }
+
+            if (!arguments.Any())
+            {
+                throw new ArgumentException(Invariant($"'{nameof(arguments)}' is an empty enumerable"));
+            }
+
+            if (arguments.Any(_ => _ == null))
+            {
+                throw new ArgumentException(Invariant($"'{nameof(arguments)}' contains an element that is null"));
+            }
 
             this.ParentObject = parentObject;
             this.Method = method;
@@ -75,7 +99,10 @@ namespace OBeautifulCode.Representation.System
         public static MethodCallExpressionRepresentation ToRepresentation(
             this MethodCallExpression methodCallExpression)
         {
-            new { methodCallExpression }.AsArg().Must().NotBeNull();
+            if (methodCallExpression == null)
+            {
+                throw new ArgumentNullException(nameof(methodCallExpression));
+            }
 
             var type = methodCallExpression.Type.ToRepresentation();
 
@@ -102,7 +129,10 @@ namespace OBeautifulCode.Representation.System
         public static MethodCallExpression FromRepresentation(
             this MethodCallExpressionRepresentation methodCallExpressionRepresentation)
         {
-            new { methodCallExpressionRepresentation }.AsArg().Must().NotBeNull();
+            if (methodCallExpressionRepresentation == null)
+            {
+                throw new ArgumentNullException(nameof(methodCallExpressionRepresentation));
+            }
 
             var instance = methodCallExpressionRepresentation.ParentObject.FromRepresentation();
 

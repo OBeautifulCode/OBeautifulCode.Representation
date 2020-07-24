@@ -6,10 +6,10 @@
 
 namespace OBeautifulCode.Representation.System
 {
+    using global::System;
     using global::System.Linq;
     using global::System.Linq.Expressions;
 
-    using OBeautifulCode.Assertion.Recipes;
     using OBeautifulCode.Type;
 
     /// <summary>
@@ -29,7 +29,10 @@ namespace OBeautifulCode.Representation.System
             ExpressionRepresentationBase expressionRepresentation)
             : base(type, memberInfo, MemberBindingType.Assignment)
         {
-            new { expressionRepresentation }.AsArg().Must().NotBeNull();
+            if (expressionRepresentation == null)
+            {
+                throw new ArgumentNullException(nameof(expressionRepresentation));
+            }
 
             this.ExpressionRepresentation = expressionRepresentation;
         }
@@ -57,7 +60,10 @@ namespace OBeautifulCode.Representation.System
         public static MemberAssignmentRepresentation ToRepresentation(
             this MemberAssignment memberAssignment)
         {
-            new { memberAssignment }.AsArg().Must().NotBeNull();
+            if (memberAssignment == null)
+            {
+                throw new ArgumentNullException(nameof(memberAssignment));
+            }
 
             var type = memberAssignment.Member.DeclaringType.ToRepresentation();
 
@@ -80,7 +86,10 @@ namespace OBeautifulCode.Representation.System
         public static MemberAssignment FromRepresentation(
             this MemberAssignmentRepresentation memberAssignmentRepresentation)
         {
-            new { memberAssignmentRepresentation }.AsArg().Must().NotBeNull();
+            if (memberAssignmentRepresentation == null)
+            {
+                throw new ArgumentNullException(nameof(memberAssignmentRepresentation));
+            }
 
             var type = memberAssignmentRepresentation.Type.ResolveFromLoadedTypes();
 

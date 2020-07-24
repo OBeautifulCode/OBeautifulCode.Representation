@@ -6,9 +6,9 @@
 
 namespace OBeautifulCode.Representation.System
 {
+    using global::System;
     using global::System.Linq.Expressions;
 
-    using OBeautifulCode.Assertion.Recipes;
     using OBeautifulCode.Type;
 
     /// <summary>
@@ -26,7 +26,10 @@ namespace OBeautifulCode.Representation.System
             ExpressionRepresentationBase expression)
             : base(type, ExpressionType.TypeIs)
         {
-            new { expression }.AsArg().Must().NotBeNull();
+            if (expression == null)
+            {
+                throw new ArgumentNullException(nameof(expression));
+            }
 
             this.Expression = expression;
         }
@@ -54,7 +57,10 @@ namespace OBeautifulCode.Representation.System
         public static TypeBinaryExpressionRepresentation ToRepresentation(
             this TypeBinaryExpression typeBinaryExpression)
         {
-            new { typeBinaryExpression }.AsArg().Must().NotBeNull();
+            if (typeBinaryExpression == null)
+            {
+                throw new ArgumentNullException(nameof(typeBinaryExpression));
+            }
 
             var type = typeBinaryExpression.Type.ToRepresentation();
 
@@ -75,7 +81,10 @@ namespace OBeautifulCode.Representation.System
         public static Expression FromRepresentation(
             this TypeBinaryExpressionRepresentation typeBinaryExpressionRepresentation)
         {
-            new { typeBinaryExpressionRepresentation }.AsArg().Must().NotBeNull();
+            if (typeBinaryExpressionRepresentation == null)
+            {
+                throw new ArgumentNullException(nameof(typeBinaryExpressionRepresentation));
+            }
 
             var type = typeBinaryExpressionRepresentation.Type.ResolveFromLoadedTypes();
 

@@ -12,7 +12,6 @@ namespace OBeautifulCode.Representation.System
     using global::System.Linq;
     using global::System.Reflection;
 
-    using OBeautifulCode.Assertion.Recipes;
     using OBeautifulCode.Type;
 
     using static global::System.FormattableString;
@@ -33,9 +32,35 @@ namespace OBeautifulCode.Representation.System
             string methodHash,
             IReadOnlyList<TypeRepresentation> genericArguments)
         {
-            new { type }.AsArg().Must().NotBeNull();
-            new { methodHash }.AsArg().Must().NotBeNullNorWhiteSpace();
-            new { genericArguments }.AsArg().Must().NotBeNullNorEmptyEnumerableNorContainAnyNulls();
+            if (type == null)
+            {
+                throw new ArgumentNullException(nameof(type));
+            }
+
+            if (methodHash == null)
+            {
+                throw new ArgumentNullException(nameof(methodHash));
+            }
+
+            if (string.IsNullOrWhiteSpace(methodHash))
+            {
+                throw new ArgumentException(Invariant($"'{nameof(methodHash)}' is white space"));
+            }
+
+            if (genericArguments == null)
+            {
+                throw new ArgumentNullException(nameof(genericArguments));
+            }
+
+            if (!genericArguments.Any())
+            {
+                throw new ArgumentException(Invariant($"'{nameof(genericArguments)}' is an empty enumerable"));
+            }
+
+            if (genericArguments.Any(_ => _ == null))
+            {
+                throw new ArgumentException(Invariant($"'{nameof(genericArguments)}' contains an element that is null"));
+            }
 
             this.Type = type;
             this.MethodHash = methodHash;
@@ -76,7 +101,10 @@ namespace OBeautifulCode.Representation.System
         public static string GetSignatureHash(
             this MethodInfo methodInfo)
         {
-            new { methodInfo }.AsArg().Must().NotBeNull();
+            if (methodInfo == null)
+            {
+                throw new ArgumentNullException(nameof(methodInfo));
+            }
 
             var methodName = methodInfo.Name;
 
@@ -101,7 +129,10 @@ namespace OBeautifulCode.Representation.System
         public static MethodInfoRepresentation ToRepresentation(
             this MethodInfo methodInfo)
         {
-            new { methodInfo }.AsArg().Must().NotBeNull();
+            if (methodInfo == null)
+            {
+                throw new ArgumentNullException(nameof(methodInfo));
+            }
 
             var methodHash = methodInfo.GetSignatureHash();
 
@@ -122,7 +153,10 @@ namespace OBeautifulCode.Representation.System
         public static MethodInfo FromRepresentation(
             this MethodInfoRepresentation methodInfoRepresentation)
         {
-            new { methodInfoRepresentation }.AsArg().Must().NotBeNull();
+            if (methodInfoRepresentation == null)
+            {
+                throw new ArgumentNullException(nameof(methodInfoRepresentation));
+            }
 
             var methodHash = methodInfoRepresentation.MethodHash;
 
@@ -163,7 +197,10 @@ namespace OBeautifulCode.Representation.System
         private static IReadOnlyCollection<MethodInfo> GetAllMethodInfos(
             this Type type)
         {
-            new { type }.AsArg().Must().NotBeNull();
+            if (type == null)
+            {
+                throw new ArgumentNullException(nameof(type));
+            }
 
             var result = new List<MethodInfo>();
 
