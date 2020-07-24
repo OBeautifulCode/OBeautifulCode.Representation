@@ -12,7 +12,6 @@ namespace OBeautifulCode.Representation.System.Test
     using global::System.Collections.Generic;
     using global::System.Diagnostics.CodeAnalysis;
     using global::System.Linq;
-    using global::System.Text.RegularExpressions;
 
     using OBeautifulCode.Assertion.Recipes;
     using OBeautifulCode.AutoFakeItEasy;
@@ -281,87 +280,6 @@ namespace OBeautifulCode.Representation.System.Test
 
             // Assert
             actual.AsTest().Must().BeNull();
-        }
-
-        [Fact]
-        public static void BuildAssemblyQualifiedName___Should_build_the_expected_assembly_qualified_name___When_TypeRepresentation_is_versioned()
-        {
-            // Arrange
-            var types = TypeGenerator.GenerateTypesForTesting();
-
-            var expected = types.Select(_ => Regex.Replace(_.AssemblyQualifiedName, ", Culture=.*?, PublicKeyToken=[a-z0-9]*", string.Empty)).ToList();
-
-            // Act
-            var actual = types.Select(_ => _.ToRepresentation().BuildAssemblyQualifiedName()).ToList();
-
-            // Assert
-            actual.AsTest().Must().BeEqualTo(expected);
-        }
-
-        [Fact]
-        public static void BuildAssemblyQualifiedName___Should_build_the_expected_assembly_qualified_name___When_TypeRepresentation_is_unversioned()
-        {
-            // Arrange
-            var types = TypeGenerator.GenerateTypesForTesting();
-
-            var expected = types.Select(_ => Regex.Replace(_.AssemblyQualifiedName, ", Version=.*?, Culture=.*?, PublicKeyToken=[a-z0-9]*", string.Empty)).ToList();
-
-            // Act
-            var actual = types.Select(_ => _.ToRepresentation().RemoveAssemblyVersions().BuildAssemblyQualifiedName()).ToList();
-
-            // Assert
-            actual.AsTest().Must().BeEqualTo(expected);
-        }
-
-        [Fact]
-        public static void BuildAssemblyQualifiedName___Should_build_assembly_qualified___When_TypeRepresentation_contains_a_mix_of_versioned_and_unversioned_types()
-        {
-            // Arrange
-            var intRepresentation = new TypeRepresentation("System", "Int32", "ass1", "1.0.0.0", null);
-
-            var stringRepresentation = new TypeRepresentation("System", "String", "ass2", "2.0.0.0", null);
-
-            var guidRepresentation = new TypeRepresentation("System", "Guid", "ass3", null, null);
-
-            var dictionaryRepresentation = new TypeRepresentation("System", "IReadOnlyDictionary`2", "ass4", "3.0.0.0", new[] { stringRepresentation, guidRepresentation });
-
-            var systemUnderTest = new TypeRepresentation("System", "Dictionary`2", "ass5", null, new[] { dictionaryRepresentation, intRepresentation });
-
-            // Act
-            var actual = systemUnderTest.BuildAssemblyQualifiedName();
-
-            // Assert
-            actual.AsTest().Must().BeEqualTo("System.Dictionary`2[[System.IReadOnlyDictionary`2[[System.String, ass2, Version=2.0.0.0],[System.Guid, ass3]], ass4, Version=3.0.0.0],[System.Int32, ass1, Version=1.0.0.0]], ass5");
-        }
-
-        [Fact]
-        public static void BuildAssemblyName___Should_build_the_expected_assembly_name___When_TypeRepresentation_is_versioned()
-        {
-            // Arrange
-            var types = TypeGenerator.GenerateTypesForTesting();
-
-            var expected = types.Select(_ => _.Assembly.GetName().Name + ", Version=" + _.Assembly.GetName().Version).ToList();
-
-            // Act
-            var actual = types.Select(_ => _.ToRepresentation().BuildAssemblyName().FullName).ToList();
-
-            // Assert
-            actual.AsTest().Must().BeEqualTo(expected);
-        }
-
-        [Fact]
-        public static void BuildAssemblyName___Should_build_the_expected_assembly_name___When_TypeRepresentation_is_unversioned()
-        {
-            // Arrange
-            var types = TypeGenerator.GenerateTypesForTesting();
-
-            var expected = types.Select(_ => _.Assembly.GetName().Name).ToList();
-
-            // Act
-            var actual = types.Select(_ => _.ToRepresentation().RemoveAssemblyVersions().BuildAssemblyName().FullName).ToList();
-
-            // Assert
-            actual.AsTest().Must().BeEqualTo(expected);
         }
     }
 }

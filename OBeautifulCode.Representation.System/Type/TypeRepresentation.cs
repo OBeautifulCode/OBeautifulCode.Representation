@@ -10,7 +10,6 @@ namespace OBeautifulCode.Representation.System
     using global::System.Collections.Generic;
     using global::System.Diagnostics.CodeAnalysis;
     using global::System.Linq;
-    using global::System.Reflection;
 
     using OBeautifulCode.Type;
 
@@ -119,59 +118,6 @@ namespace OBeautifulCode.Representation.System
         /// Gets the generic arguments.
         /// </summary>
         public IReadOnlyList<TypeRepresentation> GenericArguments { get; private set; }
-
-        /// <summary>
-        /// Gets the assembly qualified name.
-        /// </summary>
-        /// <returns>
-        /// The assembly qualified name of the type.
-        /// </returns>
-        public string BuildAssemblyQualifiedName()
-        {
-            var assemblyName = this.BuildAssemblyName();
-
-            var genericArgumentsQualifiedNames = this.GenericArguments?.Select(_ => "[" + _.BuildAssemblyQualifiedName() + "]").ToArray() ?? new string[0];
-
-            var genericToken = genericArgumentsQualifiedNames.Any()
-                ? Invariant($"[{string.Join(",", genericArgumentsQualifiedNames)}]")
-                : string.Empty;
-
-            string result;
-
-            if (this.IsArray() && this.IsClosedGenericType())
-            {
-                var arraySpecifierStartIndex = this.Name.IndexOf('[');
-
-                var nameWithGenericArguments = this.Name.Insert(arraySpecifierStartIndex, genericToken);
-
-                result = Invariant($"{this.Namespace}.{nameWithGenericArguments}, {assemblyName.FullName}");
-            }
-            else
-            {
-                result = Invariant($"{this.Namespace}.{this.Name}{genericToken}, {assemblyName.FullName}");
-            }
-
-            return result;
-        }
-
-        /// <summary>
-        /// Builds the <see cref="AssemblyName"/> of the assembly that contains the type being represented by this object.
-        /// </summary>
-        /// <returns>
-        /// The <see cref="AssemblyName"/> of the assembly that contains the type being represented by this object.
-        /// </returns>
-        public AssemblyName BuildAssemblyName()
-        {
-            var versionToken = (this.AssemblyVersion != null)
-                ? Invariant($", Version={this.AssemblyVersion}")
-                : string.Empty;
-
-            var assemblyName = Invariant($"{this.AssemblyName}{versionToken}");
-
-            var result = new AssemblyName(assemblyName);
-
-            return result;
-        }
 
         /// <inheritdoc cref="IDeclareToStringMethod" />
         public override string ToString()
