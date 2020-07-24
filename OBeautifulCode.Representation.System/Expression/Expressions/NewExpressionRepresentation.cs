@@ -49,7 +49,7 @@ namespace OBeautifulCode.Representation.System
 
             if (arguments.Any(_ => _ == null))
             {
-                throw new ArgumentException(Invariant($"'{nameof(arguments)}' contains an element that is null"));
+                throw new ArgumentException(Invariant($"'{nameof(arguments)}' contains at least one null element"));
             }
 
             this.ConstructorInfo = constructorInfo;

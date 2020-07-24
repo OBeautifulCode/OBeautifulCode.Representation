@@ -150,7 +150,7 @@ namespace OBeautifulCode.Representation.System
 
             if (memberBindings.Any(_ => _ == null))
             {
-                throw new ArgumentException(Invariant($"'{nameof(memberBindings)}' contains an element that is null"));
+                throw new ArgumentException(Invariant($"'{nameof(memberBindings)}' contains at least one null element"));
             }
 
             var result = memberBindings.Select(_ => _.ToRepresentation()).ToList();
@@ -175,7 +175,7 @@ namespace OBeautifulCode.Representation.System
 
             if (memberBindings.Any(_ => _ == null))
             {
-                throw new ArgumentException(Invariant($"'{nameof(memberBindings)}' contains an element that is null"));
+                throw new ArgumentException(Invariant($"'{nameof(memberBindings)}' contains at least one null element"));
             }
 
             var result = memberBindings.Select(_ => _.FromRepresentation()).ToList();

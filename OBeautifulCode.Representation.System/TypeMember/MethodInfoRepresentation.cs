@@ -59,7 +59,7 @@ namespace OBeautifulCode.Representation.System
 
             if (genericArguments.Any(_ => _ == null))
             {
-                throw new ArgumentException(Invariant($"'{nameof(genericArguments)}' contains an element that is null"));
+                throw new ArgumentException(Invariant($"'{nameof(genericArguments)}' contains at least one null element"));
             }
 
             this.Type = type;

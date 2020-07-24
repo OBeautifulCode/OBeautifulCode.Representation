@@ -44,7 +44,7 @@ namespace OBeautifulCode.Representation.System
 
             if (bindings.Any(_ => _ == null))
             {
-                throw new ArgumentException(Invariant($"'{nameof(bindings)}' contains an element that is null"));
+                throw new ArgumentException(Invariant($"'{nameof(bindings)}' contains at least one null element"));
             }
 
             this.Bindings = bindings;

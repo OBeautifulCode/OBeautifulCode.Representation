@@ -74,7 +74,7 @@ namespace OBeautifulCode.Representation.System
 
             if (assemblyVersion != null)
             {
-                if (string.IsNullOrWhiteSpace(assemblyName))
+                if (string.IsNullOrWhiteSpace(assemblyVersion))
                 {
                     throw new ArgumentException(Invariant($"'{nameof(assemblyVersion)}' is not null, but white space"));
                 }
@@ -84,7 +84,7 @@ namespace OBeautifulCode.Representation.System
             {
                 if (genericArguments.Any(_ => _ == null))
                 {
-                    throw new ArgumentException(Invariant($"'{nameof(genericArguments)}' contains an element that is null"));
+                    throw new ArgumentException(Invariant($"'{nameof(genericArguments)}' contains at least one null element"));
                 }
             }
 

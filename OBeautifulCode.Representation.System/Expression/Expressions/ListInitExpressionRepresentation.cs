@@ -50,7 +50,7 @@ namespace OBeautifulCode.Representation.System
 
             if (initializers.Any(_ => _ == null))
             {
-                throw new ArgumentException(Invariant($"'{nameof(initializers)}' contains an element that is null"));
+                throw new ArgumentException(Invariant($"'{nameof(initializers)}' contains at least one null element"));
             }
 
             this.NewExpressionRepresentation = newExpressionRepresentation;

@@ -44,7 +44,7 @@ namespace OBeautifulCode.Representation.System
 
             if (expressions.Any(_ => _ == null))
             {
-                throw new ArgumentException(Invariant($"'{nameof(expressions)}' contains an element that is null"));
+                throw new ArgumentException(Invariant($"'{nameof(expressions)}' contains at least one null element"));
             }
 
             this.Expressions = expressions;

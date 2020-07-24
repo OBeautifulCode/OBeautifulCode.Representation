@@ -216,7 +216,7 @@ namespace OBeautifulCode.Reflection.Recipes
 
             if (assemblies.Any(_ => _ == null))
             {
-                throw new ArgumentException(Invariant($"'{nameof(assemblies)}' contains an element that is null"));
+                throw new ArgumentException(Invariant($"'{nameof(assemblies)}' contains at least one null element"));
             }
 
             try

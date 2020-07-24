@@ -54,7 +54,7 @@ namespace OBeautifulCode.Representation.System
 
             if (arguments.Any(_ => _ == null))
             {
-                throw new ArgumentException(Invariant($"'{nameof(arguments)}' contains an element that is null"));
+                throw new ArgumentException(Invariant($"'{nameof(arguments)}' contains at least one null element"));
             }
 
             this.Type = type;
@@ -155,7 +155,7 @@ namespace OBeautifulCode.Representation.System
 
             if (elementInitList.Any(_ => _ == null))
             {
-                throw new ArgumentException(Invariant($"'{nameof(elementInitList)}' contains an element that is null"));
+                throw new ArgumentException(Invariant($"'{nameof(elementInitList)}' contains at least one null element"));
             }
 
             var result = elementInitList.Select(_ => _.ToRepresentation()).ToList();
@@ -180,7 +180,7 @@ namespace OBeautifulCode.Representation.System
 
             if (elementInitRepresentationList.Any(_ => _ == null))
             {
-                throw new ArgumentException(Invariant($"'{nameof(elementInitRepresentationList)}' contains an element that is null"));
+                throw new ArgumentException(Invariant($"'{nameof(elementInitRepresentationList)}' contains at least one null element"));
             }
 
             var result = elementInitRepresentationList.Select(_ => _.FromRepresentation()).ToList();

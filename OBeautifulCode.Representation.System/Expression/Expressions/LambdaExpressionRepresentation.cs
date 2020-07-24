@@ -49,7 +49,7 @@ namespace OBeautifulCode.Representation.System
 
             if (parameters.Any(_ => _ == null))
             {
-                throw new ArgumentException(Invariant($"'{nameof(parameters)}' contains an element that is null"));
+                throw new ArgumentException(Invariant($"'{nameof(parameters)}' contains at least one null element"));
             }
 
             this.Body = body;

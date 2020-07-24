@@ -119,7 +119,7 @@ namespace OBeautifulCode.Representation.System
 
             if (expressions.Any(_ => _ == null))
             {
-                throw new ArgumentException(Invariant($"'{nameof(expressions)}' contains an element that is null"));
+                throw new ArgumentException(Invariant($"'{nameof(expressions)}' contains at least one null element"));
             }
 
             var result = expressions.Select(_ => _.ToRepresentation()).ToList();
@@ -144,7 +144,7 @@ namespace OBeautifulCode.Representation.System
 
             if (expressions.Any(_ => _ == null))
             {
-                throw new ArgumentException(Invariant($"'{nameof(expressions)}' contains an element that is null"));
+                throw new ArgumentException(Invariant($"'{nameof(expressions)}' contains at least one null element"));
             }
 
             var result = expressions.Select(_ => _.FromRepresentation()).ToList();
