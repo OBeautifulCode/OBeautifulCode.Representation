@@ -182,7 +182,7 @@ namespace OBeautifulCode.Representation.System
             return result;
         }
 
-        private T DeepCloneGeneric(T value)
+        private static T DeepCloneGeneric(T value)
         {
             T result;
 
