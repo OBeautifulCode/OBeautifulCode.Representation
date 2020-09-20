@@ -15,8 +15,8 @@ namespace OBeautifulCode.Representation.System.Test
 
     using OBeautifulCode.Assertion.Recipes;
     using OBeautifulCode.AutoFakeItEasy;
+    using OBeautifulCode.CodeAnalysis.Recipes;
     using OBeautifulCode.CodeGen.ModelObject.Recipes;
-    using OBeautifulCode.Representation.System.Test.Internal;
 
     using Xunit;
 

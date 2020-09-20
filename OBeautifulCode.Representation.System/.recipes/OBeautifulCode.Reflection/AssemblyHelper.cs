@@ -9,24 +9,24 @@
 
 namespace OBeautifulCode.Reflection.Recipes
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Diagnostics;
-    using System.IO;
-    using System.IO.Compression;
-    using System.Linq;
-    using System.Reflection;
-    using System.Runtime.CompilerServices;
+    using global::System;
+    using global::System.Collections.Generic;
+    using global::System.Diagnostics;
+    using global::System.IO;
+    using global::System.IO.Compression;
+    using global::System.Linq;
+    using global::System.Reflection;
+    using global::System.Runtime.CompilerServices;
 
     using OBeautifulCode.Collection.Recipes;
-    
-    using static System.FormattableString;
+
+    using static global::System.FormattableString;
 
     /// <summary>
     /// Provides useful methods for extracting information from and
     /// interacting with assemblies using reflection.
     /// </summary>
-#if !OBeautifulCodeReflectionRecipesProject
+#if !OBeautifulCodeReflectionSolution
     [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     [System.CodeDom.Compiler.GeneratedCode("OBeautifulCode.Reflection.Recipes", "See package version number")]
     internal
@@ -216,7 +216,7 @@ namespace OBeautifulCode.Reflection.Recipes
 
             if (assemblies.Any(_ => _ == null))
             {
-                throw new ArgumentException(Invariant($"'{nameof(assemblies)}' contains at least one null element"));
+                throw new ArgumentException(Invariant($"'{nameof(assemblies)}' contains an element that is null"));
             }
 
             try

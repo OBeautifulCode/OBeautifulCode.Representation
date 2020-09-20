@@ -6,8 +6,6 @@
 
 namespace OBeautifulCode.Representation.System.Test
 {
-    using global::OBeautifulCode.Representation.System.Test.Internal;
-
     using global::System;
     using global::System.Collections.Generic;
     using global::System.Diagnostics.CodeAnalysis;
@@ -15,6 +13,7 @@ namespace OBeautifulCode.Representation.System.Test
     using global::System.Linq;
     using global::System.Reflection;
 
+    using OBeautifulCode.CodeAnalysis.Recipes;
     using OBeautifulCode.Reflection.Recipes;
 
     public static class TypeGenerator

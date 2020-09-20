@@ -7,12 +7,12 @@
     <iconUrl>https://raw.githubusercontent.com/OBeautifulCode/OBeautifulCode.Representation/master/OBeautifulCode.Representation.System.Test/nuget-icon.png</iconUrl>
     <dependencies>
       <dependency id="OBeautifulCode.Representation.System" version="$version$" />
-      <dependency id="OBeautifulCode.AutoFakeItEasy" version="1.0.127" />
-      <dependency id="OBeautifulCode.Type.Recipes.DummyFactory" version="1.0.51" />
+      <dependency id="OBeautifulCode.AutoFakeItEasy" version="1.0.129" />
+      <dependency id="OBeautifulCode.Type.Recipes.DummyFactory" version="1.0.69" />
+      <dependency id="OBeautifulCode.CodeAnalysis.Recipes.SuppressBecause" version="1.0.6" />
     </dependencies>
   </metadata>
   <files>
-    <file src=".analyzers\SuppressBecause.cs" target="content\net462\.recipes\OBeautifulCode.Representation\SuppressBecause.cs" />
     <file src="RepresentationSystemDummyFactory.cs" target="content\net462\.recipes\OBeautifulCode.Representation\RepresentationSystemDummyFactory.cs" />
     <file src="RepresentationSystemDummyFactory.designer.cs" target="content\net462\.recipes\OBeautifulCode.Representation\RepresentationSystemDummyFactory.designer.cs" />
   </files>
