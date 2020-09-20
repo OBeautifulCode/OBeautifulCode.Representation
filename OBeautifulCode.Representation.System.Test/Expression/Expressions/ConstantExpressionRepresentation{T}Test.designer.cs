@@ -14,6 +14,7 @@ namespace OBeautifulCode.Representation.System.Test
     using global::System.Diagnostics.CodeAnalysis;
     using global::System.Globalization;
     using global::System.Linq;
+    using global::System.Linq.Expressions;
     using global::System.Reflection;
 
     using global::FakeItEasy;
@@ -29,391 +30,221 @@ namespace OBeautifulCode.Representation.System.Test
 
     using static global::System.FormattableString;
 
-    public static partial class AssemblyRepresentationTest
+    public static partial class ConstantExpressionRepresentationTest
     {
-        private static readonly StringRepresentationTestScenarios<AssemblyRepresentation> StringRepresentationTestScenarios = new StringRepresentationTestScenarios<AssemblyRepresentation>()
+        private static readonly StringRepresentationTestScenarios<ConstantExpressionRepresentation<Version>> StringRepresentationTestScenarios = new StringRepresentationTestScenarios<ConstantExpressionRepresentation<Version>>()
             .AddScenario(() =>
-                new StringRepresentationTestScenario<AssemblyRepresentation>
+                new StringRepresentationTestScenario<ConstantExpressionRepresentation<Version>>
                 {
                     Name = "Default Code Generated Scenario",
                     SystemUnderTestExpectedStringRepresentationFunc = () =>
                     {
-                        var systemUnderTest = A.Dummy<AssemblyRepresentation>();
+                        var systemUnderTest = A.Dummy<ConstantExpressionRepresentation<Version>>();
 
-                        var result = new SystemUnderTestExpectedStringRepresentation<AssemblyRepresentation>
+                        var result = new SystemUnderTestExpectedStringRepresentation<ConstantExpressionRepresentation<Version>>
                         {
                             SystemUnderTest = systemUnderTest,
-                            ExpectedStringRepresentation = Invariant($"OBeautifulCode.Representation.System.AssemblyRepresentation: Name = {systemUnderTest.Name?.ToString(CultureInfo.InvariantCulture) ?? "<null>"}, Version = {systemUnderTest.Version?.ToString(CultureInfo.InvariantCulture) ?? "<null>"}, FilePath = {systemUnderTest.FilePath?.ToString(CultureInfo.InvariantCulture) ?? "<null>"}, FrameworkVersion = {systemUnderTest.FrameworkVersion?.ToString(CultureInfo.InvariantCulture) ?? "<null>"}."),
+                            ExpectedStringRepresentation = Invariant($"OBeautifulCode.Representation.System.ConstantExpressionRepresentation<Version>: NodeType = {systemUnderTest.NodeType.ToString() ?? "<null>"}, Type = {systemUnderTest.Type?.ToString() ?? "<null>"}, Value = {systemUnderTest.Value?.ToString() ?? "<null>"}."),
                         };
 
                         return result;
                     },
                 });
 
-        private static readonly ConstructorArgumentValidationTestScenarios<AssemblyRepresentation> ConstructorArgumentValidationTestScenarios = new ConstructorArgumentValidationTestScenarios<AssemblyRepresentation>()
+        private static readonly ConstructorArgumentValidationTestScenarios<ConstantExpressionRepresentation<Version>> ConstructorArgumentValidationTestScenarios = new ConstructorArgumentValidationTestScenarios<ConstantExpressionRepresentation<Version>>()
             .AddScenario(() =>
-                new ConstructorArgumentValidationTestScenario<AssemblyRepresentation>
+                new ConstructorArgumentValidationTestScenario<ConstantExpressionRepresentation<Version>>
                 {
-                    Name = "constructor should throw ArgumentNullException when parameter 'name' is null scenario",
+                    Name = "constructor should throw ArgumentNullException when parameter 'type' is null scenario",
                     ConstructionFunc = () =>
                     {
-                        var referenceObject = A.Dummy<AssemblyRepresentation>();
+                        var referenceObject = A.Dummy<ConstantExpressionRepresentation<Version>>();
 
-                        var result = new AssemblyRepresentation(
+                        var result = new ConstantExpressionRepresentation<Version>(
                                              null,
-                                             referenceObject.Version,
-                                             referenceObject.FilePath,
-                                             referenceObject.FrameworkVersion);
+                                             referenceObject.NodeType,
+                                             referenceObject.Value);
 
                         return result;
                     },
                     ExpectedExceptionType = typeof(ArgumentNullException),
-                    ExpectedExceptionMessageContains = new[] { "name" },
+                    ExpectedExceptionMessageContains = new[] { "type" },
                 })
             .AddScenario(() =>
-                new ConstructorArgumentValidationTestScenario<AssemblyRepresentation>
+                new ConstructorArgumentValidationTestScenario<ConstantExpressionRepresentation<Version>>
                 {
-                    Name = "constructor should throw ArgumentException when parameter 'name' is white space scenario",
+                    Name = "constructor should throw ArgumentNullException when parameter 'value' is null scenario",
                     ConstructionFunc = () =>
                     {
-                        var referenceObject = A.Dummy<AssemblyRepresentation>();
+                        var referenceObject = A.Dummy<ConstantExpressionRepresentation<Version>>();
 
-                        var result = new AssemblyRepresentation(
-                                             Invariant($"  {Environment.NewLine}  "),
-                                             referenceObject.Version,
-                                             referenceObject.FilePath,
-                                             referenceObject.FrameworkVersion);
-
-                        return result;
-                    },
-                    ExpectedExceptionType = typeof(ArgumentException),
-                    ExpectedExceptionMessageContains = new[] { "name", "white space" },
-                })
-            .AddScenario(() =>
-                new ConstructorArgumentValidationTestScenario<AssemblyRepresentation>
-                {
-                    Name = "constructor should throw ArgumentNullException when parameter 'version' is null scenario",
-                    ConstructionFunc = () =>
-                    {
-                        var referenceObject = A.Dummy<AssemblyRepresentation>();
-
-                        var result = new AssemblyRepresentation(
-                                             referenceObject.Name,
-                                             null,
-                                             referenceObject.FilePath,
-                                             referenceObject.FrameworkVersion);
-
-                        return result;
-                    },
-                    ExpectedExceptionType = typeof(ArgumentNullException),
-                    ExpectedExceptionMessageContains = new[] { "version" },
-                })
-            .AddScenario(() =>
-                new ConstructorArgumentValidationTestScenario<AssemblyRepresentation>
-                {
-                    Name = "constructor should throw ArgumentException when parameter 'version' is white space scenario",
-                    ConstructionFunc = () =>
-                    {
-                        var referenceObject = A.Dummy<AssemblyRepresentation>();
-
-                        var result = new AssemblyRepresentation(
-                                             referenceObject.Name,
-                                             Invariant($"  {Environment.NewLine}  "),
-                                             referenceObject.FilePath,
-                                             referenceObject.FrameworkVersion);
-
-                        return result;
-                    },
-                    ExpectedExceptionType = typeof(ArgumentException),
-                    ExpectedExceptionMessageContains = new[] { "version", "white space" },
-                })
-            .AddScenario(() =>
-                new ConstructorArgumentValidationTestScenario<AssemblyRepresentation>
-                {
-                    Name = "constructor should throw ArgumentNullException when parameter 'filePath' is null scenario",
-                    ConstructionFunc = () =>
-                    {
-                        var referenceObject = A.Dummy<AssemblyRepresentation>();
-
-                        var result = new AssemblyRepresentation(
-                                             referenceObject.Name,
-                                             referenceObject.Version,
-                                             null,
-                                             referenceObject.FrameworkVersion);
-
-                        return result;
-                    },
-                    ExpectedExceptionType = typeof(ArgumentNullException),
-                    ExpectedExceptionMessageContains = new[] { "filePath" },
-                })
-            .AddScenario(() =>
-                new ConstructorArgumentValidationTestScenario<AssemblyRepresentation>
-                {
-                    Name = "constructor should throw ArgumentException when parameter 'filePath' is white space scenario",
-                    ConstructionFunc = () =>
-                    {
-                        var referenceObject = A.Dummy<AssemblyRepresentation>();
-
-                        var result = new AssemblyRepresentation(
-                                             referenceObject.Name,
-                                             referenceObject.Version,
-                                             Invariant($"  {Environment.NewLine}  "),
-                                             referenceObject.FrameworkVersion);
-
-                        return result;
-                    },
-                    ExpectedExceptionType = typeof(ArgumentException),
-                    ExpectedExceptionMessageContains = new[] { "filePath", "white space" },
-                })
-            .AddScenario(() =>
-                new ConstructorArgumentValidationTestScenario<AssemblyRepresentation>
-                {
-                    Name = "constructor should throw ArgumentNullException when parameter 'frameworkVersion' is null scenario",
-                    ConstructionFunc = () =>
-                    {
-                        var referenceObject = A.Dummy<AssemblyRepresentation>();
-
-                        var result = new AssemblyRepresentation(
-                                             referenceObject.Name,
-                                             referenceObject.Version,
-                                             referenceObject.FilePath,
+                        var result = new ConstantExpressionRepresentation<Version>(
+                                             referenceObject.Type,
+                                             referenceObject.NodeType,
                                              null);
 
                         return result;
                     },
                     ExpectedExceptionType = typeof(ArgumentNullException),
-                    ExpectedExceptionMessageContains = new[] { "frameworkVersion" },
-                })
-            .AddScenario(() =>
-                new ConstructorArgumentValidationTestScenario<AssemblyRepresentation>
-                {
-                    Name = "constructor should throw ArgumentException when parameter 'frameworkVersion' is white space scenario",
-                    ConstructionFunc = () =>
-                    {
-                        var referenceObject = A.Dummy<AssemblyRepresentation>();
-
-                        var result = new AssemblyRepresentation(
-                                             referenceObject.Name,
-                                             referenceObject.Version,
-                                             referenceObject.FilePath,
-                                             Invariant($"  {Environment.NewLine}  "));
-
-                        return result;
-                    },
-                    ExpectedExceptionType = typeof(ArgumentException),
-                    ExpectedExceptionMessageContains = new[] { "frameworkVersion", "white space" },
+                    ExpectedExceptionMessageContains = new[] { "value" },
                 });
 
-        private static readonly ConstructorPropertyAssignmentTestScenarios<AssemblyRepresentation> ConstructorPropertyAssignmentTestScenarios = new ConstructorPropertyAssignmentTestScenarios<AssemblyRepresentation>()
+        private static readonly ConstructorPropertyAssignmentTestScenarios<ConstantExpressionRepresentation<Version>> ConstructorPropertyAssignmentTestScenarios = new ConstructorPropertyAssignmentTestScenarios<ConstantExpressionRepresentation<Version>>()
             .AddScenario(() =>
-                new ConstructorPropertyAssignmentTestScenario<AssemblyRepresentation>
+                new ConstructorPropertyAssignmentTestScenario<ConstantExpressionRepresentation<Version>>
                 {
-                    Name = "Name should return same 'name' parameter passed to constructor when getting",
+                    Name = "Type should return same 'type' parameter passed to constructor when getting",
                     SystemUnderTestExpectedPropertyValueFunc = () =>
                     {
-                        var referenceObject = A.Dummy<AssemblyRepresentation>();
+                        var referenceObject = A.Dummy<ConstantExpressionRepresentation<Version>>();
 
-                        var result = new SystemUnderTestExpectedPropertyValue<AssemblyRepresentation>
+                        var result = new SystemUnderTestExpectedPropertyValue<ConstantExpressionRepresentation<Version>>
                         {
-                            SystemUnderTest = new AssemblyRepresentation(
-                                                      referenceObject.Name,
-                                                      referenceObject.Version,
-                                                      referenceObject.FilePath,
-                                                      referenceObject.FrameworkVersion),
-                            ExpectedPropertyValue = referenceObject.Name,
+                            SystemUnderTest = new ConstantExpressionRepresentation<Version>(
+                                                      referenceObject.Type,
+                                                      referenceObject.NodeType,
+                                                      referenceObject.Value),
+                            ExpectedPropertyValue = referenceObject.Type,
                         };
 
                         return result;
                     },
-                    PropertyName = "Name",
+                    PropertyName = "Type",
                 })
             .AddScenario(() =>
-                new ConstructorPropertyAssignmentTestScenario<AssemblyRepresentation>
+                new ConstructorPropertyAssignmentTestScenario<ConstantExpressionRepresentation<Version>>
                 {
-                    Name = "Version should return same 'version' parameter passed to constructor when getting",
+                    Name = "NodeType should return same 'nodeType' parameter passed to constructor when getting",
                     SystemUnderTestExpectedPropertyValueFunc = () =>
                     {
-                        var referenceObject = A.Dummy<AssemblyRepresentation>();
+                        var referenceObject = A.Dummy<ConstantExpressionRepresentation<Version>>();
 
-                        var result = new SystemUnderTestExpectedPropertyValue<AssemblyRepresentation>
+                        var result = new SystemUnderTestExpectedPropertyValue<ConstantExpressionRepresentation<Version>>
                         {
-                            SystemUnderTest = new AssemblyRepresentation(
-                                                      referenceObject.Name,
-                                                      referenceObject.Version,
-                                                      referenceObject.FilePath,
-                                                      referenceObject.FrameworkVersion),
-                            ExpectedPropertyValue = referenceObject.Version,
+                            SystemUnderTest = new ConstantExpressionRepresentation<Version>(
+                                                      referenceObject.Type,
+                                                      referenceObject.NodeType,
+                                                      referenceObject.Value),
+                            ExpectedPropertyValue = referenceObject.NodeType,
                         };
 
                         return result;
                     },
-                    PropertyName = "Version",
+                    PropertyName = "NodeType",
                 })
             .AddScenario(() =>
-                new ConstructorPropertyAssignmentTestScenario<AssemblyRepresentation>
+                new ConstructorPropertyAssignmentTestScenario<ConstantExpressionRepresentation<Version>>
                 {
-                    Name = "FilePath should return same 'filePath' parameter passed to constructor when getting",
+                    Name = "Value should return same 'value' parameter passed to constructor when getting",
                     SystemUnderTestExpectedPropertyValueFunc = () =>
                     {
-                        var referenceObject = A.Dummy<AssemblyRepresentation>();
+                        var referenceObject = A.Dummy<ConstantExpressionRepresentation<Version>>();
 
-                        var result = new SystemUnderTestExpectedPropertyValue<AssemblyRepresentation>
+                        var result = new SystemUnderTestExpectedPropertyValue<ConstantExpressionRepresentation<Version>>
                         {
-                            SystemUnderTest = new AssemblyRepresentation(
-                                                      referenceObject.Name,
-                                                      referenceObject.Version,
-                                                      referenceObject.FilePath,
-                                                      referenceObject.FrameworkVersion),
-                            ExpectedPropertyValue = referenceObject.FilePath,
+                            SystemUnderTest = new ConstantExpressionRepresentation<Version>(
+                                                      referenceObject.Type,
+                                                      referenceObject.NodeType,
+                                                      referenceObject.Value),
+                            ExpectedPropertyValue = referenceObject.Value,
                         };
 
                         return result;
                     },
-                    PropertyName = "FilePath",
-                })
-            .AddScenario(() =>
-                new ConstructorPropertyAssignmentTestScenario<AssemblyRepresentation>
-                {
-                    Name = "FrameworkVersion should return same 'frameworkVersion' parameter passed to constructor when getting",
-                    SystemUnderTestExpectedPropertyValueFunc = () =>
-                    {
-                        var referenceObject = A.Dummy<AssemblyRepresentation>();
-
-                        var result = new SystemUnderTestExpectedPropertyValue<AssemblyRepresentation>
-                        {
-                            SystemUnderTest = new AssemblyRepresentation(
-                                                      referenceObject.Name,
-                                                      referenceObject.Version,
-                                                      referenceObject.FilePath,
-                                                      referenceObject.FrameworkVersion),
-                            ExpectedPropertyValue = referenceObject.FrameworkVersion,
-                        };
-
-                        return result;
-                    },
-                    PropertyName = "FrameworkVersion",
+                    PropertyName = "Value",
                 });
 
-        private static readonly DeepCloneWithTestScenarios<AssemblyRepresentation> DeepCloneWithTestScenarios = new DeepCloneWithTestScenarios<AssemblyRepresentation>()
+        private static readonly DeepCloneWithTestScenarios<ConstantExpressionRepresentation<Version>> DeepCloneWithTestScenarios = new DeepCloneWithTestScenarios<ConstantExpressionRepresentation<Version>>()
             .AddScenario(() =>
-                new DeepCloneWithTestScenario<AssemblyRepresentation>
+                new DeepCloneWithTestScenario<ConstantExpressionRepresentation<Version>>
                 {
-                    Name = "DeepCloneWithName should deep clone object and replace Name with the provided name",
-                    WithPropertyName = "Name",
+                    Name = "DeepCloneWithNodeType should deep clone object and replace NodeType with the provided nodeType",
+                    WithPropertyName = "NodeType",
                     SystemUnderTestDeepCloneWithValueFunc = () =>
                     {
-                        var systemUnderTest = A.Dummy<AssemblyRepresentation>();
+                        var systemUnderTest = A.Dummy<ConstantExpressionRepresentation<Version>>();
 
-                        var referenceObject = A.Dummy<AssemblyRepresentation>().ThatIs(_ => !systemUnderTest.Name.IsEqualTo(_.Name));
+                        var referenceObject = A.Dummy<ConstantExpressionRepresentation<Version>>().ThatIs(_ => !systemUnderTest.NodeType.IsEqualTo(_.NodeType));
 
-                        var result = new SystemUnderTestDeepCloneWithValue<AssemblyRepresentation>
+                        var result = new SystemUnderTestDeepCloneWithValue<ConstantExpressionRepresentation<Version>>
                         {
                             SystemUnderTest = systemUnderTest,
-                            DeepCloneWithValue = referenceObject.Name,
+                            DeepCloneWithValue = referenceObject.NodeType,
                         };
 
                         return result;
                     },
                 })
             .AddScenario(() =>
-                new DeepCloneWithTestScenario<AssemblyRepresentation>
+                new DeepCloneWithTestScenario<ConstantExpressionRepresentation<Version>>
                 {
-                    Name = "DeepCloneWithVersion should deep clone object and replace Version with the provided version",
-                    WithPropertyName = "Version",
+                    Name = "DeepCloneWithType should deep clone object and replace Type with the provided type",
+                    WithPropertyName = "Type",
                     SystemUnderTestDeepCloneWithValueFunc = () =>
                     {
-                        var systemUnderTest = A.Dummy<AssemblyRepresentation>();
+                        var systemUnderTest = A.Dummy<ConstantExpressionRepresentation<Version>>();
 
-                        var referenceObject = A.Dummy<AssemblyRepresentation>().ThatIs(_ => !systemUnderTest.Version.IsEqualTo(_.Version));
+                        var referenceObject = A.Dummy<ConstantExpressionRepresentation<Version>>().ThatIs(_ => !systemUnderTest.Type.IsEqualTo(_.Type));
 
-                        var result = new SystemUnderTestDeepCloneWithValue<AssemblyRepresentation>
+                        var result = new SystemUnderTestDeepCloneWithValue<ConstantExpressionRepresentation<Version>>
                         {
                             SystemUnderTest = systemUnderTest,
-                            DeepCloneWithValue = referenceObject.Version,
+                            DeepCloneWithValue = referenceObject.Type,
                         };
 
                         return result;
                     },
                 })
             .AddScenario(() =>
-                new DeepCloneWithTestScenario<AssemblyRepresentation>
+                new DeepCloneWithTestScenario<ConstantExpressionRepresentation<Version>>
                 {
-                    Name = "DeepCloneWithFilePath should deep clone object and replace FilePath with the provided filePath",
-                    WithPropertyName = "FilePath",
+                    Name = "DeepCloneWithValue should deep clone object and replace Value with the provided value",
+                    WithPropertyName = "Value",
                     SystemUnderTestDeepCloneWithValueFunc = () =>
                     {
-                        var systemUnderTest = A.Dummy<AssemblyRepresentation>();
+                        var systemUnderTest = A.Dummy<ConstantExpressionRepresentation<Version>>();
 
-                        var referenceObject = A.Dummy<AssemblyRepresentation>().ThatIs(_ => !systemUnderTest.FilePath.IsEqualTo(_.FilePath));
+                        var referenceObject = A.Dummy<ConstantExpressionRepresentation<Version>>().ThatIs(_ => !systemUnderTest.Value.IsEqualTo(_.Value));
 
-                        var result = new SystemUnderTestDeepCloneWithValue<AssemblyRepresentation>
+                        var result = new SystemUnderTestDeepCloneWithValue<ConstantExpressionRepresentation<Version>>
                         {
                             SystemUnderTest = systemUnderTest,
-                            DeepCloneWithValue = referenceObject.FilePath,
-                        };
-
-                        return result;
-                    },
-                })
-            .AddScenario(() =>
-                new DeepCloneWithTestScenario<AssemblyRepresentation>
-                {
-                    Name = "DeepCloneWithFrameworkVersion should deep clone object and replace FrameworkVersion with the provided frameworkVersion",
-                    WithPropertyName = "FrameworkVersion",
-                    SystemUnderTestDeepCloneWithValueFunc = () =>
-                    {
-                        var systemUnderTest = A.Dummy<AssemblyRepresentation>();
-
-                        var referenceObject = A.Dummy<AssemblyRepresentation>().ThatIs(_ => !systemUnderTest.FrameworkVersion.IsEqualTo(_.FrameworkVersion));
-
-                        var result = new SystemUnderTestDeepCloneWithValue<AssemblyRepresentation>
-                        {
-                            SystemUnderTest = systemUnderTest,
-                            DeepCloneWithValue = referenceObject.FrameworkVersion,
+                            DeepCloneWithValue = referenceObject.Value,
                         };
 
                         return result;
                     },
                 });
 
-        private static readonly AssemblyRepresentation ReferenceObjectForEquatableTestScenarios = A.Dummy<AssemblyRepresentation>();
+        private static readonly ConstantExpressionRepresentation<Version> ReferenceObjectForEquatableTestScenarios = A.Dummy<ConstantExpressionRepresentation<Version>>();
 
-        private static readonly EquatableTestScenarios<AssemblyRepresentation> EquatableTestScenarios = new EquatableTestScenarios<AssemblyRepresentation>()
+        private static readonly EquatableTestScenarios<ConstantExpressionRepresentation<Version>> EquatableTestScenarios = new EquatableTestScenarios<ConstantExpressionRepresentation<Version>>()
             .AddScenario(() =>
-                new EquatableTestScenario<AssemblyRepresentation>
+                new EquatableTestScenario<ConstantExpressionRepresentation<Version>>
                 {
                     Name = "Default Code Generated Scenario",
                     ReferenceObject = ReferenceObjectForEquatableTestScenarios,
-                    ObjectsThatAreEqualToButNotTheSameAsReferenceObject = new AssemblyRepresentation[]
+                    ObjectsThatAreEqualToButNotTheSameAsReferenceObject = new ConstantExpressionRepresentation<Version>[]
                     {
-                        new AssemblyRepresentation(
-                                ReferenceObjectForEquatableTestScenarios.Name,
-                                ReferenceObjectForEquatableTestScenarios.Version,
-                                ReferenceObjectForEquatableTestScenarios.FilePath,
-                                ReferenceObjectForEquatableTestScenarios.FrameworkVersion),
+                        new ConstantExpressionRepresentation<Version>(
+                                ReferenceObjectForEquatableTestScenarios.Type,
+                                ReferenceObjectForEquatableTestScenarios.NodeType,
+                                ReferenceObjectForEquatableTestScenarios.Value),
                     },
-                    ObjectsThatAreNotEqualToReferenceObject = new AssemblyRepresentation[]
+                    ObjectsThatAreNotEqualToReferenceObject = new ConstantExpressionRepresentation<Version>[]
                     {
-                        new AssemblyRepresentation(
-                                A.Dummy<AssemblyRepresentation>().Whose(_ => !_.Name.IsEqualTo(ReferenceObjectForEquatableTestScenarios.Name)).Name,
-                                ReferenceObjectForEquatableTestScenarios.Version,
-                                ReferenceObjectForEquatableTestScenarios.FilePath,
-                                ReferenceObjectForEquatableTestScenarios.FrameworkVersion),
-                        new AssemblyRepresentation(
-                                ReferenceObjectForEquatableTestScenarios.Name,
-                                A.Dummy<AssemblyRepresentation>().Whose(_ => !_.Version.IsEqualTo(ReferenceObjectForEquatableTestScenarios.Version)).Version,
-                                ReferenceObjectForEquatableTestScenarios.FilePath,
-                                ReferenceObjectForEquatableTestScenarios.FrameworkVersion),
-                        new AssemblyRepresentation(
-                                ReferenceObjectForEquatableTestScenarios.Name,
-                                ReferenceObjectForEquatableTestScenarios.Version,
-                                A.Dummy<AssemblyRepresentation>().Whose(_ => !_.FilePath.IsEqualTo(ReferenceObjectForEquatableTestScenarios.FilePath)).FilePath,
-                                ReferenceObjectForEquatableTestScenarios.FrameworkVersion),
-                        new AssemblyRepresentation(
-                                ReferenceObjectForEquatableTestScenarios.Name,
-                                ReferenceObjectForEquatableTestScenarios.Version,
-                                ReferenceObjectForEquatableTestScenarios.FilePath,
-                                A.Dummy<AssemblyRepresentation>().Whose(_ => !_.FrameworkVersion.IsEqualTo(ReferenceObjectForEquatableTestScenarios.FrameworkVersion)).FrameworkVersion),
+                        new ConstantExpressionRepresentation<Version>(
+                                ReferenceObjectForEquatableTestScenarios.Type,
+                                A.Dummy<ConstantExpressionRepresentation<Version>>().Whose(_ => !_.NodeType.IsEqualTo(ReferenceObjectForEquatableTestScenarios.NodeType)).NodeType,
+                                ReferenceObjectForEquatableTestScenarios.Value),
+                        new ConstantExpressionRepresentation<Version>(
+                                A.Dummy<ConstantExpressionRepresentation<Version>>().Whose(_ => !_.Type.IsEqualTo(ReferenceObjectForEquatableTestScenarios.Type)).Type,
+                                ReferenceObjectForEquatableTestScenarios.NodeType,
+                                ReferenceObjectForEquatableTestScenarios.Value),
+                        new ConstantExpressionRepresentation<Version>(
+                                ReferenceObjectForEquatableTestScenarios.Type,
+                                ReferenceObjectForEquatableTestScenarios.NodeType,
+                                A.Dummy<ConstantExpressionRepresentation<Version>>().Whose(_ => !_.Value.IsEqualTo(ReferenceObjectForEquatableTestScenarios.Value)).Value),
                     },
                     ObjectsThatAreNotOfTheSameTypeAsReferenceObject = new object[]
                     {
@@ -422,6 +253,19 @@ namespace OBeautifulCode.Representation.System.Test
                         A.Dummy<int>(),
                         A.Dummy<int?>(),
                         A.Dummy<Guid>(),
+                        A.Dummy<BinaryExpressionRepresentation>(),
+                        A.Dummy<ConditionalExpressionRepresentation>(),
+                        A.Dummy<InvocationExpressionRepresentation>(),
+                        A.Dummy<LambdaExpressionRepresentation>(),
+                        A.Dummy<ListInitExpressionRepresentation>(),
+                        A.Dummy<MemberExpressionRepresentation>(),
+                        A.Dummy<MemberInitExpressionRepresentation>(),
+                        A.Dummy<MethodCallExpressionRepresentation>(),
+                        A.Dummy<NewArrayExpressionRepresentation>(),
+                        A.Dummy<NewExpressionRepresentation>(),
+                        A.Dummy<ParameterExpressionRepresentation>(),
+                        A.Dummy<TypeBinaryExpressionRepresentation>(),
+                        A.Dummy<UnaryExpressionRepresentation>(),
                     },
                 });
 
@@ -443,12 +287,12 @@ namespace OBeautifulCode.Representation.System.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void AssemblyRepresentation___Should_implement_IModel_of_AssemblyRepresentation___When_reflecting()
+            public static void ConstantExpressionRepresentation___Should_implement_IModel_of_ConstantExpressionRepresentation___When_reflecting()
             {
                 // Arrange
-                var type = typeof(AssemblyRepresentation);
+                var type = typeof(ConstantExpressionRepresentation<Version>);
 
-                var expectedModelMethods = typeof(IModel<AssemblyRepresentation>)
+                var expectedModelMethods = typeof(IModel<ConstantExpressionRepresentation<Version>>)
                                           .GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.FlattenHierarchy)
                                           .ToList();
 
@@ -460,7 +304,7 @@ namespace OBeautifulCode.Representation.System.Test
                 var actualModelMethodHashes = actualModelMethods.Select(_ => _.GetSignatureHash());
 
                 // Assert
-                actualInterfaces.AsTest().Must().ContainElement(typeof(IModel<AssemblyRepresentation>));
+                actualInterfaces.AsTest().Must().ContainElement(typeof(IModel<ConstantExpressionRepresentation<Version>>));
                 expectedModelMethodHashes.Except(actualModelMethodHashes).AsTest().Must().BeEmptyEnumerable();
             }
 
@@ -478,10 +322,10 @@ namespace OBeautifulCode.Representation.System.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void AssemblyRepresentation___Should_be_attributed_with_Serializable____When_reflecting()
+            public static void ConstantExpressionRepresentation___Should_be_attributed_with_Serializable____When_reflecting()
             {
                 // Arrange
-                var type = typeof(AssemblyRepresentation);
+                var type = typeof(ConstantExpressionRepresentation<Version>);
 
                 // Act
                 var actualAttributes = type.GetCustomAttributes(typeof(SerializableAttribute), false);
@@ -654,10 +498,10 @@ namespace OBeautifulCode.Representation.System.Test
             public static void Clone___Should_clone_object___When_called()
             {
                 // Arrange
-                var systemUnderTest = A.Dummy<AssemblyRepresentation>();
+                var systemUnderTest = A.Dummy<ConstantExpressionRepresentation<Version>>();
 
                 // Act
-                var actual = (AssemblyRepresentation)systemUnderTest.Clone();
+                var actual = (ConstantExpressionRepresentation<Version>)systemUnderTest.Clone();
 
                 // Assert
                 actual.AsTest().Must().BeEqualTo(systemUnderTest);
@@ -681,7 +525,7 @@ namespace OBeautifulCode.Representation.System.Test
             public static void DeepClone___Should_deep_clone_object___When_called()
             {
                 // Arrange
-                var systemUnderTest = A.Dummy<AssemblyRepresentation>();
+                var systemUnderTest = A.Dummy<ConstantExpressionRepresentation<Version>>();
 
                 // Act
                 var actual = systemUnderTest.DeepClone();
@@ -689,6 +533,24 @@ namespace OBeautifulCode.Representation.System.Test
                 // Assert
                 actual.AsTest().Must().BeEqualTo(systemUnderTest);
                 actual.AsTest().Must().NotBeSameReferenceAs(systemUnderTest);
+
+                if (systemUnderTest.Type == null)
+                {
+                    actual.Type.AsTest().Must().BeNull();
+                }
+                else
+                {
+                    actual.Type.AsTest().Must().NotBeSameReferenceAs(systemUnderTest.Type);
+                }
+
+                if (systemUnderTest.Value == null)
+                {
+                    actual.Value.AsTest().Must().BeNull();
+                }
+                else
+                {
+                    actual.Value.AsTest().Must().NotBeSameReferenceAs(systemUnderTest.Value);
+                }
             }
 
             [Fact]
@@ -707,7 +569,7 @@ namespace OBeautifulCode.Representation.System.Test
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
             public static void DeepCloneWith___Should_deep_clone_object_and_replace_the_associated_property_with_the_provided_value___When_called()
             {
-                var propertyNames = new string[] { "Name", "Version", "FilePath", "FrameworkVersion" };
+                var propertyNames = new string[] { "NodeType", "Type", "Value" };
 
                 var scenarios = DeepCloneWithTestScenarios.ValidateAndPrepareForTesting();
 
@@ -724,12 +586,12 @@ namespace OBeautifulCode.Representation.System.Test
                     }
 
                     // Act
-                    var actual = (AssemblyRepresentation)scenario.DeepCloneWithMethod.Invoke(scenario.SystemUnderTest, new[] { scenario.WithValue });
+                    var actual = (ConstantExpressionRepresentation<Version>)scenario.DeepCloneWithMethod.Invoke(scenario.SystemUnderTest, new[] { scenario.WithValue });
 
                     // Assert
                     foreach(var propertyName in propertyNames)
                     {
-                        var property = typeof(AssemblyRepresentation).GetProperty(propertyName);
+                        var property = typeof(ConstantExpressionRepresentation<Version>).GetProperty(propertyName);
 
                         var propertyType = property.PropertyType;
 
@@ -797,8 +659,8 @@ namespace OBeautifulCode.Representation.System.Test
             public static void EqualsOperator___Should_return_true___When_both_sides_of_operator_are_null()
             {
                 // Arrange
-                AssemblyRepresentation systemUnderTest1 = null;
-                AssemblyRepresentation systemUnderTest2 = null;
+                ConstantExpressionRepresentation<Version> systemUnderTest1 = null;
+                ConstantExpressionRepresentation<Version> systemUnderTest2 = null;
 
                 // Act
                 var actual = systemUnderTest1 == systemUnderTest2;
@@ -828,7 +690,7 @@ namespace OBeautifulCode.Representation.System.Test
                 foreach (var scenario in scenarios)
                 {
                     // Arrange
-                    AssemblyRepresentation systemUnderTest = null;
+                    ConstantExpressionRepresentation<Version> systemUnderTest = null;
 
                     // Act
                     var actual1 = systemUnderTest == scenario.ReferenceObject;
@@ -977,8 +839,8 @@ namespace OBeautifulCode.Representation.System.Test
             public static void NotEqualsOperator___Should_return_false___When_both_sides_of_operator_are_null()
             {
                 // Arrange
-                AssemblyRepresentation systemUnderTest1 = null;
-                AssemblyRepresentation systemUnderTest2 = null;
+                ConstantExpressionRepresentation<Version> systemUnderTest1 = null;
+                ConstantExpressionRepresentation<Version> systemUnderTest2 = null;
 
                 // Act
                 var actual = systemUnderTest1 != systemUnderTest2;
@@ -1008,7 +870,7 @@ namespace OBeautifulCode.Representation.System.Test
                 foreach (var scenario in scenarios)
                 {
                     // Arrange
-                    AssemblyRepresentation systemUnderTest = null;
+                    ConstantExpressionRepresentation<Version> systemUnderTest = null;
 
                     // Act
                     var actual1 = systemUnderTest != scenario.ReferenceObject;
@@ -1154,14 +1016,157 @@ namespace OBeautifulCode.Representation.System.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void Equals_with_AssemblyRepresentation___Should_return_false___When_parameter_other_is_null()
+            public static void Equals_with_ExpressionRepresentationBase___Should_return_false___When_parameter_other_is_null()
             {
                 var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
 
                 foreach (var scenario in scenarios)
                 {
                     // Arrange
-                    AssemblyRepresentation systemUnderTest = null;
+                    ExpressionRepresentationBase systemUnderTest = null;
+
+                    // Act
+                    var actual = scenario.ReferenceObject.Equals((ExpressionRepresentationBase)systemUnderTest);
+
+                    // Assert
+                    actual.AsTest().Must().BeFalse(because: scenario.Id);
+                }
+            }
+
+            [Fact]
+            [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly")]
+            [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
+            [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly")]
+            [SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix")]
+            [SuppressMessage("Microsoft.Naming", "CA1711:IdentifiersShouldNotHaveIncorrectSuffix")]
+            [SuppressMessage("Microsoft.Naming", "CA1715:IdentifiersShouldHaveCorrectPrefix")]
+            [SuppressMessage("Microsoft.Naming", "CA1716:IdentifiersShouldNotMatchKeywords")]
+            [SuppressMessage("Microsoft.Naming", "CA1719:ParameterNamesShouldNotMatchMemberNames")]
+            [SuppressMessage("Microsoft.Naming", "CA1720:IdentifiersShouldNotContainTypeNames")]
+            [SuppressMessage("Microsoft.Naming", "CA1722:IdentifiersShouldNotHaveIncorrectPrefix")]
+            [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
+            [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
+            [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
+            public static void Equals_with_ExpressionRepresentationBase___Should_return_true___When_parameter_other_is_same_object()
+            {
+                var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
+
+                foreach (var scenario in scenarios)
+                {
+                    // Arrange, Act
+                    var actual = scenario.ReferenceObject.Equals((ExpressionRepresentationBase)scenario.ReferenceObject);
+
+                    // Assert
+                    actual.AsTest().Must().BeTrue(because: scenario.Id);
+                }
+            }
+
+            [Fact]
+            [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly")]
+            [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
+            [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly")]
+            [SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix")]
+            [SuppressMessage("Microsoft.Naming", "CA1711:IdentifiersShouldNotHaveIncorrectSuffix")]
+            [SuppressMessage("Microsoft.Naming", "CA1715:IdentifiersShouldHaveCorrectPrefix")]
+            [SuppressMessage("Microsoft.Naming", "CA1716:IdentifiersShouldNotMatchKeywords")]
+            [SuppressMessage("Microsoft.Naming", "CA1719:ParameterNamesShouldNotMatchMemberNames")]
+            [SuppressMessage("Microsoft.Naming", "CA1720:IdentifiersShouldNotContainTypeNames")]
+            [SuppressMessage("Microsoft.Naming", "CA1722:IdentifiersShouldNotHaveIncorrectPrefix")]
+            [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
+            [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
+            [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
+            public static void Equals_with_ExpressionRepresentationBase___Should_return_false___When_parameter_other_is_derived_from_the_same_type_but_is_not_of_the_same_type_as_this_object()
+            {
+                var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
+
+                foreach (var scenario in scenarios)
+                {
+                    // Arrange, Act
+                    var actuals = scenario.ObjectsThatDeriveFromScenarioTypeButAreNotOfTheSameTypeAsReferenceObject.Select(_ => scenario.ReferenceObject.Equals((ExpressionRepresentationBase)_)).ToList();
+
+                    // Assert
+                    actuals.AsTest().Must().Each().BeFalse(because: scenario.Id);
+                }
+            }
+
+            [Fact]
+            [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly")]
+            [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
+            [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly")]
+            [SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix")]
+            [SuppressMessage("Microsoft.Naming", "CA1711:IdentifiersShouldNotHaveIncorrectSuffix")]
+            [SuppressMessage("Microsoft.Naming", "CA1715:IdentifiersShouldHaveCorrectPrefix")]
+            [SuppressMessage("Microsoft.Naming", "CA1716:IdentifiersShouldNotMatchKeywords")]
+            [SuppressMessage("Microsoft.Naming", "CA1719:ParameterNamesShouldNotMatchMemberNames")]
+            [SuppressMessage("Microsoft.Naming", "CA1720:IdentifiersShouldNotContainTypeNames")]
+            [SuppressMessage("Microsoft.Naming", "CA1722:IdentifiersShouldNotHaveIncorrectPrefix")]
+            [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
+            [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
+            [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
+            public static void Equals_with_ExpressionRepresentationBase___Should_return_false___When_objects_being_compared_have_different_property_values()
+            {
+                var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
+
+                foreach (var scenario in scenarios)
+                {
+                    // Arrange, Act
+                    var actuals = scenario.ObjectsThatAreNotEqualToReferenceObject.Select(_ => scenario.ReferenceObject.Equals((ExpressionRepresentationBase)_)).ToList();
+
+                    // Assert
+                    actuals.AsTest().Must().Each().BeFalse(because: scenario.Id);
+                }
+            }
+
+            [Fact]
+            [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly")]
+            [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
+            [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly")]
+            [SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix")]
+            [SuppressMessage("Microsoft.Naming", "CA1711:IdentifiersShouldNotHaveIncorrectSuffix")]
+            [SuppressMessage("Microsoft.Naming", "CA1715:IdentifiersShouldHaveCorrectPrefix")]
+            [SuppressMessage("Microsoft.Naming", "CA1716:IdentifiersShouldNotMatchKeywords")]
+            [SuppressMessage("Microsoft.Naming", "CA1719:ParameterNamesShouldNotMatchMemberNames")]
+            [SuppressMessage("Microsoft.Naming", "CA1720:IdentifiersShouldNotContainTypeNames")]
+            [SuppressMessage("Microsoft.Naming", "CA1722:IdentifiersShouldNotHaveIncorrectPrefix")]
+            [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
+            [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
+            [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
+            public static void Equals_with_ExpressionRepresentationBase___Should_return_true___When_objects_being_compared_have_same_property_values()
+            {
+                var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
+
+                foreach (var scenario in scenarios)
+                {
+                    // Arrange, Act
+                    var actuals = scenario.ObjectsThatAreEqualToButNotTheSameAsReferenceObject.Select(_ => scenario.ReferenceObject.Equals((ExpressionRepresentationBase)_)).ToList();
+
+                    // Assert
+                    actuals.AsTest().Must().Each().BeTrue(because: scenario.Id);
+                }
+            }
+
+            [Fact]
+            [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly")]
+            [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
+            [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly")]
+            [SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix")]
+            [SuppressMessage("Microsoft.Naming", "CA1711:IdentifiersShouldNotHaveIncorrectSuffix")]
+            [SuppressMessage("Microsoft.Naming", "CA1715:IdentifiersShouldHaveCorrectPrefix")]
+            [SuppressMessage("Microsoft.Naming", "CA1716:IdentifiersShouldNotMatchKeywords")]
+            [SuppressMessage("Microsoft.Naming", "CA1719:ParameterNamesShouldNotMatchMemberNames")]
+            [SuppressMessage("Microsoft.Naming", "CA1720:IdentifiersShouldNotContainTypeNames")]
+            [SuppressMessage("Microsoft.Naming", "CA1722:IdentifiersShouldNotHaveIncorrectPrefix")]
+            [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
+            [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
+            [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
+            public static void Equals_with_ConstantExpressionRepresentation___Should_return_false___When_parameter_other_is_null()
+            {
+                var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
+
+                foreach (var scenario in scenarios)
+                {
+                    // Arrange
+                    ConstantExpressionRepresentation<Version> systemUnderTest = null;
 
                     // Act
                     var actual = scenario.ReferenceObject.Equals(systemUnderTest);
@@ -1185,7 +1190,7 @@ namespace OBeautifulCode.Representation.System.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void Equals_with_AssemblyRepresentation___Should_return_true___When_parameter_other_is_same_object()
+            public static void Equals_with_ConstantExpressionRepresentation___Should_return_true___When_parameter_other_is_same_object()
             {
                 var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
 
@@ -1213,7 +1218,7 @@ namespace OBeautifulCode.Representation.System.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void Equals_with_AssemblyRepresentation___Should_return_false___When_parameter_other_is_derived_from_the_same_type_but_is_not_of_the_same_type_as_this_object()
+            public static void Equals_with_ConstantExpressionRepresentation___Should_return_false___When_parameter_other_is_derived_from_the_same_type_but_is_not_of_the_same_type_as_this_object()
             {
                 var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
 
@@ -1241,7 +1246,7 @@ namespace OBeautifulCode.Representation.System.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void Equals_with_AssemblyRepresentation___Should_return_false___When_objects_being_compared_have_different_property_values()
+            public static void Equals_with_ConstantExpressionRepresentation___Should_return_false___When_objects_being_compared_have_different_property_values()
             {
                 var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
 
@@ -1269,7 +1274,7 @@ namespace OBeautifulCode.Representation.System.Test
             [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
             [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
             [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-            public static void Equals_with_AssemblyRepresentation___Should_return_true___When_objects_being_compared_have_same_property_values()
+            public static void Equals_with_ConstantExpressionRepresentation___Should_return_true___When_objects_being_compared_have_same_property_values()
             {
                 var scenarios = EquatableTestScenarios.ValidateAndPrepareForTesting();
 

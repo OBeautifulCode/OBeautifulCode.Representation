@@ -152,6 +152,10 @@
     <Compile Include="Assembly\AssemblyRepresentationTest.designer.cs">
       <DependentUpon>AssemblyRepresentationTest.cs</DependentUpon>
     </Compile>
+    <Compile Include="Expression\Expressions\ConstantExpressionRepresentation{T}Test.cs" />
+    <Compile Include="Expression\Expressions\ConstantExpressionRepresentation{T}Test.designer.cs">
+      <DependentUpon>ConstantExpressionRepresentation{T}Test.cs</DependentUpon>
+    </Compile>
     <Compile Include="Expression\Bindings\ElementInitRepresentationTest.designer.cs">
       <DependentUpon>ElementInitRepresentationTest.cs</DependentUpon>
     </Compile>

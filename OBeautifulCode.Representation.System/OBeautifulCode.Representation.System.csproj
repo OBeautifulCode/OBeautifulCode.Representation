@@ -102,6 +102,9 @@
       <DependentUpon>BinaryExpressionRepresentation.cs</DependentUpon>
     </Compile>
     <Compile Include="Expression\Expressions\ConditionalExpressionRepresentation.cs" />
+    <Compile Include="Expression\Expressions\ConstantExpressionRepresentation{T}.designer.cs">
+      <DependentUpon>ConstantExpressionRepresentation{T}.cs</DependentUpon>
+    </Compile>
     <Compile Include="TypeMember\ConstructorInfoRepresentation.designer.cs">
       <DependentUpon>ConstructorInfoRepresentation.cs</DependentUpon>
     </Compile>

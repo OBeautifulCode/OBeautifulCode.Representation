@@ -23,15 +23,15 @@ namespace OBeautifulCode.Representation.System
     using static global::System.FormattableString;
 
     [Serializable]
-    public partial class MemberExpressionRepresentation : IModel<MemberExpressionRepresentation>
+    public partial class ConstantExpressionRepresentation<T> : IModel<ConstantExpressionRepresentation<T>>
     {
         /// <summary>
-        /// Determines whether two objects of type <see cref="MemberExpressionRepresentation"/> are equal.
+        /// Determines whether two objects of type <see cref="ConstantExpressionRepresentation{T}"/> are equal.
         /// </summary>
         /// <param name="left">The object to the left of the equality operator.</param>
         /// <param name="right">The object to the right of the equality operator.</param>
         /// <returns>true if the two items are equal; otherwise false.</returns>
-        public static bool operator ==(MemberExpressionRepresentation left, MemberExpressionRepresentation right)
+        public static bool operator ==(ConstantExpressionRepresentation<T> left, ConstantExpressionRepresentation<T> right)
         {
             if (ReferenceEquals(left, right))
             {
@@ -49,15 +49,15 @@ namespace OBeautifulCode.Representation.System
         }
 
         /// <summary>
-        /// Determines whether two objects of type <see cref="MemberExpressionRepresentation"/> are not equal.
+        /// Determines whether two objects of type <see cref="ConstantExpressionRepresentation{T}"/> are not equal.
         /// </summary>
         /// <param name="left">The object to the left of the equality operator.</param>
         /// <param name="right">The object to the right of the equality operator.</param>
         /// <returns>true if the two items are not equal; otherwise false.</returns>
-        public static bool operator !=(MemberExpressionRepresentation left, MemberExpressionRepresentation right) => !(left == right);
+        public static bool operator !=(ConstantExpressionRepresentation<T> left, ConstantExpressionRepresentation<T> right) => !(left == right);
 
         /// <inheritdoc />
-        public bool Equals(MemberExpressionRepresentation other)
+        public bool Equals(ConstantExpressionRepresentation<T> other)
         {
             if (ReferenceEquals(this, other))
             {
@@ -71,25 +71,23 @@ namespace OBeautifulCode.Representation.System
 
             var result = this.NodeType.IsEqualTo(other.NodeType)
                       && this.Type.IsEqualTo(other.Type)
-                      && this.Expression.IsEqualTo(other.Expression)
-                      && this.MemberInfo.IsEqualTo(other.MemberInfo);
+                      && this.Value.IsEqualTo(other.Value);
 
             return result;
         }
 
         /// <inheritdoc />
-        public override bool Equals(object obj) => this == (obj as MemberExpressionRepresentation);
+        public override bool Equals(object obj) => this == (obj as ConstantExpressionRepresentation<T>);
 
         /// <inheritdoc />
         public override int GetHashCode() => HashCodeHelper.Initialize()
             .Hash(this.NodeType)
             .Hash(this.Type)
-            .Hash(this.Expression)
-            .Hash(this.MemberInfo)
+            .Hash(this.Value)
             .Value;
 
         /// <inheritdoc />
-        public new MemberExpressionRepresentation DeepClone() => (MemberExpressionRepresentation)this.DeepCloneInternal();
+        public new ConstantExpressionRepresentation<T> DeepClone() => (ConstantExpressionRepresentation<T>)this.DeepCloneInternal();
 
         /// <inheritdoc />
         [SuppressMessage("Microsoft.Design", "CA1002: DoNotExposeGenericLists")]
@@ -109,7 +107,12 @@ namespace OBeautifulCode.Representation.System
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
         public override ExpressionRepresentationBase DeepCloneWithNodeType(ExpressionType nodeType)
         {
-            throw new NotSupportedException("The constructor in-use (by code gen) for MemberExpressionRepresentation does not have a parameter that corresponds with the 'NodeType' property.  As such, this method, DeepCloneWithNodeType(ExpressionType nodeType), cannot utilize the specified 'nodeType' value for that property.");
+            var result = new ConstantExpressionRepresentation<T>(
+                                 this.Type?.DeepClone(),
+                                 nodeType,
+                                 DeepCloneGeneric(this.Value));
+
+            return result;
         }
 
         /// <inheritdoc />
@@ -130,19 +133,19 @@ namespace OBeautifulCode.Representation.System
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
         public override ExpressionRepresentationBase DeepCloneWithType(TypeRepresentation type)
         {
-            var result = new MemberExpressionRepresentation(
+            var result = new ConstantExpressionRepresentation<T>(
                                  type,
-                                 this.Expression?.DeepClone(),
-                                 this.MemberInfo?.DeepClone());
+                                 this.NodeType,
+                                 DeepCloneGeneric(this.Value));
 
             return result;
         }
 
         /// <summary>
-        /// Deep clones this object with a new <see cref="Expression" />.
+        /// Deep clones this object with a new <see cref="Value" />.
         /// </summary>
-        /// <param name="expression">The new <see cref="Expression" />.  This object will NOT be deep cloned; it is used as-is.</param>
-        /// <returns>New <see cref="MemberExpressionRepresentation" /> using the specified <paramref name="expression" /> for <see cref="Expression" /> and a deep clone of every other property.</returns>
+        /// <param name="value">The new <see cref="Value" />.  This object will NOT be deep cloned; it is used as-is.</param>
+        /// <returns>New <see cref="ConstantExpressionRepresentation{T}" /> using the specified <paramref name="value" /> for <see cref="Value" /> and a deep clone of every other property.</returns>
         [SuppressMessage("Microsoft.Design", "CA1002: DoNotExposeGenericLists")]
         [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly")]
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
@@ -158,42 +161,12 @@ namespace OBeautifulCode.Representation.System
         [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
         [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
         [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
-        public MemberExpressionRepresentation DeepCloneWithExpression(ExpressionRepresentationBase expression)
+        public ConstantExpressionRepresentation<T> DeepCloneWithValue(T value)
         {
-            var result = new MemberExpressionRepresentation(
+            var result = new ConstantExpressionRepresentation<T>(
                                  this.Type?.DeepClone(),
-                                 expression,
-                                 this.MemberInfo?.DeepClone());
-
-            return result;
-        }
-
-        /// <summary>
-        /// Deep clones this object with a new <see cref="MemberInfo" />.
-        /// </summary>
-        /// <param name="memberInfo">The new <see cref="MemberInfo" />.  This object will NOT be deep cloned; it is used as-is.</param>
-        /// <returns>New <see cref="MemberExpressionRepresentation" /> using the specified <paramref name="memberInfo" /> for <see cref="MemberInfo" /> and a deep clone of every other property.</returns>
-        [SuppressMessage("Microsoft.Design", "CA1002: DoNotExposeGenericLists")]
-        [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly")]
-        [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
-        [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly")]
-        [SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix")]
-        [SuppressMessage("Microsoft.Naming", "CA1711:IdentifiersShouldNotHaveIncorrectSuffix")]
-        [SuppressMessage("Microsoft.Naming", "CA1715:IdentifiersShouldHaveCorrectPrefix")]
-        [SuppressMessage("Microsoft.Naming", "CA1716:IdentifiersShouldNotMatchKeywords")]
-        [SuppressMessage("Microsoft.Naming", "CA1719:ParameterNamesShouldNotMatchMemberNames")]
-        [SuppressMessage("Microsoft.Naming", "CA1720:IdentifiersShouldNotContainTypeNames")]
-        [SuppressMessage("Microsoft.Naming", "CA1722:IdentifiersShouldNotHaveIncorrectPrefix")]
-        [SuppressMessage("Microsoft.Naming", "CA1725:ParameterNamesShouldMatchBaseDeclaration")]
-        [SuppressMessage("Microsoft.Naming", "CA1726:UsePreferredTerms")]
-        [SuppressMessage("Microsoft.Naming", "CA2204:Literals should be spelled correctly")]
-        [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic")]
-        public MemberExpressionRepresentation DeepCloneWithMemberInfo(MemberInfoRepresentation memberInfo)
-        {
-            var result = new MemberExpressionRepresentation(
-                                 this.Type?.DeepClone(),
-                                 this.Expression?.DeepClone(),
-                                 memberInfo);
+                                 this.NodeType,
+                                 value);
 
             return result;
         }
@@ -201,10 +174,47 @@ namespace OBeautifulCode.Representation.System
         /// <inheritdoc />
         protected override ExpressionRepresentationBase DeepCloneInternal()
         {
-            var result = new MemberExpressionRepresentation(
+            var result = new ConstantExpressionRepresentation<T>(
                                  this.Type?.DeepClone(),
-                                 this.Expression?.DeepClone(),
-                                 this.MemberInfo?.DeepClone());
+                                 this.NodeType,
+                                 DeepCloneGeneric(this.Value));
+
+            return result;
+        }
+
+        private T DeepCloneGeneric(T value)
+        {
+            T result;
+
+            var type = typeof(T);
+
+            if (type.IsValueType)
+            {
+                result = value;
+            }
+            else
+            {
+                if (ReferenceEquals(value, null))
+                {
+                    result = default;
+                }
+                else if (value is IDeepCloneable<T> deepCloneableValue)
+                {
+                    result = deepCloneableValue.DeepClone();
+                }
+                else if (value is string valueAsString)
+                {
+                    result = (T)(object)valueAsString.Clone().ToString();
+                }
+                else if (value is global::System.Version valueAsVersion)
+                {
+                    result = (T)valueAsVersion.Clone();
+                }
+                else
+                {
+                    throw new NotSupportedException(Invariant($"I do not know how to deep clone an object of type '{type.ToStringReadable()}'"));
+                }
+            }
 
             return result;
         }
@@ -213,7 +223,7 @@ namespace OBeautifulCode.Representation.System
         [SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
         public override string ToString()
         {
-            var result = Invariant($"OBeautifulCode.Representation.System.MemberExpressionRepresentation: NodeType = {this.NodeType.ToString() ?? "<null>"}, Type = {this.Type?.ToString() ?? "<null>"}, Expression = {this.Expression?.ToString() ?? "<null>"}, MemberInfo = {this.MemberInfo?.ToString() ?? "<null>"}.");
+            var result = Invariant($"OBeautifulCode.Representation.System.{this.GetType().ToStringReadable()}: NodeType = {this.NodeType.ToString() ?? "<null>"}, Type = {this.Type?.ToString() ?? "<null>"}, Value = {this.Value?.ToString() ?? "<null>"}.");
 
             return result;
         }
