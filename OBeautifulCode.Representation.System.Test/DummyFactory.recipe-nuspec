@@ -8,8 +8,8 @@
     <dependencies>
       <dependency id="OBeautifulCode.Representation.System" version="$version$" />
       <dependency id="OBeautifulCode.AutoFakeItEasy" version="1.0.129" />
-      <dependency id="OBeautifulCode.Type.Recipes.DummyFactory" version="1.0.69" />
-      <dependency id="OBeautifulCode.CodeAnalysis.Recipes.SuppressBecause" version="1.0.6" />
+      <dependency id="OBeautifulCode.Type.Recipes.DummyFactory" version="1.0.71" />
+      <dependency id="OBeautifulCode.CodeAnalysis.Recipes.SuppressBecause" version="1.0.7" />
     </dependencies>
   </metadata>
   <files>
