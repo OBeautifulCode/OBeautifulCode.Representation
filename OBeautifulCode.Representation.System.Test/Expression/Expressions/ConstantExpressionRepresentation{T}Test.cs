@@ -14,10 +14,10 @@ namespace OBeautifulCode.Representation.System.Test
     using OBeautifulCode.CodeAnalysis.Recipes;
     using OBeautifulCode.CodeGen.ModelObject.Recipes;
 
-    public static partial class ConstantExpressionRepresentationTest
+    public static partial class ConstantExpressionRepresentationTTest
     {
         [SuppressMessage("Microsoft.Performance", "CA1810:InitializeReferenceTypeStaticFieldsInline", Justification = ObcSuppressBecause.CA1810_InitializeReferenceTypeStaticFieldsInline_FieldsDeclaredInCodeGeneratedPartialTestClass)]
-        static ConstantExpressionRepresentationTest()
+        static ConstantExpressionRepresentationTTest()
         {
             ConstructorArgumentValidationTestScenarios
                 .RemoveAllScenarios()
