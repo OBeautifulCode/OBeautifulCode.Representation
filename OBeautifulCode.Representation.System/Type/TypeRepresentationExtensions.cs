@@ -26,15 +26,15 @@ namespace OBeautifulCode.Representation.System
     /// </summary>
     public static class TypeRepresentationExtensions
     {
-        private static readonly ConcurrentDictionary<ResolveFromLoadedTypesUsingAssemblyQualifiedNameCacheKey, Type> ResolveFromLoadedTypesUsingAssemblyQualifiedNameCacheKeyToTypeMap = new ConcurrentDictionary<ResolveFromLoadedTypesUsingAssemblyQualifiedNameCacheKey, Type>();
+        private static readonly ConcurrentDictionary<ResolveFromLoadedTypesUsingAssemblyQualifiedNameCacheKey, Type> CachedResolveFromLoadedTypesUsingAssemblyQualifiedNameCacheKeyToTypeMap = new ConcurrentDictionary<ResolveFromLoadedTypesUsingAssemblyQualifiedNameCacheKey, Type>();
 
-        private static readonly ConcurrentDictionary<ResolveFromLoadedTypesUsingTypeRepresentationCacheKey, Type> ResolveFromLoadedTypesUsingTypeRepresentationCacheKeyToTypeMap = new ConcurrentDictionary<ResolveFromLoadedTypesUsingTypeRepresentationCacheKey, Type>();
+        private static readonly ConcurrentDictionary<ResolveFromLoadedTypesUsingTypeRepresentationCacheKey, Type> CachedResolveFromLoadedTypesUsingTypeRepresentationCacheKeyToTypeMap = new ConcurrentDictionary<ResolveFromLoadedTypesUsingTypeRepresentationCacheKey, Type>();
 
-        private static readonly ConcurrentDictionary<string, TypeRepresentation> AssemblyQualifiedNameToTypeRepresentationMap = new ConcurrentDictionary<string, TypeRepresentation>();
+        private static readonly ConcurrentDictionary<string, TypeRepresentation> CachedAssemblyQualifiedNameToTypeRepresentationMap = new ConcurrentDictionary<string, TypeRepresentation>();
 
-        private static readonly ConcurrentDictionary<Type, TypeRepresentation> TypeToTypeRepresentationMap = new ConcurrentDictionary<Type, TypeRepresentation>();
+        private static readonly ConcurrentDictionary<Type, TypeRepresentation> CachedTypeToTypeRepresentationMap = new ConcurrentDictionary<Type, TypeRepresentation>();
 
-        private static readonly ConcurrentDictionary<TypeRepresentation, string> TypeRepresentationToAssemblyQualifiedNameMap = new ConcurrentDictionary<TypeRepresentation, string>();
+        private static readonly ConcurrentDictionary<TypeRepresentation, string> CachedTypeRepresentationToAssemblyQualifiedNameMap = new ConcurrentDictionary<TypeRepresentation, string>();
 
         private static readonly Regex BeforeLastCommaRegex = new Regex(@"(.*?)(?=\,[^,]+$)", RegexOptions.Compiled);
 
@@ -141,7 +141,7 @@ namespace OBeautifulCode.Representation.System
                 throw new ArgumentNullException(nameof(type));
             }
 
-            if (TypeToTypeRepresentationMap.TryGetValue(type, out TypeRepresentation result))
+            if (CachedTypeToTypeRepresentationMap.TryGetValue(type, out TypeRepresentation result))
             {
                 return result;
             }
@@ -221,7 +221,7 @@ namespace OBeautifulCode.Representation.System
                     null);
             }
 
-            TypeToTypeRepresentationMap.TryAdd(type, result);
+            CachedTypeToTypeRepresentationMap.TryAdd(type, result);
 
             return result;
         }
@@ -256,14 +256,14 @@ namespace OBeautifulCode.Representation.System
 
             var cacheKey = new ResolveFromLoadedTypesUsingAssemblyQualifiedNameCacheKey(assemblyQualifiedName, assemblyMatchStrategy, throwIfCannotResolve);
 
-            if (ResolveFromLoadedTypesUsingAssemblyQualifiedNameCacheKeyToTypeMap.TryGetValue(cacheKey, out Type result))
+            if (CachedResolveFromLoadedTypesUsingAssemblyQualifiedNameCacheKeyToTypeMap.TryGetValue(cacheKey, out Type result))
             {
                 return result;
             }
 
             result = assemblyQualifiedName.ToTypeRepresentationFromAssemblyQualifiedName().ResolveFromLoadedTypes(assemblyMatchStrategy, throwIfCannotResolve);
 
-            ResolveFromLoadedTypesUsingAssemblyQualifiedNameCacheKeyToTypeMap.TryAdd(cacheKey, result);
+            CachedResolveFromLoadedTypesUsingAssemblyQualifiedNameCacheKeyToTypeMap.TryAdd(cacheKey, result);
 
             return result;
         }
@@ -301,7 +301,7 @@ namespace OBeautifulCode.Representation.System
             // never refreshed.
             var cacheKey = new ResolveFromLoadedTypesUsingTypeRepresentationCacheKey(typeRepresentation, assemblyMatchStrategy, throwIfCannotResolve);
 
-            if (ResolveFromLoadedTypesUsingTypeRepresentationCacheKeyToTypeMap.TryGetValue(cacheKey, out Type result))
+            if (CachedResolveFromLoadedTypesUsingTypeRepresentationCacheKeyToTypeMap.TryGetValue(cacheKey, out Type result))
             {
                 return result;
             }
@@ -375,7 +375,7 @@ namespace OBeautifulCode.Representation.System
                 throw new InvalidOperationException(Invariant($"Unable to resolve the specified {nameof(TypeRepresentation)} {assemblyQualifiedName} with {nameof(AssemblyMatchStrategy)}.{nameof(AssemblyMatchStrategy.AnySingleVersion)} for unknown reasons.  We never expected to hit this line of code."));
             }
 
-            ResolveFromLoadedTypesUsingTypeRepresentationCacheKeyToTypeMap.TryAdd(cacheKey, result);
+            CachedResolveFromLoadedTypesUsingTypeRepresentationCacheKeyToTypeMap.TryAdd(cacheKey, result);
 
             return result;
         }
@@ -401,7 +401,7 @@ namespace OBeautifulCode.Representation.System
                 throw new ArgumentException(Invariant($"'{nameof(assemblyQualifiedName)}' is white space"));
             }
 
-            if (AssemblyQualifiedNameToTypeRepresentationMap.TryGetValue(assemblyQualifiedName, out var result))
+            if (CachedAssemblyQualifiedNameToTypeRepresentationMap.TryGetValue(assemblyQualifiedName, out var result))
             {
                 return result;
             }
@@ -472,7 +472,7 @@ namespace OBeautifulCode.Representation.System
 
             result = new TypeRepresentation(@namespace, name, assemblyName, assemblyVersion, genericArguments);
 
-            AssemblyQualifiedNameToTypeRepresentationMap.TryAdd(assemblyQualifiedName, result);
+            CachedAssemblyQualifiedNameToTypeRepresentationMap.TryAdd(assemblyQualifiedName, result);
 
             return result;
         }
@@ -554,7 +554,7 @@ namespace OBeautifulCode.Representation.System
                 throw new ArgumentNullException(nameof(representation));
             }
 
-            if (TypeRepresentationToAssemblyQualifiedNameMap.TryGetValue(representation, out string result))
+            if (CachedTypeRepresentationToAssemblyQualifiedNameMap.TryGetValue(representation, out string result))
             {
                 return result;
             }
@@ -580,7 +580,7 @@ namespace OBeautifulCode.Representation.System
                 result = Invariant($"{representation.Namespace}.{representation.Name}{genericToken}, {assemblyName.FullName}");
             }
 
-            TypeRepresentationToAssemblyQualifiedNameMap.TryAdd(representation, result);
+            CachedTypeRepresentationToAssemblyQualifiedNameMap.TryAdd(representation, result);
 
             return result;
         }
