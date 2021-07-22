@@ -15,11 +15,12 @@ namespace OBeautifulCode.Representation.System
 
     using OBeautifulCode.Collection.Recipes;
     using OBeautifulCode.Reflection.Recipes;
+    using OBeautifulCode.Type;
 
     using static global::System.FormattableString;
 
-    using ResolveFromLoadedTypesUsingAssemblyQualifiedNameCacheKey = global::System.Tuple<string, AssemblyMatchStrategy, bool>;
-    using ResolveFromLoadedTypesUsingTypeRepresentationCacheKey = global::System.Tuple<TypeRepresentation, AssemblyMatchStrategy, bool>;
+    using ResolveFromLoadedTypesUsingAssemblyQualifiedNameCacheKey = global::System.Tuple<string, Type.VersionMatchStrategy, bool>;
+    using ResolveFromLoadedTypesUsingTypeRepresentationCacheKey = global::System.Tuple<TypeRepresentation, Type.VersionMatchStrategy, bool>;
 
     /// <summary>
     /// Extensions to <see cref="TypeRepresentation"/>.
@@ -230,7 +231,7 @@ namespace OBeautifulCode.Representation.System
         /// Resolve the assembly qualified name into a Type from the loaded Types.
         /// </summary>
         /// <param name="assemblyQualifiedName">The assembly qualified name.</param>
-        /// <param name="assemblyMatchStrategy">Strategy to use for matching assemblies.</param>
+        /// <param name="assemblyVersionMatchStrategy">Strategy to use for matching assembly versions.</param>
         /// <param name="throwIfCannotResolve">
         /// Optional value indicating whether to throw an exception if the required assembly(ies) or the type(s) cannot be found
         /// (generics, having generic type arguments, may cause the specified type representation to encapsulate multiple assemblies and/or multiple types).
@@ -241,7 +242,7 @@ namespace OBeautifulCode.Representation.System
         /// </returns>
         public static Type ResolveFromLoadedTypes(
             this string assemblyQualifiedName,
-            AssemblyMatchStrategy assemblyMatchStrategy = AssemblyMatchStrategy.AnySingleVersion,
+            VersionMatchStrategy assemblyVersionMatchStrategy = VersionMatchStrategy.AnySingleVersion,
             bool throwIfCannotResolve = true)
         {
             if (assemblyQualifiedName == null)
@@ -254,14 +255,14 @@ namespace OBeautifulCode.Representation.System
                 throw new ArgumentException(Invariant($"'{nameof(assemblyQualifiedName)}' is white space"));
             }
 
-            var cacheKey = new ResolveFromLoadedTypesUsingAssemblyQualifiedNameCacheKey(assemblyQualifiedName, assemblyMatchStrategy, throwIfCannotResolve);
+            var cacheKey = new ResolveFromLoadedTypesUsingAssemblyQualifiedNameCacheKey(assemblyQualifiedName, assemblyVersionMatchStrategy, throwIfCannotResolve);
 
             if (CachedResolveFromLoadedTypesUsingAssemblyQualifiedNameCacheKeyToTypeMap.TryGetValue(cacheKey, out Type result))
             {
                 return result;
             }
 
-            result = assemblyQualifiedName.ToTypeRepresentationFromAssemblyQualifiedName().ResolveFromLoadedTypes(assemblyMatchStrategy, throwIfCannotResolve);
+            result = assemblyQualifiedName.ToTypeRepresentationFromAssemblyQualifiedName().ResolveFromLoadedTypes(assemblyVersionMatchStrategy, throwIfCannotResolve);
 
             CachedResolveFromLoadedTypesUsingAssemblyQualifiedNameCacheKeyToTypeMap.TryAdd(cacheKey, result);
 
@@ -272,7 +273,7 @@ namespace OBeautifulCode.Representation.System
         /// Resolve the <see cref="TypeRepresentation" /> into a Type from the loaded Types.
         /// </summary>
         /// <param name="typeRepresentation">The representation of the type.</param>
-        /// <param name="assemblyMatchStrategy">Strategy to use for matching assemblies.</param>
+        /// <param name="assemblyVersionMatchStrategy">Strategy to use for matching assembly versions.</param>
         /// <param name="throwIfCannotResolve">
         /// Optional value indicating whether to throw an exception if the required assembly(ies) or the type(s) cannot be found
         /// (generics, having generic type arguments, may cause the specified type representation to encapsulate multiple assemblies and/or multiple types).
@@ -283,7 +284,7 @@ namespace OBeautifulCode.Representation.System
         /// </returns>
         public static Type ResolveFromLoadedTypes(
             this TypeRepresentation typeRepresentation,
-            AssemblyMatchStrategy assemblyMatchStrategy = AssemblyMatchStrategy.AnySingleVersion,
+            VersionMatchStrategy assemblyVersionMatchStrategy = VersionMatchStrategy.AnySingleVersion,
             bool throwIfCannotResolve = true)
         {
             if (typeRepresentation == null)
@@ -299,7 +300,7 @@ namespace OBeautifulCode.Representation.System
             // AssemblyLoader.GetLoadedAssemblies() but then this would similarly not honor the specified
             // AssemblyMatchStrategy because the loaded assemblies would be cached upon the first call and
             // never refreshed.
-            var cacheKey = new ResolveFromLoadedTypesUsingTypeRepresentationCacheKey(typeRepresentation, assemblyMatchStrategy, throwIfCannotResolve);
+            var cacheKey = new ResolveFromLoadedTypesUsingTypeRepresentationCacheKey(typeRepresentation, assemblyVersionMatchStrategy, throwIfCannotResolve);
 
             if (CachedResolveFromLoadedTypesUsingTypeRepresentationCacheKeyToTypeMap.TryGetValue(cacheKey, out Type result))
             {
@@ -347,16 +348,16 @@ namespace OBeautifulCode.Representation.System
             }
             else
             {
-                switch (assemblyMatchStrategy)
+                switch (assemblyVersionMatchStrategy)
                 {
-                    case AssemblyMatchStrategy.AnySingleVersion:
+                    case VersionMatchStrategy.AnySingleVersion:
                         var assembliesWithMultipleVersions = matchingAssembliesGroupedByName.Where(_ => _.Count() > 1).SelectMany(_ => _).ToList();
 
                         if (assembliesWithMultipleVersions.Any())
                         {
                             if (throwIfCannotResolve)
                             {
-                                throw new InvalidOperationException(Invariant($"Unable to resolve the specified {nameof(TypeRepresentation)} ({assemblyQualifiedName}) with {nameof(AssemblyMatchStrategy)}.{nameof(AssemblyMatchStrategy.AnySingleVersion)}.  There were multiple versions of the following assemblies loaded: {assembliesWithMultipleVersions.Select(_ => "[" + _.FullName + "]").ToDelimitedString(", ")}."));
+                                throw new InvalidOperationException(Invariant($"Unable to resolve the specified {nameof(TypeRepresentation)} ({assemblyQualifiedName}) with {nameof(VersionMatchStrategy)}.{nameof(VersionMatchStrategy.AnySingleVersion)}.  There were multiple versions of the following assemblies loaded: {assembliesWithMultipleVersions.Select(_ => "[" + _.FullName + "]").ToDelimitedString(", ")}."));
                             }
                         }
                         else
@@ -366,13 +367,13 @@ namespace OBeautifulCode.Representation.System
 
                         break;
                     default:
-                        throw new NotSupportedException(Invariant($"This {nameof(AssemblyMatchStrategy)} is not supported: {assemblyMatchStrategy}."));
+                        throw new NotSupportedException(Invariant($"This {nameof(VersionMatchStrategy)} is not supported: {assemblyVersionMatchStrategy}."));
                 }
             }
 
             if ((result == null) && throwIfCannotResolve)
             {
-                throw new InvalidOperationException(Invariant($"Unable to resolve the specified {nameof(TypeRepresentation)} {assemblyQualifiedName} with {nameof(AssemblyMatchStrategy)}.{nameof(AssemblyMatchStrategy.AnySingleVersion)} for unknown reasons.  We never expected to hit this line of code."));
+                throw new InvalidOperationException(Invariant($"Unable to resolve the specified {nameof(TypeRepresentation)} {assemblyQualifiedName} with {nameof(VersionMatchStrategy)}.{nameof(VersionMatchStrategy.AnySingleVersion)} for unknown reasons.  We never expected to hit this line of code."));
             }
 
             CachedResolveFromLoadedTypesUsingTypeRepresentationCacheKeyToTypeMap.TryAdd(cacheKey, result);

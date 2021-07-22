@@ -195,7 +195,6 @@
     <Compile Include="TypeMember\ConstructorInfoRepresentation.cs" />
     <Compile Include="TypeMember\MemberInfoRepresentation.cs" />
     <Compile Include="TypeMember\MethodInfoRepresentation.cs" />
-    <Compile Include="Type\AssemblyMatchStrategy.cs" />
     <Compile Include="Type\TypeRepresentation.cs" />
     <Compile Include="Type\TypeRepresentation.designer.cs">
       <DependentUpon>TypeRepresentation.cs</DependentUpon>

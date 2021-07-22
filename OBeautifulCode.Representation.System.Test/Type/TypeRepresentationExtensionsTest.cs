@@ -12,10 +12,12 @@ namespace OBeautifulCode.Representation.System.Test
     using global::System.Collections.Generic;
     using global::System.Linq;
     using global::System.Text.RegularExpressions;
+
     using OBeautifulCode.Assertion.Recipes;
     using OBeautifulCode.AutoFakeItEasy;
     using OBeautifulCode.Enum.Recipes;
     using OBeautifulCode.Reflection.Recipes;
+    using OBeautifulCode.Type;
 
     using Xunit;
 
@@ -181,16 +183,16 @@ namespace OBeautifulCode.Representation.System.Test
         }
 
         [Fact]
-        public static void ResolvedFromLoadedTypes_assemblyQualifiedName___Should_throw_NotSupportedException___When_parameter_assemblyMatchStrategy_is_not_AnySingleVersion()
+        public static void ResolvedFromLoadedTypes_assemblyQualifiedName___Should_throw_NotSupportedException___When_parameter_assemblyVersionMatchStrategy_is_not_AnySingleVersion()
         {
             // Arrange
-            var assemblyMatchStrategy = EnumExtensions.GetDefinedEnumValues<AssemblyMatchStrategy>().Where(_ => _ != AssemblyMatchStrategy.AnySingleVersion).ToList();
+            var assemblyVersionMatchStrategy = EnumExtensions.GetDefinedEnumValues<VersionMatchStrategy>().Where(_ => _ != VersionMatchStrategy.AnySingleVersion).ToList();
 
             var assemblyQualifiedName = A.Dummy<TypeRepresentation>().BuildAssemblyQualifiedName();
 
             // Act
-            var actuals1 = assemblyMatchStrategy.Select(_ => Record.Exception(() => assemblyQualifiedName.ResolveFromLoadedTypes(_, throwIfCannotResolve: false)));
-            var actuals2 = assemblyMatchStrategy.Select(_ => Record.Exception(() => assemblyQualifiedName.ResolveFromLoadedTypes(_, throwIfCannotResolve: true)));
+            var actuals1 = assemblyVersionMatchStrategy.Select(_ => Record.Exception(() => assemblyQualifiedName.ResolveFromLoadedTypes(_, throwIfCannotResolve: false)));
+            var actuals2 = assemblyVersionMatchStrategy.Select(_ => Record.Exception(() => assemblyQualifiedName.ResolveFromLoadedTypes(_, throwIfCannotResolve: true)));
 
             // Assert
             actuals1.AsTest().Must().Each().BeOfType<NotSupportedException>();
@@ -229,8 +231,8 @@ namespace OBeautifulCode.Representation.System.Test
             var assemblyQualifiedName2 = representation2.BuildAssemblyQualifiedName();
 
             // Act
-            var actual1 = assemblyQualifiedName1.ResolveFromLoadedTypes(AssemblyMatchStrategy.AnySingleVersion, throwIfCannotResolve: false);
-            var actual2 = assemblyQualifiedName2.ResolveFromLoadedTypes(AssemblyMatchStrategy.AnySingleVersion, throwIfCannotResolve: false);
+            var actual1 = assemblyQualifiedName1.ResolveFromLoadedTypes(VersionMatchStrategy.AnySingleVersion, throwIfCannotResolve: false);
+            var actual2 = assemblyQualifiedName2.ResolveFromLoadedTypes(VersionMatchStrategy.AnySingleVersion, throwIfCannotResolve: false);
 
             // Assert
             actual1.AsTest().Must().BeNull();
@@ -256,8 +258,8 @@ namespace OBeautifulCode.Representation.System.Test
             var assemblyQualifiedName2 = representation2.BuildAssemblyQualifiedName();
 
             // Act
-            var actual1 = Record.Exception(() => assemblyQualifiedName1.ResolveFromLoadedTypes(AssemblyMatchStrategy.AnySingleVersion, throwIfCannotResolve: true));
-            var actual2 = Record.Exception(() => assemblyQualifiedName2.ResolveFromLoadedTypes(AssemblyMatchStrategy.AnySingleVersion, throwIfCannotResolve: true));
+            var actual1 = Record.Exception(() => assemblyQualifiedName1.ResolveFromLoadedTypes(VersionMatchStrategy.AnySingleVersion, throwIfCannotResolve: true));
+            var actual2 = Record.Exception(() => assemblyQualifiedName2.ResolveFromLoadedTypes(VersionMatchStrategy.AnySingleVersion, throwIfCannotResolve: true));
 
             // Assert
             actual1.AsTest().Must().BeOfType<InvalidOperationException>();
@@ -306,7 +308,7 @@ namespace OBeautifulCode.Representation.System.Test
             var assemblyQualifiedName = type.ToRepresentation().BuildAssemblyQualifiedName();
 
             // Act
-            var actual = assemblyQualifiedName.ResolveFromLoadedTypes(AssemblyMatchStrategy.AnySingleVersion, throwIfCannotResolve: false);
+            var actual = assemblyQualifiedName.ResolveFromLoadedTypes(VersionMatchStrategy.AnySingleVersion, throwIfCannotResolve: false);
 
             // Assert
             actual.AsTest().Must().BeNull();
@@ -323,11 +325,11 @@ namespace OBeautifulCode.Representation.System.Test
             var assemblyQualifiedName = type.ToRepresentation().BuildAssemblyQualifiedName();
 
             // Act
-            var actual = Record.Exception(() => assemblyQualifiedName.ResolveFromLoadedTypes(AssemblyMatchStrategy.AnySingleVersion, throwIfCannotResolve: true));
+            var actual = Record.Exception(() => assemblyQualifiedName.ResolveFromLoadedTypes(VersionMatchStrategy.AnySingleVersion, throwIfCannotResolve: true));
 
             // Assert
             actual.AsTest().Must().BeOfType<InvalidOperationException>();
-            actual.Message.AsTest().Must().ContainString("Unable to resolve the specified TypeRepresentation (Conditions.Condition, Conditions, Version=2.1.0.24) with AssemblyMatchStrategy.AnySingleVersion.  There were multiple versions of the following assemblies loaded: [Conditions,");
+            actual.Message.AsTest().Must().ContainString("Unable to resolve the specified TypeRepresentation (Conditions.Condition, Conditions, Version=2.1.0.24) with VersionMatchStrategy.AnySingleVersion.  There were multiple versions of the following assemblies loaded: [Conditions,");
         }
 
         [Fact]
@@ -342,16 +344,16 @@ namespace OBeautifulCode.Representation.System.Test
         }
 
         [Fact]
-        public static void ResolvedFromLoadedTypes_typeRepresentation___Should_throw_NotSupportedException___When_parameter_assemblyMatchStrategy_is_not_AnySingleVersion()
+        public static void ResolvedFromLoadedTypes_typeRepresentation___Should_throw_NotSupportedException___When_parameter_assemblyVersionMatchStrategy_is_not_AnySingleVersion()
         {
             // Arrange
-            var assemblyMatchStrategy = EnumExtensions.GetDefinedEnumValues<AssemblyMatchStrategy>().Where(_ => _ != AssemblyMatchStrategy.AnySingleVersion).ToList();
+            var assemblyVersionMatchStrategy = EnumExtensions.GetDefinedEnumValues<VersionMatchStrategy>().Where(_ => _ != VersionMatchStrategy.AnySingleVersion).ToList();
 
             var typeRepresentation = A.Dummy<TypeRepresentation>();
 
             // Act
-            var actuals1 = assemblyMatchStrategy.Select(_ => Record.Exception(() => typeRepresentation.ResolveFromLoadedTypes(_, throwIfCannotResolve: false)));
-            var actuals2 = assemblyMatchStrategy.Select(_ => Record.Exception(() => typeRepresentation.ResolveFromLoadedTypes(_, throwIfCannotResolve: true)));
+            var actuals1 = assemblyVersionMatchStrategy.Select(_ => Record.Exception(() => typeRepresentation.ResolveFromLoadedTypes(_, throwIfCannotResolve: false)));
+            var actuals2 = assemblyVersionMatchStrategy.Select(_ => Record.Exception(() => typeRepresentation.ResolveFromLoadedTypes(_, throwIfCannotResolve: true)));
 
             // Assert
             actuals1.AsTest().Must().Each().BeOfType<NotSupportedException>();
@@ -388,8 +390,8 @@ namespace OBeautifulCode.Representation.System.Test
             representation2 = representation2.DeepCloneWithGenericArguments(modifiedGenericArguments);
 
             // Act
-            var actual1 = representation1.ResolveFromLoadedTypes(AssemblyMatchStrategy.AnySingleVersion, throwIfCannotResolve: false);
-            var actual2 = representation2.ResolveFromLoadedTypes(AssemblyMatchStrategy.AnySingleVersion, throwIfCannotResolve: false);
+            var actual1 = representation1.ResolveFromLoadedTypes(VersionMatchStrategy.AnySingleVersion, throwIfCannotResolve: false);
+            var actual2 = representation2.ResolveFromLoadedTypes(VersionMatchStrategy.AnySingleVersion, throwIfCannotResolve: false);
 
             // Assert
             actual1.AsTest().Must().BeNull();
@@ -413,8 +415,8 @@ namespace OBeautifulCode.Representation.System.Test
             representation2 = representation2.DeepCloneWithGenericArguments(modifiedGenericArguments);
 
             // Act
-            var actual1 = Record.Exception(() => representation1.ResolveFromLoadedTypes(AssemblyMatchStrategy.AnySingleVersion, throwIfCannotResolve: true));
-            var actual2 = Record.Exception(() => representation2.ResolveFromLoadedTypes(AssemblyMatchStrategy.AnySingleVersion, throwIfCannotResolve: true));
+            var actual1 = Record.Exception(() => representation1.ResolveFromLoadedTypes(VersionMatchStrategy.AnySingleVersion, throwIfCannotResolve: true));
+            var actual2 = Record.Exception(() => representation2.ResolveFromLoadedTypes(VersionMatchStrategy.AnySingleVersion, throwIfCannotResolve: true));
 
             // Assert
             actual1.AsTest().Must().BeOfType<InvalidOperationException>();
@@ -463,7 +465,7 @@ namespace OBeautifulCode.Representation.System.Test
             var representation = type.ToRepresentation();
 
             // Act
-            var actual = representation.ResolveFromLoadedTypes(AssemblyMatchStrategy.AnySingleVersion, throwIfCannotResolve: false);
+            var actual = representation.ResolveFromLoadedTypes(VersionMatchStrategy.AnySingleVersion, throwIfCannotResolve: false);
 
             // Assert
             actual.AsTest().Must().BeNull();
@@ -480,11 +482,11 @@ namespace OBeautifulCode.Representation.System.Test
             var representation = type.ToRepresentation();
 
             // Act
-            var actual = Record.Exception(() => representation.ResolveFromLoadedTypes(AssemblyMatchStrategy.AnySingleVersion, throwIfCannotResolve: true));
+            var actual = Record.Exception(() => representation.ResolveFromLoadedTypes(VersionMatchStrategy.AnySingleVersion, throwIfCannotResolve: true));
 
             // Assert
             actual.AsTest().Must().BeOfType<InvalidOperationException>();
-            actual.Message.AsTest().Must().ContainString("Unable to resolve the specified TypeRepresentation (Conditions.Condition, Conditions, Version=2.1.0.24) with AssemblyMatchStrategy.AnySingleVersion.  There were multiple versions of the following assemblies loaded: [Conditions,");
+            actual.Message.AsTest().Must().ContainString("Unable to resolve the specified TypeRepresentation (Conditions.Condition, Conditions, Version=2.1.0.24) with VersionMatchStrategy.AnySingleVersion.  There were multiple versions of the following assemblies loaded: [Conditions,");
         }
 
         [Fact]
