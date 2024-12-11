@@ -7,9 +7,9 @@
     <iconUrl>https://raw.githubusercontent.com/OBeautifulCode/OBeautifulCode.Representation/master/OBeautifulCode.Representation.System.Test/nuget-icon.png</iconUrl>
     <dependencies>
       <dependency id="OBeautifulCode.Representation.System" version="$version$" />
-      <dependency id="OBeautifulCode.AutoFakeItEasy" version="1.0.139" />
-      <dependency id="OBeautifulCode.Type.Recipes.DummyFactory" version="1.0.117" />
-      <dependency id="OBeautifulCode.CodeAnalysis.Recipes.SuppressBecause" version="1.0.17" />
+      <dependency id="OBeautifulCode.AutoFakeItEasy" version="1.0.141" />
+      <dependency id="OBeautifulCode.Type.Recipes.DummyFactory" version="1.0.131" />
+      <dependency id="OBeautifulCode.CodeAnalysis.Recipes.SuppressBecause" version="1.0.19" />
     </dependencies>
   </metadata>
   <files>
