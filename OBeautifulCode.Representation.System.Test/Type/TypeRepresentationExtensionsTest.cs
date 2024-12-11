@@ -729,5 +729,90 @@ namespace OBeautifulCode.Representation.System.Test
             // Assert
             actual.AsTest().Must().BeEqualTo(expected);
         }
+
+        [Fact]
+        public static void EqualsIgnoringVersion___Should_return_true___When_both_type_parameters_are_null()
+        {
+            // Arrange, Act
+            var actual = ((TypeRepresentation)null).EqualsIgnoringVersion(null);
+
+            // Assert
+            actual.AsTest().Must().BeTrue();
+        }
+
+        [Fact]
+        public static void EqualsIgnoringVersion___Should_return_false___When_one_type_is_null_and_the_other_is_not()
+        {
+            // Arrange, Act
+            var actual1 = ((TypeRepresentation)null).EqualsIgnoringVersion(A.Dummy<TypeRepresentation>());
+            var actual2 = A.Dummy<TypeRepresentation>().EqualsIgnoringVersion(null);
+
+            // Assert
+            actual1.AsTest().Must().BeFalse();
+            actual2.AsTest().Must().BeFalse();
+        }
+
+        [Fact]
+        public static void EqualsIgnoringVersion___Should_return_false___When_types_are_not_equal_ignoring_version()
+        {
+            // Arrange
+            var type1 = typeof(Dictionary<string, int>).ToRepresentation();
+            var type2 = typeof(Dictionary<int, string>).ToRepresentation();
+
+            // Act
+            var actual = type1.EqualsIgnoringVersion(type2);
+
+            // Assert
+            actual.AsTest().Must().BeFalse();
+        }
+
+        [Fact]
+        public static void EqualsIgnoringVersion___Should_return_true___When_types_are_equal_ignoring_version()
+        {
+            // Arrange
+            var typeWithVersion = typeof(Dictionary<string, int>).ToRepresentation();
+            var typeWithoutVersion = typeWithVersion.RemoveAssemblyVersions();
+            var typeWithManipulatedVersion = typeWithVersion.DeepCloneWithGenericArguments(
+                new[]
+                {
+                    typeWithVersion.GenericArguments[0],
+                    typeWithVersion.GenericArguments[1].DeepCloneWithAssemblyVersion("0.0.3"),
+                });
+
+            var types = new[]
+            {
+                new
+                {
+                    Type1 = typeWithVersion,
+                    Type2 = typeWithVersion,
+                },
+                new
+                {
+                    Type1 = typeWithVersion,
+                    Type2 = typeWithoutVersion,
+                },
+                new
+                {
+                    Type1 = typeWithoutVersion,
+                    Type2 = typeWithVersion,
+                },
+                new
+                {
+                    Type1 = typeWithManipulatedVersion,
+                    Type2 = typeWithVersion,
+                },
+                new
+                {
+                    Type1 = typeWithoutVersion,
+                    Type2 = typeWithManipulatedVersion,
+                },
+            };
+
+            // Act
+            var actual = types.Select(_ => _.Type1.EqualsIgnoringVersion(_.Type2)).ToList();
+
+            // Assert
+            actual.AsTest().Must().Each().BeTrue();
+        }
     }
 }

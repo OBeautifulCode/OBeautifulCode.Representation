@@ -612,6 +612,26 @@ namespace OBeautifulCode.Representation.System
             return result;
         }
 
+        /// <summary>
+        /// Determines if two <see cref="TypeRepresentation"/>s are equal, ignoring all version information.
+        /// </summary>
+        /// <param name="type1">The first type to compare.</param>
+        /// <param name="type2">The second type to compare.</param>
+        /// <returns>
+        /// true if the types are equal when version is ignored, otherwise false.
+        /// </returns>
+        public static bool EqualsIgnoringVersion(
+            this TypeRepresentation type1,
+            TypeRepresentation type2)
+        {
+            var type1WithoutVersion = type1?.RemoveAssemblyVersions();
+            var type2WithoutVersion = type2?.RemoveAssemblyVersions();
+
+            var result = type1WithoutVersion == type2WithoutVersion;
+
+            return result;
+        }
+
         private static HashSet<string> GetAssemblyNamesInUse(
             this TypeRepresentation typeRepresentation)
         {
