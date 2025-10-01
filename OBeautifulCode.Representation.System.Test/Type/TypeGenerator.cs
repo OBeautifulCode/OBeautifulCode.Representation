@@ -27,7 +27,6 @@ namespace OBeautifulCode.Representation.System.Test
                 typeof(Guid),
                 typeof(DateTime),
                 typeof(object),
-                typeof(ConstructorInfoRepresentation),
                 typeof(TestClassInStaticClass),
                 typeof(TestClassInStaticClass.NestedClassInTestClassInStaticClass),
                 typeof(TestClassInStaticClass.NestedClassInTestClassInStaticClass.NestedClassInNestedClassInTestClassInStaticClass),
@@ -88,9 +87,9 @@ namespace OBeautifulCode.Representation.System.Test
 
             var additionalTypes = new[]
             {
-                typeof(IReadOnlyDictionary<Guid?, IReadOnlyDictionary<ConstructorInfoRepresentation, DateTime>>),
+                typeof(IReadOnlyDictionary<Guid?, IReadOnlyDictionary<UnknownTypePlaceholder, DateTime>>),
                 typeof(IReadOnlyDictionary<IReadOnlyDictionary<Guid[], int?>, IList<IList<short>>[]>),
-                typeof(IReadOnlyDictionary<IReadOnlyDictionary<ConstructorInfoRepresentation[], int?>, IList<IList<TestClassInStaticClass.NestedClassInTestClassInStaticClass>>[]>[]),
+                typeof(IReadOnlyDictionary<IReadOnlyDictionary<UnknownTypePlaceholder[], int?>, IList<IList<TestClassInStaticClass.NestedClassInTestClassInStaticClass>>[]>[]),
             };
 
             var closedTypes = new Type[0]

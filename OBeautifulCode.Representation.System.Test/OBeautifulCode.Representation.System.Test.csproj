@@ -178,94 +178,7 @@
     <Compile Include="Assembly\AssemblyRepresentationTest.designer.cs">
       <DependentUpon>AssemblyRepresentationTest.cs</DependentUpon>
     </Compile>
-    <Compile Include="Expression\Expressions\ConstantExpressionRepresentation{T}Test.cs" />
-    <Compile Include="Expression\Expressions\ConstantExpressionRepresentation{T}Test.designer.cs">
-      <DependentUpon>ConstantExpressionRepresentation{T}Test.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Expression\Bindings\ElementInitRepresentationTest.designer.cs">
-      <DependentUpon>ElementInitRepresentationTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Expression\Bindings\MemberAssignmentRepresentationTest.designer.cs">
-      <DependentUpon>MemberAssignmentRepresentationTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Expression\Bindings\MemberBindingRepresentationBaseTest.designer.cs">
-      <DependentUpon>MemberBindingRepresentationBaseTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Expression\Bindings\MemberListBindingRepresentationTest.designer.cs">
-      <DependentUpon>MemberListBindingRepresentationTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Expression\Bindings\MemberMemberBindingRepresentationTest.designer.cs">
-      <DependentUpon>MemberMemberBindingRepresentationTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Expression\Expressions\BinaryExpressionRepresentationTest.cs" />
-    <Compile Include="Expression\Expressions\BinaryExpressionRepresentationTest.designer.cs">
-      <DependentUpon>BinaryExpressionRepresentationTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Expression\Expressions\ConditionalExpressionRepresentationTest.cs" />
-    <Compile Include="Expression\Expressions\ConditionalExpressionRepresentationTest.designer.cs">
-      <DependentUpon>ConditionalExpressionRepresentationTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Expression\Expressions\ExpressionRepresentationBaseTest.designer.cs">
-      <DependentUpon>ExpressionRepresentationBaseTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Expression\Expressions\InvocationExpressionRepresentationTest.designer.cs">
-      <DependentUpon>InvocationExpressionRepresentationTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Expression\Expressions\LambdaExpressionRepresentationTest.designer.cs">
-      <DependentUpon>LambdaExpressionRepresentationTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Expression\Expressions\ListInitExpressionRepresentationTest.designer.cs">
-      <DependentUpon>ListInitExpressionRepresentationTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Expression\Expressions\MemberExpressionRepresentationTest.designer.cs">
-      <DependentUpon>MemberExpressionRepresentationTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Expression\Expressions\MemberInitExpressionRepresentationTest.designer.cs">
-      <DependentUpon>MemberInitExpressionRepresentationTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Expression\Expressions\MethodCallExpressionRepresentationTest.designer.cs">
-      <DependentUpon>MethodCallExpressionRepresentationTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Expression\Expressions\NewArrayExpressionRepresentationTest.designer.cs">
-      <DependentUpon>NewArrayExpressionRepresentationTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Expression\Expressions\NewExpressionRepresentationTest.designer.cs">
-      <DependentUpon>NewExpressionRepresentationTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Expression\Expressions\ParameterExpressionRepresentationTest.designer.cs">
-      <DependentUpon>ParameterExpressionRepresentationTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Expression\Expressions\TypeBinaryExpressionRepresentationTest.designer.cs">
-      <DependentUpon>TypeBinaryExpressionRepresentationTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Expression\Expressions\UnaryExpressionRepresentationTest.designer.cs">
-      <DependentUpon>UnaryExpressionRepresentationTest.cs</DependentUpon>
-    </Compile>
     <Compile Include="Properties\ProjectInfo.cs" />
-    <Compile Include="TypeMember\ConstructorInfoRepresentationTest.cs" />
-    <Compile Include="Expression\Bindings\ElementInitRepresentationTest.cs" />
-    <Compile Include="Expression\Expressions\ExpressionRepresentationBaseTest.cs" />
-    <Compile Include="Expression\Expressions\InvocationExpressionRepresentationTest.cs" />
-    <Compile Include="Expression\Expressions\LambdaExpressionRepresentationTest.cs" />
-    <Compile Include="Expression\Expressions\ListInitExpressionRepresentationTest.cs" />
-    <Compile Include="Expression\Bindings\MemberAssignmentRepresentationTest.cs" />
-    <Compile Include="Expression\Bindings\MemberBindingRepresentationBaseTest.cs" />
-    <Compile Include="Expression\Expressions\MemberExpressionRepresentationTest.cs" />
-    <Compile Include="TypeMember\ConstructorInfoRepresentationTest.designer.cs">
-      <DependentUpon>ConstructorInfoRepresentationTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="TypeMember\MemberInfoRepresentationTest.cs" />
-    <Compile Include="Expression\Expressions\MemberInitExpressionRepresentationTest.cs" />
-    <Compile Include="Expression\Bindings\MemberListBindingRepresentationTest.cs" />
-    <Compile Include="Expression\Bindings\MemberMemberBindingRepresentationTest.cs" />
-    <Compile Include="Expression\Expressions\MethodCallExpressionRepresentationTest.cs" />
-    <Compile Include="TypeMember\MemberInfoRepresentationTest.designer.cs">
-      <DependentUpon>MemberInfoRepresentationTest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="TypeMember\MethodInfoRepresentationTest.cs" />
-    <Compile Include="Expression\Expressions\NewArrayExpressionRepresentationTest.cs" />
-    <Compile Include="Expression\Expressions\NewExpressionRepresentationTest.cs" />
-    <Compile Include="Expression\Expressions\ParameterExpressionRepresentationTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="RepresentationSystemDummyFactory.cs" />
@@ -276,16 +189,11 @@
     <Compile Include="RepresentationSystemDummyFactoryTest.designer.cs">
       <DependentUpon>RepresentationSystemDummyFactoryTest.cs</DependentUpon>
     </Compile>
-    <Compile Include="Expression\Expressions\TypeBinaryExpressionRepresentationTest.cs" />
-    <Compile Include="TypeMember\MethodInfoRepresentationTest.designer.cs">
-      <DependentUpon>MethodInfoRepresentationTest.cs</DependentUpon>
-    </Compile>
     <Compile Include="Type\TypeGenerator.cs" />
     <Compile Include="Type\TypeRepresentationExtensionsTest.cs" />
     <Compile Include="Type\VersionlessTypeEqualityComparerTest.cs" />
     <Compile Include="Type\VersionlessTypeRepresentationEqualityComparerTest.cs" />
     <Compile Include="Type\TypeRepresentationTest.cs" />
-    <Compile Include="Expression\Expressions\UnaryExpressionRepresentationTest.cs" />
     <Compile Include="Type\TypeRepresentationTest.designer.cs">
       <DependentUpon>TypeRepresentationTest.cs</DependentUpon>
     </Compile>

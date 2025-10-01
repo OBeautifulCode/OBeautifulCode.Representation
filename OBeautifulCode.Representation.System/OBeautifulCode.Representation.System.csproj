@@ -99,106 +99,15 @@
     <Compile Include="Assembly\AssemblyRepresentation.designer.cs">
       <DependentUpon>AssemblyRepresentation.cs</DependentUpon>
     </Compile>
-    <Compile Include="Expression\Bindings\ElementInitRepresentation.cs" />
-    <Compile Include="Expression\Bindings\ElementInitRepresentation.designer.cs">
-      <DependentUpon>ElementInitRepresentation.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Expression\Bindings\MemberAssignmentRepresentation.cs" />
-    <Compile Include="Expression\Bindings\MemberAssignmentRepresentation.designer.cs">
-      <DependentUpon>MemberAssignmentRepresentation.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Expression\Bindings\MemberBindingRepresentationBase.cs" />
-    <Compile Include="Expression\Bindings\MemberBindingRepresentationBase.designer.cs">
-      <DependentUpon>MemberBindingRepresentationBase.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Expression\Bindings\MemberListBindingRepresentation.cs" />
-    <Compile Include="Expression\Bindings\MemberListBindingRepresentation.designer.cs">
-      <DependentUpon>MemberListBindingRepresentation.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Expression\Bindings\MemberMemberBindingRepresentation.cs" />
-    <Compile Include="Expression\Bindings\MemberMemberBindingRepresentation.designer.cs">
-      <DependentUpon>MemberMemberBindingRepresentation.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Expression\Expressions\BinaryExpressionRepresentation.cs" />
-    <Compile Include="Expression\Expressions\BinaryExpressionRepresentation.designer.cs">
-      <DependentUpon>BinaryExpressionRepresentation.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Expression\Expressions\ConditionalExpressionRepresentation.cs" />
-    <Compile Include="Expression\Expressions\ConstantExpressionRepresentation{T}.designer.cs">
-      <DependentUpon>ConstantExpressionRepresentation{T}.cs</DependentUpon>
-    </Compile>
     <Compile Include="Properties\ProjectInfo.cs" />
-    <Compile Include="TypeMember\ConstructorInfoRepresentation.designer.cs">
-      <DependentUpon>ConstructorInfoRepresentation.cs</DependentUpon>
-    </Compile>
-    <Compile Include="TypeMember\MemberInfoRepresentation.designer.cs">
-      <DependentUpon>MemberInfoRepresentation.cs</DependentUpon>
-    </Compile>
-    <Compile Include="TypeMember\MethodInfoRepresentation.designer.cs">
-      <DependentUpon>MethodInfoRepresentation.cs</DependentUpon>
-    </Compile>
     <Compile Include="Type\UnknownTypePlaceholder.designer.cs">
       <DependentUpon>UnknownTypePlaceholder.cs</DependentUpon>
     </Compile>
-    <Compile Include="Expression\Expressions\ConstantExpressionRepresentation{T}.cs" />
-    <Compile Include="Expression\Expressions\ConditionalExpressionRepresentation.designer.cs">
-      <DependentUpon>ConditionalExpressionRepresentation.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Expression\Expressions\ExpressionRepresentationBase.cs" />
-    <Compile Include="Expression\Expressions\ExpressionRepresentationBase.designer.cs">
-      <DependentUpon>ExpressionRepresentationBase.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Expression\Expressions\InvocationExpressionRepresentation.cs" />
-    <Compile Include="Expression\Expressions\InvocationExpressionRepresentation.designer.cs">
-      <DependentUpon>InvocationExpressionRepresentation.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Expression\Expressions\LambdaExpressionRepresentation.cs" />
-    <Compile Include="Expression\Expressions\LambdaExpressionRepresentation.designer.cs">
-      <DependentUpon>LambdaExpressionRepresentation.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Expression\Expressions\ListInitExpressionRepresentation.cs" />
-    <Compile Include="Expression\Expressions\ListInitExpressionRepresentation.designer.cs">
-      <DependentUpon>ListInitExpressionRepresentation.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Expression\Expressions\MemberExpressionRepresentation.cs" />
-    <Compile Include="Expression\Expressions\MemberExpressionRepresentation.designer.cs">
-      <DependentUpon>MemberExpressionRepresentation.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Expression\Expressions\MemberInitExpressionRepresentation.cs" />
-    <Compile Include="Expression\Expressions\MemberInitExpressionRepresentation.designer.cs">
-      <DependentUpon>MemberInitExpressionRepresentation.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Expression\Expressions\MethodCallExpressionRepresentation.cs" />
-    <Compile Include="Expression\Expressions\MethodCallExpressionRepresentation.designer.cs">
-      <DependentUpon>MethodCallExpressionRepresentation.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Expression\Expressions\NewArrayExpressionRepresentation.cs" />
-    <Compile Include="Expression\Expressions\NewArrayExpressionRepresentation.designer.cs">
-      <DependentUpon>NewArrayExpressionRepresentation.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Expression\Expressions\NewExpressionRepresentation.cs" />
-    <Compile Include="Expression\Expressions\NewExpressionRepresentation.designer.cs">
-      <DependentUpon>NewExpressionRepresentation.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Expression\Expressions\ParameterExpressionRepresentation.cs" />
-    <Compile Include="Expression\Expressions\ParameterExpressionRepresentation.designer.cs">
-      <DependentUpon>ParameterExpressionRepresentation.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Expression\Expressions\TypeBinaryExpressionRepresentation.cs" />
-    <Compile Include="Expression\Expressions\TypeBinaryExpressionRepresentation.designer.cs">
-      <DependentUpon>TypeBinaryExpressionRepresentation.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Expression\Expressions\UnaryExpressionRepresentation.cs" />
-    <Compile Include="Expression\Expressions\UnaryExpressionRepresentation.designer.cs">
-      <DependentUpon>UnaryExpressionRepresentation.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Expression\Visitors\ExpressionRepresentationVisitor.cs" />
-    <Compile Include="Expression\Visitors\ExpressionVisitor.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TypeMember\ConstructorInfoRepresentation.cs" />
-    <Compile Include="TypeMember\MemberInfoRepresentation.cs" />
-    <Compile Include="TypeMember\MethodInfoRepresentation.cs" />
+    <Compile Include="TypeMember\ConstructorInfoExtensions.cs" />
+    <Compile Include="TypeMember\MemberInfoExtensions.cs" />
+    <Compile Include="TypeMember\MethodInfoExtensions.cs" />
     <Compile Include="Type\TypeRepresentation.cs" />
     <Compile Include="Type\TypeRepresentation.designer.cs">
       <DependentUpon>TypeRepresentation.cs</DependentUpon>
